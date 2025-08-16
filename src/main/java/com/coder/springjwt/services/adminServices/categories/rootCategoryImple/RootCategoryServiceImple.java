@@ -1,0 +1,184 @@
+package com.coder.springjwt.services.adminServices.categories.rootCategoryImple;
+
+import com.coder.springjwt.bucket.bucketModels.BucketModel;
+import com.coder.springjwt.bucket.bucketService.BucketService;
+import com.coder.springjwt.constants.adminConstants.adminMessageConstants.AdminMessageResponse;
+import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
+import com.coder.springjwt.dtos.adminDtos.categoriesDtos.RootCategoryDto;
+import com.coder.springjwt.exception.adminException.CategoryNotFoundException;
+import com.coder.springjwt.exception.adminException.DataNotFoundException;
+import com.coder.springjwt.models.adminModels.categories.RootCategoryModel;
+import com.coder.springjwt.repository.adminRepository.categories.RootCategoryRepo;
+import com.coder.springjwt.services.adminServices.categories.RootCategoryService;
+import com.coder.springjwt.util.MessageResponse;
+import com.coder.springjwt.util.ResponseGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+@Service
+public class RootCategoryServiceImple implements RootCategoryService {
+
+    @Autowired
+    RootCategoryRepo rootCategoryRepo;
+    @Autowired
+    BucketService bucketService;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private ObjectMapper objectMapper;
+    Logger logger =  LoggerFactory.getLogger(RootCategoryServiceImple.class);
+
+
+    @Override
+    public ResponseEntity<?> saveRootCategory(RootCategoryDto rootCategoryDto) {
+        MessageResponse response =new MessageResponse();
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            rootCategoryDto.setUser(auth.getName());
+
+            //Convert DTO TO Model Class...
+            RootCategoryModel rootCategoryModel =  modelMapper.map(rootCategoryDto , RootCategoryModel.class);
+            logger.info("model mapper Conversion Success");
+
+            //save Category
+            this.rootCategoryRepo.save(rootCategoryModel);
+
+            response.setMessage("Category Saved Success");
+            response.setStatus(HttpStatus.OK);
+            return ResponseGenerator.generateSuccessResponse(response ,"Success");
+        }
+        catch (DataIntegrityViolationException ex) {
+            // Handle exception here
+            response.setMessage("Duplicate entry error: ");
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            return ResponseGenerator.generateBadRequestResponse(response);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            response.setMessage(e.getMessage());
+            response.setStatus(HttpStatus.BAD_REQUEST);
+            return ResponseGenerator.generateBadRequestResponse(response);
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<?> getRootCategoryList() {
+
+        try {
+                System.out.println("First To Get From Database");
+                // Fetch data from the database
+                List<RootCategoryModel> rootList = this.rootCategoryRepo.findAll();
+                return ResponseGenerator.generateSuccessResponse(rootList, AdminMessageResponse.SUCCESS);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse(SellerMessageResponse.SOMETHING_WENT_WRONG);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> deleteRootCategoryById(long categoryId) {
+        try {
+            RootCategoryModel data = this.rootCategoryRepo.findById(categoryId).orElseThrow(
+                    () -> new CategoryNotFoundException("Category id not Found"));
+
+            this.rootCategoryRepo.deleteById(data.getId());
+            logger.info("Delete Success => Category id :: " + categoryId );
+            return ResponseGenerator.generateSuccessResponse("Delete Success" , "Success");
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.error("Category Could Not deleted");
+            return ResponseGenerator.generateBadRequestResponse
+                    ("Category Could not deleted :: " + e.getMessage() , "Error");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getRootCategoryById(long categoryId) {
+        try {
+            RootCategoryModel data = this.rootCategoryRepo.findById(categoryId).orElseThrow(
+                    () -> new RuntimeException("Data not Found ! Error"));
+            return ResponseGenerator.generateSuccessResponse(data , "Success");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            logger.error("");
+            return ResponseGenerator.generateBadRequestResponse(e.getMessage() , "Error");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateRootCategory(RootCategoryDto rootCategoryDto) {
+        MessageResponse response = new MessageResponse();
+        try {
+            logger.info(rootCategoryDto.toString());
+            logger.info("Update Process Starting....");
+            RootCategoryModel rootData =  this.rootCategoryRepo.findById(rootCategoryDto.getId()).orElseThrow(()->new DataNotFoundException("Dara not Found"));
+
+            //Delete Bucket -->AWS
+            logger.info("File Delete Success AWS");
+            this.bucketService.deleteFile(rootData.getCategoryFile());
+
+            RootCategoryModel rootCategoryModel =  modelMapper.map(rootCategoryDto , RootCategoryModel.class);
+            this.rootCategoryRepo.save(rootCategoryModel);
+
+            logger.info("Data Update Success");
+            return ResponseGenerator.generateSuccessResponse("Success" , "Data update Success");
+
+        }
+        catch (Exception e)
+        {
+            logger.info("Data Update Failed");
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("failed" ," Data Update Failed");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateRootCategoryFile(MultipartFile file, Long rootCategoryId) {
+        try {
+            RootCategoryModel rootCategoryModel = this.rootCategoryRepo.findById(rootCategoryId).orElseThrow(()-> new DataNotFoundException("DATA_NOT_FOUND"));
+
+            //Delete old File
+            bucketService.deleteFile(rootCategoryModel.getCategoryFile());
+
+            //upload New File
+            BucketModel bucketModel = bucketService.uploadFile(file);
+            if(bucketModel != null)
+            {
+                rootCategoryModel.setCategoryFile(bucketModel.getBucketUrl());
+                this.rootCategoryRepo.save(rootCategoryModel);
+                return ResponseGenerator.generateSuccessResponse("Success","File Update Success");
+            }
+            else {
+                logger.error("Bucket Model is null | please check AWS bucket configuration");
+                throw new Exception("Bucket AWS is Empty");
+            }
+        }
+        catch (Exception e)
+        {
+            logger.info("Exception" , e.getMessage());
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("Error" ,"File Not Update");
+        }
+    }
+}

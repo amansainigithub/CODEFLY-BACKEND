@@ -1,0 +1,14 @@
+
+
+configuration with proifile Set
+-------------------------------
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@ActiveProfiles("test")
+public class MyServiceTest {
+    // Test cases that use the test profile configurations
+}
+
+make a jar file with active profile set
+-------------------------------
+$ java -jar myapp.jar --spring.profiles.active=preprod
