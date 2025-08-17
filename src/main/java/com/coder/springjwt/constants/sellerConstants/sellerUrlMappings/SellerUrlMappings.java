@@ -43,4 +43,10 @@ public class SellerUrlMappings {
     public static final String SELLER_STORE = "/sellerStore";
 
 
+//    =============================================================/
+public static final String SELLER_FORM_BUILDERSS_CONTROLLER = SELLER_PUBLIC_URL + "/sellerFormBuilderss";
+
+    public static final String SELLER_FORM_BUILDER_CONTROLLER = SELLER_AUTH_URL + "/productFormBuilder";
+
+    public static final String GET_FORM_BUILDER = "/getFormBuilder";
 }

@@ -1,12 +1,12 @@
 package com.coder.springjwt.services.sellerServices.sellerTaxService.imple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
+import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerTaxPayload;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.helpers.validateGstRegex.ValidateGstRegex;
 import com.coder.springjwt.models.ERole;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.sellerModels.sellerTax.SellerTax;
-import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerTaxPayload;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.sellerRepository.sellerBankRepository.SellerBankRepository;

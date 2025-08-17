@@ -1,11 +1,11 @@
 package com.coder.springjwt.services.sellerServices.sellerBankService.imple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
+import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerBankPayload;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.ERole;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.sellerModels.sellerBank.SellerBank;
-import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerBankPayload;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.sellerRepository.sellerBankRepository.SellerBankRepository;

@@ -1,4 +1,4 @@
-package com.coder.springjwt.formBuilderTools.FormBuilderModel;
+package com.coder.springjwt.controllers.seller.formBuilderController;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,12 +18,11 @@ public class FormBuilderTool {
     private String name;
     private String type;
     private boolean required;
-    private String description;
     private String exclamationDesc;
     private String minLength;
     private String maxLength;
-    private String min;
-    private String max;
-    private String isFiledDisabled;
+    private String pattern;
+    private String description;
+    private String isFieldDisabled;
     private List<String> values;
 }

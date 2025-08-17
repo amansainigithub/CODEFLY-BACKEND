@@ -2,13 +2,13 @@ package com.coder.springjwt.controllers.seller.sellerAuthController;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
-import com.coder.springjwt.models.ERole;
-import com.coder.springjwt.models.User;
-import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import com.coder.springjwt.dtos.request.LoginRequest;
 import com.coder.springjwt.dtos.response.JwtResponse;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerMobilePayload;
+import com.coder.springjwt.models.ERole;
+import com.coder.springjwt.models.User;
+import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.security.jwt.JwtUtils;

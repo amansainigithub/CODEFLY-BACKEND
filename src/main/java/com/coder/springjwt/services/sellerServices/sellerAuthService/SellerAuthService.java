@@ -1,8 +1,8 @@
 package com.coder.springjwt.services.sellerServices.sellerAuthService;
 
-import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerMobilePayload;
+import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
