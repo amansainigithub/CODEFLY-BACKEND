@@ -16,4 +16,5 @@ public class FormRootCapture {
 
     private List<FormBuilderTool>  inventoryData;
     private List<FormBuilderTool>  rows;
+    private List<FormBuilderTool>  productDetails;
 }

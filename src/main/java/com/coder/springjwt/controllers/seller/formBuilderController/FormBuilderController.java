@@ -19,6 +19,7 @@ public class FormBuilderController {
     @PreAuthorize("hasRole('SELLER')")
     @GetMapping(SellerUrlMappings.GET_FORM_BUILDER)
     public FormRootCapture getFormBuilder() {
+        System.out.println("Engine X Working ");
         return sellerFormBuilderService.getFormBuilder();
     }
 }

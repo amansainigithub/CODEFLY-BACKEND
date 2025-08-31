@@ -18,9 +18,12 @@ public class FormBuilderTool {
     private String name;
     private String type;
     private boolean required;
+    private String placeHolder;
     private String exclamationDesc;
     private String minLength;
     private String maxLength;
+    private String min;
+    private String max;
     private String pattern;
     private String description;
     private String isFieldDisabled;
