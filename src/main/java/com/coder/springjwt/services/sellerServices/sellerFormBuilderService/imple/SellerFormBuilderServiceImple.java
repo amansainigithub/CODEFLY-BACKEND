@@ -18,7 +18,7 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
 
             FormBuilderTool productName = new FormBuilderTool();
             productName.setId("01");
-            productName.setIdentifier("Product Name");
+            productName.setIdentifier("productName");
             productName.setName("Product Name");
             productName.setPlaceHolder("Enter Product Name");
             productName.setType("TEXT");
@@ -32,7 +32,7 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
 
             FormBuilderTool defaultName = new FormBuilderTool();
             defaultName.setId("02");
-            defaultName.setIdentifier("Default Name");
+            defaultName.setIdentifier("defaultName");
             defaultName.setName("Default Name");
             defaultName.setPlaceHolder("Enter Default Name");
             defaultName.setType("TEXT");
@@ -68,7 +68,7 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
 
             FormBuilderTool hsnCode = new FormBuilderTool();
             hsnCode.setId("04");
-            hsnCode.setIdentifier("HSN Code");
+            hsnCode.setIdentifier("hsnCode");
             hsnCode.setName("HSN");
             hsnCode.setPlaceHolder("Enter HSN");
             hsnCode.setType("DROPDOWN");
@@ -303,7 +303,7 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
             //PRODUCT DETAILS STARTING
             FormBuilderTool color = new FormBuilderTool();
             color.setId("12");
-            color.setIdentifier("Color");
+            color.setIdentifier("color");
             color.setName("color");
             color.setPlaceHolder("Enter Color");
             color.setType("DROPDOWN");
@@ -428,16 +428,16 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
 
             FormBuilderTool sleeveLength = new FormBuilderTool();
             sleeveLength.setId("13");
-            sleeveLength.setIdentifier("pattern");
-            sleeveLength.setName("pattern");
-            sleeveLength.setPlaceHolder("Enter Pattern");
+            sleeveLength.setIdentifier("sleeveLength");
+            sleeveLength.setName("sleeveLength");
+            sleeveLength.setPlaceHolder("Enter sleeveLength");
             sleeveLength.setType("DROPDOWN");
             sleeveLength.setRequired(true);
-            sleeveLength.setExclamationDesc("Enter the main visible color of your product (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            sleeveLength.setExclamationDesc("Enter the main sleeveLength color of your product (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
             sleeveLength.setMinLength("");
             sleeveLength.setMaxLength("");
             sleeveLength.setPattern("");
-            sleeveLength.setDescription("Enter the main visible color of your product (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            sleeveLength.setDescription("Enter the main sleeveLength color of your product (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
             sleeveLength.setIsFieldDisabled("");
             List<String> sleeveLengthList = new ArrayList<>();
             sleeveLengthList.add("Sleeveless");
@@ -588,26 +588,26 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
             closureTypeList.add("Toggle");
             closureType.setValues(closureTypeList);
 
-            FormBuilderTool StretchType = new FormBuilderTool();
-            StretchType.setId("13");
-            StretchType.setIdentifier("StretchType");
-            StretchType.setName("StretchType");
-            StretchType.setPlaceHolder("Enter StretchType");
-            StretchType.setType("DROPDOWN");
-            StretchType.setRequired(true);
-            StretchType.setExclamationDesc("Enter the StretchType visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
-            StretchType.setMinLength("");
-            StretchType.setMaxLength("");
-            StretchType.setPattern("");
-            StretchType.setDescription("Enter the StretchType visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
-            StretchType.setIsFieldDisabled("");
+            FormBuilderTool stretchType = new FormBuilderTool();
+            stretchType.setId("13");
+            stretchType.setIdentifier("stretchType");
+            stretchType.setName("StretchType");
+            stretchType.setPlaceHolder("Enter StretchType");
+            stretchType.setType("DROPDOWN");
+            stretchType.setRequired(true);
+            stretchType.setExclamationDesc("Enter the StretchType visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            stretchType.setMinLength("");
+            stretchType.setMaxLength("");
+            stretchType.setPattern("");
+            stretchType.setDescription("Enter the StretchType visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            stretchType.setIsFieldDisabled("");
             List<String> stretchTypeList = new ArrayList<>();
             stretchTypeList.add("No Stretch");
             stretchTypeList.add("Low Stretch");
             stretchTypeList.add("Medium Stretch");
             stretchTypeList.add("High Stretch");
             stretchTypeList.add("Super Stretch");
-            StretchType.setValues(stretchTypeList);
+            stretchType.setValues(stretchTypeList);
 
 
             FormBuilderTool careInstruction = new FormBuilderTool();
@@ -655,7 +655,7 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
             additionalDetails.add(brand);
             additionalDetails.add(lining);
             additionalDetails.add(closureType);
-            additionalDetails.add(StretchType);
+            additionalDetails.add(stretchType);
             additionalDetails.add(careInstruction);
             additionalDetails.add(description);
 
