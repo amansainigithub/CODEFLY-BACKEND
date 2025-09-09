@@ -509,6 +509,7 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
             manufacturerPincode.setDescription("Please enter the product name only. Avoid adding details like size, weight, price, or dimensions.");
             manufacturerPincode.setIsFieldDisabled("");
 
+
             List<FormBuilderTool> listOfProductDetails = new ArrayList<>();
             listOfProductDetails.add(color);
             listOfProductDetails.add(netQuantity);
@@ -523,10 +524,147 @@ public class SellerFormBuilderServiceImple  implements SellerFormBuilderService 
             //PRODUCT DETAILS ENDING
 
 
+
+
+            //ADDITIONAL DETAILS STARTING
+            FormBuilderTool brand = new FormBuilderTool();
+            brand.setId("01");
+            brand.setIdentifier("brand");
+            brand.setName("brand");
+            brand.setPlaceHolder("Enter brand");
+            brand.setType("TEXT");
+            brand.setRequired(true);
+            brand.setExclamationDesc("Please enter the Brand name only. Avoid adding details like size, weight, price, or dimensions.");
+            brand.setMinLength("");
+            brand.setMaxLength("");
+            brand.setPattern("");
+            brand.setDescription("Please enter the Brand name only. Avoid adding details like size, weight, price, or dimensions.");
+            brand.setIsFieldDisabled("");
+
+
+            FormBuilderTool lining = new FormBuilderTool();
+            lining.setId("13");
+            lining.setIdentifier("lining");
+            lining.setName("lining");
+            lining.setPlaceHolder("Enter lining");
+            lining.setType("DROPDOWN");
+            lining.setRequired(true);
+            lining.setExclamationDesc("Enter the main visible color of your lining (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            lining.setMinLength("");
+            lining.setMaxLength("");
+            lining.setPattern("");
+            lining.setDescription("Enter the lining visible color of your product (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            lining.setIsFieldDisabled("");
+            List<String> liningList = new ArrayList<>();
+            liningList.add("No Lining");
+            liningList.add("Full Lining");
+            liningList.add("Half Lining (Upper/Lower)");
+            liningList.add("Partial Lining (Selective areas)");
+            liningList.add("Attached Lining");
+            liningList.add("Detachable Lining");
+            liningList.add("Inner Slip Included");
+            lining.setValues(liningList);
+
+            FormBuilderTool closureType = new FormBuilderTool();
+            closureType.setId("13");
+            closureType.setIdentifier("closureType");
+            closureType.setName("closureType");
+            closureType.setPlaceHolder("Enter C losureType");
+            closureType.setType("DROPDOWN");
+            closureType.setRequired(true);
+            closureType.setExclamationDesc("Enter the main visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            closureType.setMinLength("");
+            closureType.setMaxLength("");
+            closureType.setPattern("");
+            closureType.setDescription("Enter the lining visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            closureType.setIsFieldDisabled("");
+            List<String> closureTypeList = new ArrayList<>();
+            closureTypeList.add("Zipper");
+            closureTypeList.add("Tie-Up");
+            closureTypeList.add("Hook & Eye");
+            closureTypeList.add("Drawstring");
+            closureTypeList.add("Slip-On / Pull-On");
+            closureTypeList.add("Velcro");
+            closureTypeList.add("Toggle");
+            closureType.setValues(closureTypeList);
+
+            FormBuilderTool StretchType = new FormBuilderTool();
+            StretchType.setId("13");
+            StretchType.setIdentifier("StretchType");
+            StretchType.setName("StretchType");
+            StretchType.setPlaceHolder("Enter StretchType");
+            StretchType.setType("DROPDOWN");
+            StretchType.setRequired(true);
+            StretchType.setExclamationDesc("Enter the StretchType visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            StretchType.setMinLength("");
+            StretchType.setMaxLength("");
+            StretchType.setPattern("");
+            StretchType.setDescription("Enter the StretchType visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            StretchType.setIsFieldDisabled("");
+            List<String> stretchTypeList = new ArrayList<>();
+            stretchTypeList.add("No Stretch");
+            stretchTypeList.add("Low Stretch");
+            stretchTypeList.add("Medium Stretch");
+            stretchTypeList.add("High Stretch");
+            stretchTypeList.add("Super Stretch");
+            StretchType.setValues(stretchTypeList);
+
+
+            FormBuilderTool careInstruction = new FormBuilderTool();
+            careInstruction.setId("13");
+            careInstruction.setIdentifier("careInstruction");
+            careInstruction.setName("careInstruction");
+            careInstruction.setPlaceHolder("Enter careInstruction");
+            careInstruction.setType("DROPDOWN");
+            careInstruction.setRequired(true);
+            careInstruction.setExclamationDesc("Enter the careInstruction visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            careInstruction.setMinLength("");
+            careInstruction.setMaxLength("");
+            careInstruction.setPattern("");
+            careInstruction.setDescription("Enter the careInstruction visible color of your closureType (e.g., Red, Black, Navy Blue). Use simple names to help customers search easily.");
+            careInstruction.setIsFieldDisabled("");
+            List<String> careInstructionList = new ArrayList<>();
+            careInstructionList.add("Machine Wash");
+            careInstructionList.add("Hand Wash");
+            careInstructionList.add("Dry Clean Only");
+            careInstructionList.add("Do Not Bleach");
+            careInstructionList.add("Tumble Dry Low");
+            careInstructionList.add("Line Dry / Hang Dry");
+            careInstructionList.add("Do Not Iron");
+            careInstructionList.add("Cool Iron");
+            careInstructionList.add("Wash with Like Colors");
+            careInstructionList.add("Gentle Wash");
+            careInstruction.setValues(careInstructionList);
+
+            FormBuilderTool description = new FormBuilderTool();
+            description.setId("01");
+            description.setIdentifier("description");
+            description.setName("description");
+            description.setPlaceHolder("Enter description");
+            description.setType("TEXT");
+            description.setRequired(true);
+            description.setExclamationDesc("Please enter the description name only. Avoid adding details like size, weight, price, or dimensions.");
+            description.setMinLength("");
+            description.setMaxLength("");
+            description.setPattern("");
+            description.setDescription("Please enter the description name only. Avoid adding details like size, weight, price, or dimensions.");
+            description.setIsFieldDisabled("");
+
+            //ADDITIONAL DETAILS ENDING
+            List<FormBuilderTool> additionalDetails = new ArrayList<>();
+            additionalDetails.add(brand);
+            additionalDetails.add(lining);
+            additionalDetails.add(closureType);
+            additionalDetails.add(StretchType);
+            additionalDetails.add(careInstruction);
+            additionalDetails.add(description);
+
+
             FormRootCapture formRootCapture = new FormRootCapture();
             formRootCapture.setInventoryData(listOfInventory);
             formRootCapture.setRows(rows);
             formRootCapture.setProductDetails(listOfProductDetails);
+            formRootCapture.setAdditionalDetails(additionalDetails);
 
             return formRootCapture;
         }
