@@ -69,6 +69,7 @@ public class ProductCategoryServiceImple implements ProductCategoryService {
     @Override
     public ResponseEntity<?> getTypeCategory(long id) {
         try {
+//            Thread.sleep(2000);
             log.info("Get Type Category Data...");
             List<TypeCategoryModel> typeCategoryList = this.typeCategoryRepo.findBySubCategoryModelId(id);
             return ResponseGenerator.generateSuccessResponse(typeCategoryList , SellerMessageResponse.SUCCESS);
