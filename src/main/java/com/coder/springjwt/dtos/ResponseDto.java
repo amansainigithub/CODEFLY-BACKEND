@@ -20,7 +20,6 @@ public class ResponseDto<T> implements Serializable {
     private T data;
     private String message;
     private boolean success;
-
     private long timestamp = System.currentTimeMillis();
 
 

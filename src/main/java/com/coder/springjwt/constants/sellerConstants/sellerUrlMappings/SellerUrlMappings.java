@@ -44,9 +44,21 @@ public class SellerUrlMappings {
 
 
 //    =============================================================/
-public static final String SELLER_FORM_BUILDERSS_CONTROLLER = SELLER_PUBLIC_URL + "/sellerFormBuilderss";
-
     public static final String SELLER_FORM_BUILDER_CONTROLLER = SELLER_AUTH_URL + "/productFormBuilder";
 
     public static final String GET_FORM_BUILDER = "/getFormBuilder";
+
+
+
+
+//    =============================================================/
+    public static final String PRODUCT_CATEGORY_CONTROLLER = SELLER_AUTH_URL + "/productCategoryController";
+    public static final String GET_ROOT_CATEGORY = "/getRootCategory";
+    public static final String GET_SUB_CATEGORY = "/getSubCategory/{id}";
+    public static final String GET_TYPE_CATEGORY = "/getTypeCategory/{id}";
+    public static final String GET_VARIANT_CATEGORY = "/getVariantCategory/{id}";
+
+
+
+
 }

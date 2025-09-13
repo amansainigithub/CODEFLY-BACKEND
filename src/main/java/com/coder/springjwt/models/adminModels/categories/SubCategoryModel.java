@@ -50,6 +50,7 @@ public class SubCategoryModel extends BaseEntity {
 
     @ManyToOne
     @JoinColumn( referencedColumnName = "id" )
+    @JsonIgnore //New Added 13-09-2025
     private RootCategoryModel rootCategory;
 
     @OneToMany(mappedBy = "subCategoryModel",cascade = CascadeType.ALL)
