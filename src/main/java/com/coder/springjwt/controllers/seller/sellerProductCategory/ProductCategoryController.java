@@ -39,17 +39,20 @@ public class ProductCategoryController {
     }
 
     @PostMapping("/uploadFiles")
-    public ResponseEntity<?> uploadFiles(@RequestParam("files") MultipartFile[] files) {
-        // Allowed extensions
-        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png");
-        long maxSize = 1 * 1024 * 1024; // 1 MB
+    public ResponseEntity<?> uploadFiles(
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam(value = "video", required = false) MultipartFile video) {
+
+        // Allowed image extensions
+        List<String> allowedImageExtensions = Arrays.asList("jpg", "jpeg", "png");
+        long maxImageSize = 1 * 1024 * 1024; // 1 MB
 
         int index = 1;
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
                 System.out.println("Slot " + index + " is empty");
                 index++;
-                continue; // skip this slot, move to next
+                continue; // skip this slot
             }
 
             String fileName = file.getOriginalFilename();
@@ -59,28 +62,55 @@ public class ProductCategoryController {
 
             // Extension check
             String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-            if (!allowedExtensions.contains(ext)) {
+            if (!allowedImageExtensions.contains(ext)) {
                 return ResponseEntity.badRequest()
                         .body("Invalid file type at slot " + index + " (" + fileName + "). Only JPG and PNG allowed.");
             }
 
             // Size check
-            if (file.getSize() > maxSize) {
+            if (file.getSize() > maxImageSize) {
                 return ResponseEntity.badRequest()
-                        .body("File " + fileName + " at slot " + index + " exceeds the 5 MB size limit.");
+                        .body("File " + fileName + " at slot " + index + " exceeds the 1 MB size limit.");
             }
 
-            // ✅ Yaha save karna hai (disk / DB me)
-            System.out.println("File accepted at slot " + index + " :: " + fileName + " | Size: " + file.getSize());
-
-            // Example:
-            // file.transferTo(new File("uploads/" + fileName));
+            // ✅ Save image file (example)
+            System.out.println("✅ Image accepted at slot " + index + " :: " + fileName + " | Size: " + file.getSize());
+            // file.transferTo(new File("uploads/images/" + fileName));
 
             index++;
         }
 
+        // ✅ Video handling
+        if (video != null && !video.isEmpty()) {
+            String videoName = video.getOriginalFilename();
+            if (videoName == null || !videoName.contains(".")) {
+                return ResponseEntity.badRequest().body("Invalid video file name");
+            }
+
+            String videoExt = videoName.substring(videoName.lastIndexOf(".") + 1).toLowerCase();
+            List<String> allowedVideoExtensions = Arrays.asList("mp4", "avi", "mov", "mkv");
+            long maxVideoSize = 50 * 1024 * 1024; // 50 MB
+
+            // Extension check
+            if (!allowedVideoExtensions.contains(videoExt)) {
+                return ResponseEntity.badRequest()
+                        .body("Invalid video type (" + videoName + "). Only MP4/AVI/MOV/MKV allowed.");
+            }
+
+            // Size check
+            if (video.getSize() > maxVideoSize) {
+                return ResponseEntity.badRequest()
+                        .body("Video " + videoName + " exceeds the 50 MB size limit.");
+            }
+
+            // ✅ Save video file (example)
+            System.out.println("✅ Video accepted :: " + videoName + " | Size: " + video.getSize());
+            // video.transferTo(new File("uploads/videos/" + videoName));
+        }
+
         return ResponseEntity.ok("Files processed successfully!");
     }
+
 
 
 
