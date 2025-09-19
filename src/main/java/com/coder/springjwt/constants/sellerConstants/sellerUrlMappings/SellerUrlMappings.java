@@ -37,18 +37,13 @@ public class SellerUrlMappings {
     public static final String SELLER_SIGN_UP = "/sellerSignup";
     public static final String STATE_CITY_PINCODE = "/stateCityPincode/{pincode}";
     public static final String SELLER_TAX = "/sellerTax";
+
+
+
     //Seller pickup Data
     public static final String SELLER_PICKUP = "/sellerPickup";
     public static final String SELLER_BANK = "/sellerBank";
     public static final String SELLER_STORE = "/sellerStore";
-
-
-//    =============================================================/
-    public static final String SELLER_FORM_BUILDER_CONTROLLER = SELLER_AUTH_URL + "/productFormBuilder";
-
-    public static final String GET_FORM_BUILDER = "/getFormBuilder";
-
-
 
 
 //    =============================================================/
@@ -58,7 +53,9 @@ public class SellerUrlMappings {
     public static final String GET_TYPE_CATEGORY = "/getTypeCategory/{id}";
     public static final String GET_VARIANT_CATEGORY = "/getVariantCategory/{id}";
 
-
+    //    =============================================================/
+    public static final String ENGINE_X_BUILDER_CONTROLLER = SELLER_AUTH_URL + "/engineXBuilderController";
+    public static final String GET_ENGINE_X = "/getEngineX/{engineXId}";
 
 
 }

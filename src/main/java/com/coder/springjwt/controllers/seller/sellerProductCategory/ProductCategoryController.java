@@ -80,7 +80,7 @@ public class ProductCategoryController {
             index++;
         }
 
-        // ✅ Video handling
+        //Video handling
         if (video != null && !video.isEmpty()) {
             String videoName = video.getOriginalFilename();
             if (videoName == null || !videoName.contains(".")) {
@@ -88,16 +88,24 @@ public class ProductCategoryController {
             }
 
             String videoExt = videoName.substring(videoName.lastIndexOf(".") + 1).toLowerCase();
-            List<String> allowedVideoExtensions = Arrays.asList("mp4", "avi", "mov", "mkv");
-            long maxVideoSize = 50 * 1024 * 1024; // 50 MB
+            List<String> allowedVideoExtensions = Arrays.asList("mp4");
+
+            long minVideoSize = 1 * 1024 * 1024;   // 1 MB
+            long maxVideoSize = 50 * 1024 * 1024;  // 50 MB
 
             // Extension check
             if (!allowedVideoExtensions.contains(videoExt)) {
                 return ResponseEntity.badRequest()
-                        .body("Invalid video type (" + videoName + "). Only MP4/AVI/MOV/MKV allowed.");
+                        .body("Invalid video type (" + videoName + "). Only MP4 allowed.");
             }
 
-            // Size check
+            // Size check - Min 1 MB
+            if (video.getSize() < minVideoSize) {
+                return ResponseEntity.badRequest()
+                        .body("Video " + videoName + " must be at least 1 MB in size.");
+            }
+
+            // Size check - Max 50 MB
             if (video.getSize() > maxVideoSize) {
                 return ResponseEntity.badRequest()
                         .body("Video " + videoName + " exceeds the 50 MB size limit.");
@@ -107,7 +115,6 @@ public class ProductCategoryController {
             System.out.println("✅ Video accepted :: " + videoName + " | Size: " + video.getSize());
             // video.transferTo(new File("uploads/videos/" + videoName));
         }
-
         return ResponseEntity.ok("Files processed successfully!");
     }
 
