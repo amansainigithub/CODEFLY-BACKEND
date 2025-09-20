@@ -58,4 +58,11 @@ public class SellerUrlMappings {
     public static final String GET_ENGINE_X = "/getEngineX/{engineXId}";
 
 
+//    =======SELLER PRODUCT DETAILS CONTROLLER==========
+    public static final String PRODUCT_CONTROLLER = SELLER_AUTH_URL + "/productController";
+    public static final String SAVE_PRODUCT_DETAILS = "/saveProductDetails/{variantId}";
+
+    public static final String SAVE_PRODUCT_FILES = "/saveProductFiles/{productId}";
+
+
 }

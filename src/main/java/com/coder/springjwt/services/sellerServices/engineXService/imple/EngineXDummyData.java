@@ -41,7 +41,7 @@ public class EngineXDummyData {
 
         FormBuilderTool gst = new FormBuilderTool();
         gst.setId("03");
-        gst.setIdentifier("GST");
+        gst.setIdentifier("gst");
         gst.setName("GST");
         gst.setPlaceHolder("Enter GST");
         gst.setType("DROPDOWN");
@@ -159,7 +159,7 @@ public class EngineXDummyData {
 
         FormBuilderTool mrp = new FormBuilderTool();
         mrp.setId("08");
-        mrp.setIdentifier("MRP");
+        mrp.setIdentifier("mrp");
         mrp.setName("MRP");
         mrp.setPlaceHolder("Enter MRP");
         mrp.setType("NUMBER");
@@ -185,19 +185,19 @@ public class EngineXDummyData {
         inventory.setDescription("Inventory defines the detailed stock information of a product such as its size, pricing, and other attributes. It helps in managing available product variants and ensures correct pricing and stock levels are maintained.");
         inventory.setIsFieldDisabled("");
 
-        FormBuilderTool skuId = new FormBuilderTool();
-        skuId.setId("10");
-        skuId.setIdentifier("SKUID");
-        skuId.setName("SKU Code (Optional)");
-        skuId.setPlaceHolder("Enter SKU ID");
-        skuId.setType("TEXT");
-        skuId.setRequired(false);
-        skuId.setExclamationDesc("SKU ID is a unique code assigned to each product or product variation in inventory. It helps in tracking stock, managing sales, and differentiating between product variants like size, color, or brand.");
-        skuId.setMinLength("");
-        skuId.setMaxLength("12");
-        skuId.setPattern("");
-        skuId.setDescription("SKU ID is a unique code assigned to each product or product variation in inventory. It helps in tracking stock, managing sales, and differentiating between product variants like size, color, or brand.");
-        skuId.setIsFieldDisabled("");
+        FormBuilderTool skuCode = new FormBuilderTool();
+        skuCode.setId("10");
+        skuCode.setIdentifier("skuCode");
+        skuCode.setName("SKU Code (Optional)");
+        skuCode.setPlaceHolder("Enter SKU ID");
+        skuCode.setType("TEXT");
+        skuCode.setRequired(false);
+        skuCode.setExclamationDesc("SKU ID is a unique code assigned to each product or product variation in inventory. It helps in tracking stock, managing sales, and differentiating between product variants like size, color, or brand.");
+        skuCode.setMinLength("");
+        skuCode.setMaxLength("12");
+        skuCode.setPattern("");
+        skuCode.setDescription("SKU ID is a unique code assigned to each product or product variation in inventory. It helps in tracking stock, managing sales, and differentiating between product variants like size, color, or brand.");
+        skuCode.setIsFieldDisabled("");
 
         FormBuilderTool chestSize = new FormBuilderTool();
         chestSize.setId("11");
@@ -286,7 +286,7 @@ public class EngineXDummyData {
         rows.add(price);
         rows.add(mrp);
         rows.add(inventory);
-        rows.add(skuId);
+        rows.add(skuCode);
         rows.add(chestSize);
         rows.add(lengthSize);
         rows.add(shoulderSize);
