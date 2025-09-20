@@ -143,20 +143,6 @@ public class EngineXDummyData {
 
 
         //ROWS STARTING
-        FormBuilderTool price = new FormBuilderTool();
-        price.setId("07");
-        price.setIdentifier("price");
-        price.setName("price");
-        price.setPlaceHolder("Enter Price");
-        price.setType("NUMBER");
-        price.setRequired(true);
-        price.setExclamationDesc("This is the standard price at which you sell your product. It should always be less than the MRP.");
-        price.setMin("10");
-        price.setMax("10000");
-        price.setPattern("");
-        price.setDescription("This is the standard price at which you sell your product. It should always be less than the MRP.");
-        price.setIsFieldDisabled("");
-
         FormBuilderTool mrp = new FormBuilderTool();
         mrp.setId("08");
         mrp.setIdentifier("mrp");
@@ -170,6 +156,20 @@ public class EngineXDummyData {
         mrp.setPattern("");
         mrp.setDescription("This is the Maximum Retail Price (MRP) printed on the product. It must be higher than your selling price.");
         mrp.setIsFieldDisabled("");
+
+        FormBuilderTool price = new FormBuilderTool();
+        price.setId("07");
+        price.setIdentifier("price");
+        price.setName("selling price");
+        price.setPlaceHolder("Enter Price");
+        price.setType("NUMBER");
+        price.setRequired(true);
+        price.setExclamationDesc("This is the standard price at which you sell your product. It should always be less than the MRP.");
+        price.setMin("10");
+        price.setMax("10000");
+        price.setPattern("");
+        price.setDescription("This is the standard price at which you sell your product. It should always be less than the MRP.");
+        price.setIsFieldDisabled("");
 
         FormBuilderTool inventory = new FormBuilderTool();
         inventory.setId("09");
@@ -283,8 +283,8 @@ public class EngineXDummyData {
         shoulderSize.setValues(shoulderSizeList);
 
         List<FormBuilderTool> rows = new ArrayList<>();
-        rows.add(price);
         rows.add(mrp);
+        rows.add(price);
         rows.add(inventory);
         rows.add(skuCode);
         rows.add(chestSize);
