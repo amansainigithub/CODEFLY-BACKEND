@@ -22,7 +22,6 @@ public class ProductController {
     public ResponseEntity<?> saveProductDetails(@RequestBody ProductDetailsDto productDetailsDto ,
                                                 @PathVariable long variantId   ) {
 
-        System.out.println("Product Details :: "+ productDetailsDto.toString());
         return this.productService.saveProductDetails(productDetailsDto, variantId);
     }
 
@@ -32,16 +31,7 @@ public class ProductController {
             @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "video", required = false) MultipartFile video,
             @PathVariable long productId) {
-        try {
-            Thread.sleep(3000);
             return this.productService.saveProductFiles(files,video,productId);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return ResponseGenerator.generateBadRequestResponse();
-        }
-
         }
 
 

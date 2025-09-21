@@ -26,6 +26,8 @@ public class ProductFiles extends BaseEntity {
 
     private String fileType;
 
+    private String contentType;
+
     @Column(length = 1000)
     private String fileUrl;
 

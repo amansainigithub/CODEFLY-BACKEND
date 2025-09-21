@@ -99,11 +99,8 @@ public class BucketService {
     private final String API_SECRET = "OLHUAyKiZ-xAyWOm3erWfhtWctI";
     private final Boolean SECURE = Boolean.TRUE;
 
-    public BucketModel uploadFileToCloudinary(MultipartFile file) {
-        return this.uploadCloudinaryFile(file);
-    }
 
-    public BucketModel uploadCloudinaryFile(@RequestParam("file") MultipartFile file) {
+    public BucketModel uploadCloudinaryFile(@RequestParam("file") MultipartFile file , String fileType) {
         log.info("Cloudinary File Upload --- FLYING");
         try {
             Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
@@ -118,6 +115,14 @@ public class BucketService {
                     "unique_filename", file.getOriginalFilename(),
                     "overwrite", false,
                     "public_id", file.getOriginalFilename());
+
+             /*Important: set resource_type for video and Image Both us Important
+            Otherwise only image is saved not video*/
+            if ("VIDEO".equalsIgnoreCase(fileType)) {
+                conditionVerifier.put("resource_type", "video");
+            } else {
+                conditionVerifier.put("resource_type", "image");
+            }
 
             Map cloudinaryUpload = cloudinary.uploader().upload(file.getBytes(), conditionVerifier);
             String cloudinaryResponse = objectMapper.writeValueAsString(cloudinaryUpload);

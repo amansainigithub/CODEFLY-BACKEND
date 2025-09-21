@@ -129,53 +129,80 @@ public class ProductServiceImple implements ProductService {
     @Override
     public ResponseEntity<?> saveProductFiles(MultipartFile[] files, MultipartFile video, long productId) {
         try {
-            //Image handling
+            ProductDetailsModel productDetails = this.productDetailsRepo.findById(productId)
+                    .orElseThrow(() -> new DataNotFoundException("Data Not Found Exception"));
+
+            // ============ IMAGE HANDLING ============
             ResponseEntity<?> imageResponse = checkAndSaveImages(files);
-            if (imageResponse != null){
+            if (imageResponse != null) {
                 return imageResponse;
-            }else{
+            } else {
+                if (files.length > 0) {
+                    List<ProductFiles> productFilesList = new ArrayList<>();
 
-                ProductDetailsModel productDetails = this.productDetailsRepo.findById(productId)
-                        .orElseThrow(() -> new DataNotFoundException("Data Not Found Exception"));
+                    // SAVE IMAGES
+                    log.info("Files Upload to Cloudinary Cloud Start");
+                    for (MultipartFile file : files) {
+                        // Upload image to Cloudinary
+                        BucketModel bucketModel = this.bucketService.uploadCloudinaryFile(file, "IMAGE");
 
-                List<ProductFiles> productFilesList = new ArrayList<>();
-                //SAVE IMAGE
-                log.info("Files Upload to Cloudinary Cloud Start");
-                for(MultipartFile file : files)
-                {
-                    //save Image to cloud
-                    BucketModel bucketModel = this.bucketService.uploadFileToCloudinary(file);
+                        // Create ProductFiles object
+                        ProductFiles productFiles = new ProductFiles();
+                        productFiles.setFileSize(file.getSize());
+                        productFiles.setContentType(file.getContentType());
+                        productFiles.setFileType("IMAGE");
+                        productFiles.setFileUrl(bucketModel.getBucketUrl());
+                        productFiles.setFileName(bucketModel.getFileName());
+                        productFiles.setProductDetailsModel(productDetails);
 
-                    //Create Object to Product Files
-                    ProductFiles productFiles = new ProductFiles();
-                    productFiles.setFileSize(file.getSize());
-                    productFiles.setFileType(file.getContentType());
-                    productFiles.setFileUrl(bucketModel.getBucketUrl());
-                    productFiles.setFileName(bucketModel.getFileName());
-                    productFiles.setProductDetailsModel(productDetails);
+                        productFilesList.add(productFiles);
+                    }
+                    log.info("Files Upload to Cloudinary Cloud End");
 
-                    //File Object add to List
-                    productFilesList.add(productFiles);
+                    // Replace old images with new ones
+                    log.info("SAVE FILE TO DB FLYING...");
+                    productDetails.getProductFiles().clear();
+                    productDetails.getProductFiles().addAll(productFilesList);
+                    this.productDetailsRepo.save(productDetails);
+                    log.info("========= ALL IMAGES SAVED SUCCESSFULLY =========");
                 }
-                log.info("Files Upload to Cloudinary Cloud End");
-
-                log.info("SAVE FILE TO DB FLYING...");
-                productDetails.getProductFiles().clear();
-                productDetails.getProductFiles().addAll(productFilesList);
-                this.productDetailsRepo.save(productDetails);
-                log.info("=========ALL FILE SAVED SUCCESS TO DATABASE=========");
             }
 
-            //Video handling
-            ResponseEntity<?> videoResponse = checkAndSaveVideo(video);
-            if (videoResponse != null) return videoResponse;
+            // ============ VIDEO HANDLING ============
+            ResponseEntity<?> videoResponse = checkIsVideoValid(video);
+            if (videoResponse != null) {
+                return videoResponse;
+            } else {
+                if (video != null && !video.isEmpty()) {
+                    log.info("Video Upload to Cloudinary Cloud Start");
 
-            return ResponseGenerator.generateSuccessResponse(" Files uploaded successfully for productId: " + productId);
+                    // Upload video to Cloudinary
+                    BucketModel bucketModel = this.bucketService.uploadCloudinaryFile(video,"VIDEO");
+
+                    // Create ProductFiles object
+                    ProductFiles productVideo = new ProductFiles();
+                    productVideo.setFileSize(video.getSize());
+                    productVideo.setContentType(video.getContentType());
+                    productVideo.setFileType("VIDEO");
+                    productVideo.setFileUrl(bucketModel.getBucketUrl());
+                    productVideo.setFileName(bucketModel.getFileName());
+                    productVideo.setProductDetailsModel(productDetails);
+
+                    // Add video without removing images
+                    productDetails.getProductFiles().add(productVideo);
+                    this.productDetailsRepo.save(productDetails);
+                    log.info("Video Upload to Cloudinary Cloud Ending");
+                    log.info("========= VIDEO SAVED SUCCESSFULLY =========");
+                }
+            }
+
+            return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + productId);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("Something went wrong while saving product files");
         }
     }
+
 
     // ================= IMAGE HANDLING =================
     public ResponseEntity<?> checkAndSaveImages(MultipartFile[] files) {
@@ -213,7 +240,7 @@ public class ProductServiceImple implements ProductService {
     }
 
     // ================= VIDEO HANDLING =================
-    public ResponseEntity<?> checkAndSaveVideo(MultipartFile video) {
+    public ResponseEntity<?> checkIsVideoValid(MultipartFile video) {
         if (video == null || video.isEmpty()) {
             System.out.println("No video uploaded.");
             return null; // optional: return ResponseEntity.badRequest().body("Video is required");
@@ -243,7 +270,7 @@ public class ProductServiceImple implements ProductService {
         }
 
         // Save video
-        System.out.println("Video accepted :: " + videoName + " | Size: " + video.getSize());
+        log.info("Video accepted :: " + videoName + " | Size: " + video.getSize());
 
         return null; // null means SUCCESS
     }
