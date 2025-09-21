@@ -1,6 +1,5 @@
 package com.coder.springjwt.models.sellerModels.productModels;
 
-import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductSizeRowsDto;
 import com.coder.springjwt.models.entities.baseEntity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -54,6 +53,9 @@ public class ProductDetailsModel extends BaseEntity {
     private String productSeries;
     private String userId;
     private String username;
+
+    @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
+    private List<ProductFiles> productFiles;
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
     private List<ProductSizeRows> productSizeRows;

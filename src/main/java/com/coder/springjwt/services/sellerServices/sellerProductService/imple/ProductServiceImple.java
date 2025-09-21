@@ -1,12 +1,14 @@
 package com.coder.springjwt.services.sellerServices.sellerProductService.imple;
 
-import com.coder.springjwt.dtos.adminDtos.catalogDtos.ProductBrandDto;
+import com.coder.springjwt.bucket.bucketModels.BucketModel;
+import com.coder.springjwt.bucket.bucketService.BucketService;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.adminModels.categories.VariantCategoryModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
+import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.models.sellerModels.productModels.ProductRoot;
 import com.coder.springjwt.models.sellerModels.productModels.ProductSizeRows;
 import com.coder.springjwt.repository.UserRepository;
@@ -22,32 +24,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
 public class ProductServiceImple implements ProductService {
 
     @Autowired
-    private  VariantCategoryRepo variantCategoryRepo;
+    private VariantCategoryRepo variantCategoryRepo;
     @Autowired
     private ModelMapper modelMapper;
-
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
-
     @Autowired
-    private ProductSizeRowsRepo  productSizeRowsRepo;
-
+    private ProductSizeRowsRepo productSizeRowsRepo;
     @Autowired
     private ProductRootRepo productRootRepo;
-
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private BucketService bucketService;
 
     @Override
     public ResponseEntity<?> saveProductDetails(ProductDetailsDto productDetailsDto, long variantId) {
@@ -59,14 +58,13 @@ public class ProductServiceImple implements ProductService {
                 return ResponseGenerator.generateBadRequestResponse();
             }
 
-            if(variantCategoryModel != null)
-            {
+            if (variantCategoryModel != null) {
                 log.info("Variant Data");
                 log.info("Variant ID ::" + variantCategoryModel.getId());
                 log.info("Variant Category Name :: " + variantCategoryModel.getCategoryName());
 
                 //Get User
-                Map<String,String> node =  UserHelper.getCurrentUser();
+                Map<String, String> node = UserHelper.getCurrentUser();
                 User username = this.getUserDetails(node.get("username"));
 
                 //Product Root
@@ -94,8 +92,7 @@ public class ProductServiceImple implements ProductService {
                 productRoot.setProductDetailsModels(List.of(productDetailsModel));
 
                 //Set Product-Details to Product Size Rows
-                for(ProductSizeRows productSizeRows : productDetailsModel.getProductSizeRows())
-                {
+                for (ProductSizeRows productSizeRows : productDetailsModel.getProductSizeRows()) {
                     productSizeRows.setProductDetailsModel(productDetailsModel);
                     //Set UserId and UserName
                     productSizeRows.setUserId(String.valueOf(username.getId()));
@@ -105,45 +102,157 @@ public class ProductServiceImple implements ProductService {
                 //save Data----
                 ProductRoot productData = this.productRootRepo.save(productRoot);
 
-                Map<Object,Object> mapNode = new HashMap<>();
-                mapNode.put("id",productData.getId());
-                return ResponseGenerator.generateSuccessResponse(mapNode,"Success");
-            }else{
+                Map<Object, Object> mapNode = new HashMap<>();
+                mapNode.put("id", productData.getId());
+                return ResponseGenerator.generateSuccessResponse(mapNode, "Success");
+            } else {
                 return ResponseGenerator.generateBadRequestResponse();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse();
         }
     }
 
 
-    public VariantCategoryModel checkVariantId(long variantId)
-    {
+    public VariantCategoryModel checkVariantId(long variantId) {
         try {
-            VariantCategoryModel variantCategoryData = this.variantCategoryRepo.findById(variantId)
-                    .orElseThrow(() -> new DataNotFoundException("Variant Category Id not found :: " + variantId));
-           return variantCategoryData;
-        }
-        catch (Exception e)
-        {
+            VariantCategoryModel variantCategoryData = this.variantCategoryRepo.findById(variantId).orElseThrow(() -> new DataNotFoundException("Variant Category Id not found :: " + variantId));
+            return variantCategoryData;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
 
-
-
-    private User getUserDetails(String username){
+    @Override
+    public ResponseEntity<?> saveProductFiles(MultipartFile[] files, MultipartFile video, long productId) {
         try {
-            return userRepository.findByUsername(username)
-                    .orElseThrow(()-> new UsernameNotFoundException("User Not Found.."));
+            //Image handling
+            ResponseEntity<?> imageResponse = checkAndSaveImages(files);
+            if (imageResponse != null){
+                return imageResponse;
+            }else{
+
+                ProductDetailsModel productDetails = this.productDetailsRepo.findById(productId)
+                        .orElseThrow(() -> new DataNotFoundException("Data Not Found Exception"));
+
+                List<ProductFiles> productFilesList = new ArrayList<>();
+                //SAVE IMAGE
+                log.info("Files Upload to Cloudinary Cloud Start");
+                for(MultipartFile file : files)
+                {
+                    //save Image to cloud
+                    BucketModel bucketModel = this.bucketService.uploadFileToCloudinary(file);
+
+                    //Create Object to Product Files
+                    ProductFiles productFiles = new ProductFiles();
+                    productFiles.setFileSize(file.getSize());
+                    productFiles.setFileType(file.getContentType());
+                    productFiles.setFileUrl(bucketModel.getBucketUrl());
+                    productFiles.setFileName(bucketModel.getFileName());
+                    productFiles.setProductDetailsModel(productDetails);
+
+                    //File Object add to List
+                    productFilesList.add(productFiles);
+                }
+                log.info("Files Upload to Cloudinary Cloud End");
+
+                log.info("SAVE FILE TO DB FLYING...");
+                productDetails.getProductFiles().clear();
+                productDetails.getProductFiles().addAll(productFilesList);
+                this.productDetailsRepo.save(productDetails);
+                log.info("=========ALL FILE SAVED SUCCESS TO DATABASE=========");
+            }
+
+            //Video handling
+            ResponseEntity<?> videoResponse = checkAndSaveVideo(video);
+            if (videoResponse != null) return videoResponse;
+
+            return ResponseGenerator.generateSuccessResponse(" Files uploaded successfully for productId: " + productId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("Something went wrong while saving product files");
         }
-        catch (Exception e)
-        {
+    }
+
+    // ================= IMAGE HANDLING =================
+    public ResponseEntity<?> checkAndSaveImages(MultipartFile[] files) {
+        List<String> allowedImageExtensions = Arrays.asList("jpg", "jpeg", "png");
+        long maxImageSize = 5 * 1024 * 1024; // 5 MB
+
+        int index = 1;
+        for (MultipartFile file : files) {
+            if (file.isEmpty()) {
+                log.info("Slot " + index + " is empty");
+                index++;
+                continue;
+            }
+
+            String fileName = file.getOriginalFilename();
+            if (fileName == null || !fileName.contains(".")) {
+                return ResponseEntity.badRequest().body("Invalid file name at slot " + index);
+            }
+
+            String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+            if (!allowedImageExtensions.contains(ext)) {
+                return ResponseEntity.badRequest().body("Invalid file type at slot " + index + " (" + fileName + "). Only JPG and PNG allowed.");
+            }
+
+            if (file.getSize() > maxImageSize) {
+                return ResponseEntity.badRequest().body("File " + fileName + " at slot " + index + " exceeds the 1 MB size limit.");
+            }
+
+            // Save image
+            log.info("Image accepted at slot " + index + " :: " + fileName + " | Size: " + file.getSize());
+
+            index++;
+        }
+        return null; // null means SUCCESS
+    }
+
+    // ================= VIDEO HANDLING =================
+    public ResponseEntity<?> checkAndSaveVideo(MultipartFile video) {
+        if (video == null || video.isEmpty()) {
+            System.out.println("No video uploaded.");
+            return null; // optional: return ResponseEntity.badRequest().body("Video is required");
+        }
+
+        String videoName = video.getOriginalFilename();
+        if (videoName == null || !videoName.contains(".")) {
+            return ResponseEntity.badRequest().body("Invalid video file name");
+        }
+
+        String videoExt = videoName.substring(videoName.lastIndexOf(".") + 1).toLowerCase();
+        List<String> allowedVideoExtensions = Arrays.asList("mp4");
+
+        long minVideoSize = 1 * 1024 * 1024;   // 1 MB
+        long maxVideoSize = 50 * 1024 * 1024;  // 10 MB
+
+        if (!allowedVideoExtensions.contains(videoExt)) {
+            return ResponseEntity.badRequest().body("Invalid video type (" + videoName + "). Only MP4 allowed.");
+        }
+
+        if (video.getSize() < minVideoSize) {
+            return ResponseEntity.badRequest().body("Video " + videoName + " must be at least 1 MB in size.");
+        }
+
+        if (video.getSize() > maxVideoSize) {
+            return ResponseEntity.badRequest().body("Video " + videoName + " exceeds the 50 MB size limit.");
+        }
+
+        // Save video
+        System.out.println("Video accepted :: " + videoName + " | Size: " + video.getSize());
+
+        return null; // null means SUCCESS
+    }
+
+
+    private User getUserDetails(String username) {
+        try {
+            return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found.."));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
