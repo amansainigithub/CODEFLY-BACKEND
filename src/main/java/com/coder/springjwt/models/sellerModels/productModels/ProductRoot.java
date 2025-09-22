@@ -27,7 +27,10 @@ public class ProductRoot extends BaseEntity {
 
     //New Columns
     private String userId;
+
     private String username;
+
+    private String productKey;
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy ="productRoot" , orphanRemoval = true )
     private List<ProductDetailsModel> productDetailsModels;

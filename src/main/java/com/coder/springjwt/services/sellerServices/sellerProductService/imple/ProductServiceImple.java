@@ -18,6 +18,7 @@ import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductSizeRowsRepo;
 import com.coder.springjwt.services.sellerServices.sellerProductService.ProductService;
 import com.coder.springjwt.util.ResponseGenerator;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -44,9 +47,10 @@ public class ProductServiceImple implements ProductService {
     private ProductRootRepo productRootRepo;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private BucketService bucketService;
+    @Autowired
+    private ProductServiceHelper productServiceHelper;
 
     @Override
     public ResponseEntity<?> saveProductDetails(ProductDetailsDto productDetailsDto, long variantId) {
@@ -99,11 +103,11 @@ public class ProductServiceImple implements ProductService {
                     productSizeRows.setUsername(String.valueOf(username.getUsername()));
                 }
 
-                //save Data----
+                //save Data Details
                 ProductRoot productData = this.productRootRepo.save(productRoot);
 
                 Map<Object, Object> mapNode = new HashMap<>();
-                mapNode.put("id", productData.getId());
+                mapNode.put("id", productData.getProductDetailsModels().get(0).getId());
                 return ResponseGenerator.generateSuccessResponse(mapNode, "Success");
             } else {
                 return ResponseGenerator.generateBadRequestResponse();
@@ -124,7 +128,6 @@ public class ProductServiceImple implements ProductService {
         }
         return null;
     }
-
 
     @Override
     public ResponseEntity<?> saveProductFiles(MultipartFile[] files, MultipartFile video, long productId) {
@@ -195,6 +198,9 @@ public class ProductServiceImple implements ProductService {
                     log.info("========= VIDEO SAVED SUCCESSFULLY =========");
                 }
             }
+
+            //Save ProductKey and Product to Binding Data
+            this.saveProductKeysBinding(productDetails.getProductRoot());
 
             return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + productId);
         } catch (Exception e) {
@@ -284,6 +290,45 @@ public class ProductServiceImple implements ProductService {
         }
         return null;
     }
+
+
+
+//    Binding Variable ProductId,ProductKey,ProductDetailsId
+    public void saveProductKeysBinding(ProductRoot productRoot) {
+        try {
+            log.info("Flying SAVE-PRODUCT-KEYS-BINDINGS...");
+            long productId = productRoot.getId();
+            String productKey = this.productServiceHelper.generateProductKey();
+
+            //Set Product Key to Product Root
+            productRoot.setProductKey(productKey);
+
+            for (ProductDetailsModel pdm : productRoot.getProductDetailsModels()) {
+                pdm.setProductId(productId);
+                pdm.setProductKey(productKey);
+
+                for (ProductFiles pf : pdm.getProductFiles()) {
+                    pf.setProductId(productId);
+                    pf.setProductKey(productKey);
+                    pf.setProductDetailsId(pdm.getId());
+                }
+
+                for (ProductSizeRows psr : pdm.getProductSizeRows()){
+                    psr.setProductId(productId);
+                    psr.setProductKey(productKey);
+                    psr.setProductDetailsId(pdm.getId());
+                }
+            }
+            //save Product Root with Product-Id and OProduct Key Binds
+            this.productRootRepo.save(productRoot);
+        } catch (Exception e) {
+            log.info("Exception generate in saveProductKeysBinding");
+            e.getMessage();
+            e.printStackTrace();
+        }
+    }
+
+
 
 
 }

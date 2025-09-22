@@ -54,6 +54,11 @@ public class ProductDetailsModel extends BaseEntity {
     private String userId;
     private String username;
 
+    //Product ID
+    private long productId;
+    //Product key
+    private String productKey;
+
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
     private List<ProductFiles> productFiles;
 

@@ -31,6 +31,12 @@ public class ProductFiles extends BaseEntity {
     @Column(length = 1000)
     private String fileUrl;
 
+
+    //Binding Variable
+    private long productId;
+    private String productKey;
+    private long productDetailsId;
+
     @ManyToOne
     @JoinColumn( referencedColumnName = "id" , name = "product_files_joiner")
     @JsonIgnore
