@@ -13,9 +13,12 @@ import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,17 +39,20 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
     private UserRepository userRepository;
 
     @Override
-    public ResponseEntity<?> getUnderReviewProduct() {
+    public ResponseEntity<?> getUnderReviewProduct(Integer page, Integer size) {
         try {
             Map<String, String> currentUser = UserHelper.getCurrentUser();
-            List<ProductDetailsModel> productDetailsList =   this.productDetailsRepo.
-                                                    findByUsernameAndProductStatus(currentUser.get("username"),
-                                                    ProductStatus.UNDER_REVIEW.toString());
+
+            Page<ProductDetailsModel> productDetailsPage = this.productDetailsRepo
+                    .findByUsernameAndProductStatus(
+                            currentUser.get("username"),
+                            ProductStatus.UNDER_REVIEW.toString(),
+                            PageRequest.of(page, size, Sort.by("id").descending())
+                    );
 
             List<ProductDetailsOverviewDto> overviewList = new ArrayList<>();
-            for(ProductDetailsModel pdm : productDetailsList)
-            {
-                ProductDetailsOverviewDto overviewDto  = new ProductDetailsOverviewDto();
+            for (ProductDetailsModel pdm : productDetailsPage) {
+                ProductDetailsOverviewDto overviewDto = new ProductDetailsOverviewDto();
                 overviewDto.setId(pdm.getId());
                 overviewDto.setProductName(pdm.getProductName());
                 overviewDto.setUserId(pdm.getUserId());
@@ -56,20 +62,21 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
                 overviewDto.setProductTime(pdm.getProductTime());
                 try {
                     overviewDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
+                } catch (Exception e) {
                     overviewDto.setProductMainFile("BLANK");
                 }
                 overviewList.add(overviewDto);
             }
-            return ResponseGenerator.generateSuccessResponse(overviewList , "SUCCESS");
-        }
-        catch (Exception e)
-        {
+
+            // DTO list ko Page me wrap karna
+            Page<ProductDetailsOverviewDto> overviewPageData =
+                    new PageImpl<>(overviewList, productDetailsPage.getPageable(), productDetailsPage.getTotalElements());
+
+            return ResponseGenerator.generateSuccessResponse(overviewPageData, "SUCCESS");
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
         }
     }
+
 }
