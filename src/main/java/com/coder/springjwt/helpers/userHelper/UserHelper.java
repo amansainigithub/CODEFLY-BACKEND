@@ -34,22 +34,4 @@ public class UserHelper {
         return currentUser;
     }
 
-    public static String getOnlyCurrentUser() {
-        // Get the Authentication object from SecurityContextHolder
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Get the username
-        String username = authentication.getName();
-
-        // Get roles/authorities
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-
-        // Convert roles to a string for demonstration purposes
-        StringBuilder roles = new StringBuilder();
-        for (GrantedAuthority authority : authorities) {
-            roles.append(authority.getAuthority()).append(" ");
-        }
-        return username;
-    }
-
 }

@@ -54,15 +54,24 @@ public class ProductDetailsModel extends BaseEntity {
     private String userId;
     private String username;
 
+    //SAVE DATE AND TIME WITH FORMAT
+    private String productDate;
+    private String productTime;
+
+    //Product Status
+    private String productStatus;
+
     //Product ID
     private long productId;
     //Product key
     private String productKey;
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
+    @JsonIgnore
     private List<ProductFiles> productFiles;
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
+    @JsonIgnore
     private List<ProductSizeRows> productSizeRows;
 
 

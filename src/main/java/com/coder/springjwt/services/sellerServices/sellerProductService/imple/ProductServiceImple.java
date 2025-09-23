@@ -3,6 +3,7 @@ package com.coder.springjwt.services.sellerServices.sellerProductService.imple;
 import com.coder.springjwt.bucket.bucketModels.BucketModel;
 import com.coder.springjwt.bucket.bucketService.BucketService;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
+import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
@@ -18,7 +19,6 @@ import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductSizeRowsRepo;
 import com.coder.springjwt.services.sellerServices.sellerProductService.ProductService;
 import com.coder.springjwt.util.ResponseGenerator;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +27,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Slf4j
@@ -63,15 +64,11 @@ public class ProductServiceImple implements ProductService {
             }
 
             if (variantCategoryModel != null) {
-                log.info("Variant Data");
-                log.info("Variant ID ::" + variantCategoryModel.getId());
-                log.info("Variant Category Name :: " + variantCategoryModel.getCategoryName());
-
                 //Get User
                 Map<String, String> node = UserHelper.getCurrentUser();
                 User username = this.getUserDetails(node.get("username"));
 
-                //Product Root
+                //Product Root Data...
                 ProductRoot productRoot = new ProductRoot();
                 productRoot.setVariantId(variantCategoryModel.getId());
                 productRoot.setVariantName(variantCategoryModel.getCategoryName());
@@ -80,7 +77,10 @@ public class ProductServiceImple implements ProductService {
                 productRoot.setUserId(String.valueOf(username.getId()));
                 productRoot.setUsername(String.valueOf(username.getUsername()));
 
-                //Convert Data To mapper
+                //Product Status
+                productRoot.setProductStatus(ProductStatus.UNDER_REVIEW.toString());
+
+                //Convert Data To mapper PRODUCT DETAILS
                 ProductDetailsModel productDetailsModel = modelMapper.map(productDetailsDto, ProductDetailsModel.class);
                 productDetailsModel.setVariantId(variantCategoryModel.getId());
                 productDetailsModel.setVariantName(variantCategoryModel.getCategoryName());
@@ -91,6 +91,13 @@ public class ProductServiceImple implements ProductService {
 
                 //Set Product Root to Product Details Model
                 productDetailsModel.setProductRoot(productRoot);
+
+                //SAVE FORMAT PRODUCT DATE AND TIME
+                productDetailsModel.setProductDate(this.getFormatDate());
+                productDetailsModel.setProductTime(this.getFormatTime());
+
+                //Product Status
+                productDetailsModel.setProductStatus(ProductStatus.UNDER_REVIEW.toString());
 
                 //Set Product-Details To Product-Root Entity
                 productRoot.setProductDetailsModels(List.of(productDetailsModel));
@@ -248,7 +255,7 @@ public class ProductServiceImple implements ProductService {
     // ================= VIDEO HANDLING =================
     public ResponseEntity<?> checkIsVideoValid(MultipartFile video) {
         if (video == null || video.isEmpty()) {
-            System.out.println("No video uploaded.");
+            log.info("No video uploaded.");
             return null; // optional: return ResponseEntity.badRequest().body("Video is required");
         }
 
@@ -328,6 +335,27 @@ public class ProductServiceImple implements ProductService {
         }
     }
 
+
+
+    public String getFormatDate() {
+        // Current Date
+        LocalDate today = LocalDate.now();
+        // Formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH);
+        // Convert
+        String formattedDate = today.format(formatter);
+        return formattedDate;
+    }
+
+    public String getFormatTime() {
+        // Current Time
+        LocalTime now = LocalTime.now();
+        // Formatter -> h:mm a  (12-hour with AM/PM)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
+        // Format time
+        String formattedTime = now.format(formatter);
+        return formattedTime;
+    }
 
 
 

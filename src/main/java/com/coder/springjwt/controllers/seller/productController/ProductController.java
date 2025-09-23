@@ -3,7 +3,6 @@ package com.coder.springjwt.controllers.seller.productController;
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
 import com.coder.springjwt.services.sellerServices.sellerProductService.ProductService;
-import com.coder.springjwt.util.ResponseGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

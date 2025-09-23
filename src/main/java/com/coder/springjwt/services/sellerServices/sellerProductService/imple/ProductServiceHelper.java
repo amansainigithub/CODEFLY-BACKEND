@@ -1,14 +1,7 @@
 package com.coder.springjwt.services.sellerServices.sellerProductService.imple;
 
 
-import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
-import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
-import com.coder.springjwt.models.sellerModels.productModels.ProductRoot;
-import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductRootRepo;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
