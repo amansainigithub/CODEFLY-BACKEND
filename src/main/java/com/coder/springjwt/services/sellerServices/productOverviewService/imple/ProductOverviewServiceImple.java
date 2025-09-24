@@ -2,6 +2,7 @@ package com.coder.springjwt.services.sellerServices.productOverviewService.imple
 
 import com.coder.springjwt.dtos.sellerPayloads.productOverviewDtos.ProductDetailsOverviewDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
+import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.repository.UserRepository;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +40,20 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserHelper userHelper;
+
     @Override
-    public ResponseEntity<?> getUnderReviewProduct(Integer page, Integer size) {
+    public ResponseEntity<?> getUnderReviewProduct(Integer page, Integer size , String username) {
         try {
-            Map<String, String> currentUser = UserHelper.getCurrentUser();
+            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+
+            // VALIDATE CURRENT USER
+            Map<String, String> currentUser = userHelper.getCurrentUser();
+            if(!currentUser.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
 
             Page<ProductDetailsModel> productDetailsPage = this.productDetailsRepo
                     .findByUsernameAndProductStatus(

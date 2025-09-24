@@ -20,9 +20,10 @@ public class ProductOverviewController {
 
     @PostMapping(SellerUrlMappings.GET_UNDER_REVIEW_PRODUCT)
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<?> getUnderReviewProduct(@RequestParam Integer page , @RequestParam  Integer size) {
-
-        return this.productOverviewService.getUnderReviewProduct(page , size);
+    public ResponseEntity<?> getUnderReviewProduct(@RequestParam Integer page ,
+                                                   @RequestParam  Integer size ,
+                                                   @RequestParam String username) {
+        return this.productOverviewService.getUnderReviewProduct(page , size , username);
     }
 
 

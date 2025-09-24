@@ -82,12 +82,15 @@ public class SellerPickUpServiceImple implements SellerPickUpService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserHelper userHelper;
+
     @Override
     public ResponseEntity<?> savePickUp(SellerPickUpPayload sellerPickUpPayload) {
         MessageResponse response = new MessageResponse();
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(sellerPickUpPayload.getUsername()+":SLR", sellerPickUpPayload.getPassword()));
+                    new UsernamePasswordAuthenticationToken(sellerPickUpPayload.getUsername()+ SellerMessageResponse.SLR, sellerPickUpPayload.getPassword()));
 
             if(authentication.isAuthenticated()) {
 
@@ -100,7 +103,7 @@ public class SellerPickUpServiceImple implements SellerPickUpService {
                 log.info("sellerData Present:: " + sellerData.isPresent());
                 if(sellerData.isPresent())
                 {
-                    Map<String, String> currentUser = UserHelper.getCurrentUser();
+                    Map<String, String> currentUser = userHelper.getCurrentUser();
                     User user = sellerData.get();
                     //Save Pick Up data
 

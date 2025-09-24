@@ -1,16 +1,25 @@
 package com.coder.springjwt.helpers.userHelper;
 
+import com.coder.springjwt.exception.adminException.DataNotFoundException;
+import com.coder.springjwt.models.User;
+import com.coder.springjwt.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class UserHelper {
 
-    public static Map<String, String> getCurrentUser() {
+    @Autowired
+    private UserRepository userRepository;
+
+    public Map<String, String> getCurrentUser() {
 
         HashMap<String,String> currentUser = new HashMap<>();
 
@@ -19,6 +28,9 @@ public class UserHelper {
 
         // Get the username
         String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new DataNotFoundException("User Not Found... :: " + UserHelper.class.getName()));
 
         // Get roles/authorities
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -29,9 +41,27 @@ public class UserHelper {
             roles.append(authority.getAuthority()).append(" ");
         }
         currentUser.put("username",username);
+        currentUser.put("userId",String.valueOf(user.getId()));
         currentUser.put("roles",roles.toString().trim());
 
         return currentUser;
     }
+
+//    public boolean validateByUsername(String username) {
+//        try {
+//            Map<String, String> currentUser = getCurrentUser();
+//            String currentUsername = currentUser.get("username");
+//
+//            if (username != null && currentUsername != null && username.equals(currentUsername)) {
+//                return Boolean.TRUE;
+//            } else {
+//                return Boolean.FALSE;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Boolean.FALSE;
+//        }
+//    }
+
 
 }

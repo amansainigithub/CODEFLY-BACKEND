@@ -6,5 +6,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface ProductOverviewService {
 
-    ResponseEntity<?> getUnderReviewProduct(Integer page, Integer size);
+    ResponseEntity<?> getUnderReviewProduct(Integer page, Integer size , String username);
 }

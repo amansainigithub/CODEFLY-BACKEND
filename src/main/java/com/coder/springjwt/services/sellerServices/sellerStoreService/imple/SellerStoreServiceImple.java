@@ -43,13 +43,16 @@ public class SellerStoreServiceImple implements SellerStoreService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserHelper userHelper;
+
 
     @Override
     public ResponseEntity<?> sellerStore(SellerStorePayload sellerStorePayload) {
         MessageResponse response = new MessageResponse();
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(sellerStorePayload.getUsername()+":SLR", sellerStorePayload.getPassword()));
+                    new UsernamePasswordAuthenticationToken(sellerStorePayload.getUsername() + SellerMessageResponse.SLR, sellerStorePayload.getPassword()));
 
             if(authentication.isAuthenticated()) {
 
@@ -64,7 +67,7 @@ public class SellerStoreServiceImple implements SellerStoreService {
                 {
 
                     //get UserName By UserHelper
-                    Map<String, String> currentUser = UserHelper.getCurrentUser();
+                    Map<String, String> currentUser = userHelper.getCurrentUser();
                     User user = sellerData.get();
 
                     SellerStore sellerStore = modelMapper.map(sellerStorePayload, SellerStore.class);

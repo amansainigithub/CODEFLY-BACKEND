@@ -34,6 +34,9 @@ public class EmailServiceImple implements EmailService {
     @Autowired
     EmailRepository emailRepository;
 
+    @Autowired
+    private UserHelper userHelper;
+
 
     public ResponseEntity<?> sendSimpleMail(EmailPayload emailPayload)
     {
@@ -85,7 +88,7 @@ public class EmailServiceImple implements EmailService {
 
     public void saveEmailData(EmailPayload emailPayload)
     {
-        Map<String,String> node =  UserHelper.getCurrentUser();
+        Map<String,String> node =  userHelper.getCurrentUser();
         node.get("username");
         node.get("roles");
 
@@ -153,7 +156,7 @@ public class EmailServiceImple implements EmailService {
 
     public void saveEmailHtmlData(EmailHtmlPayload emailHtmlPayload)
     {
-        Map<String,String> node =  UserHelper.getCurrentUser();
+        Map<String,String> node =  userHelper.getCurrentUser();
         node.get("username");
         node.get("roles");
 

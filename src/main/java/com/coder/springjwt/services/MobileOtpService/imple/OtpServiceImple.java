@@ -29,6 +29,8 @@ public class OtpServiceImple implements MobileOtpService {
     private ApiPropsRepository apiPropsRepository;
     @Autowired
     OtpRequestResponseRepo otpRequestResponseRepo;
+    @Autowired
+    private UserHelper userHelper;
     private static String LANGUAGE = "english";
     private static String ROUTE = "q";
 
@@ -37,7 +39,7 @@ public class OtpServiceImple implements MobileOtpService {
         logger.info("Starting Messaging Service");
 
         //get UserName
-        Map<String,String> node =  UserHelper.getCurrentUser();
+        Map<String,String> node =  userHelper.getCurrentUser();
         String username =  node.get("username");
 
         //Get API Properties

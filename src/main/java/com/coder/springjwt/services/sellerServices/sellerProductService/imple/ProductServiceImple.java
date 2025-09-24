@@ -53,6 +53,9 @@ public class ProductServiceImple implements ProductService {
     @Autowired
     private ProductServiceHelper productServiceHelper;
 
+    @Autowired
+    private UserHelper userHelper;
+
     @Override
     public ResponseEntity<?> saveProductDetails(ProductDetailsDto productDetailsDto, long variantId) {
         log.info("saveProductDetails........");
@@ -65,7 +68,7 @@ public class ProductServiceImple implements ProductService {
 
             if (variantCategoryModel != null) {
                 //Get User
-                Map<String, String> node = UserHelper.getCurrentUser();
+                Map<String, String> node = userHelper.getCurrentUser();
                 User username = this.getUserDetails(node.get("username"));
 
                 //Product Root Data...

@@ -81,13 +81,16 @@ public class SellerBankServiceImple implements SellerBankService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private UserHelper userHelper;
+
 
     @Override
     public ResponseEntity<?> sellerBank(SellerBankPayload sellerBankPayload) {
         MessageResponse response = new MessageResponse();
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(sellerBankPayload.getUsername()+":SLR", sellerBankPayload.getPassword()));
+                    new UsernamePasswordAuthenticationToken(sellerBankPayload.getUsername() + SellerMessageResponse.SLR, sellerBankPayload.getPassword()));
 
             if(authentication.isAuthenticated()) {
 
@@ -103,7 +106,7 @@ public class SellerBankServiceImple implements SellerBankService {
 
                     //Save Pick Up data
                     User user = sellerData.get();
-                    Map<String, String> currentUser = UserHelper.getCurrentUser();
+                    Map<String, String> currentUser = userHelper.getCurrentUser();
 
                     SellerBank sellerBank = modelMapper.map(sellerBankPayload, SellerBank.class);
                     sellerBank.setUsername(currentUser.get("username") + " OR " + user.getUsername() );

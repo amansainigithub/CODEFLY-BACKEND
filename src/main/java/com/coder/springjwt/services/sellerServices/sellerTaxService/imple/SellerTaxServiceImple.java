@@ -82,6 +82,9 @@ public class SellerTaxServiceImple implements SellerTaxService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserHelper userHelper;
     @Override
     public ResponseEntity<?> saveAndVerifyTaxDetails(SellerTaxPayload sellerTaxPayload) {
         MessageResponse response = new MessageResponse();
@@ -118,7 +121,7 @@ public class SellerTaxServiceImple implements SellerTaxService {
                                 log.info("GST Verified Success");
 
                                 //get UserName By UserHelper
-                                Map<String, String> currentUser = UserHelper.getCurrentUser();
+                                Map<String, String> currentUser = userHelper.getCurrentUser();
                                 User user = sellerData.get();
 
                                 //set payload to seller Object
@@ -166,7 +169,7 @@ public class SellerTaxServiceImple implements SellerTaxService {
     public  boolean userAuthenticated(SellerTaxPayload sellerTaxPayload)
     {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(sellerTaxPayload.getUsername()+":SLR", sellerTaxPayload.getPassword()));
+                new UsernamePasswordAuthenticationToken(sellerTaxPayload.getUsername() + SellerMessageResponse.SLR, sellerTaxPayload.getPassword()));
 
         if(authentication.isAuthenticated())
         {
