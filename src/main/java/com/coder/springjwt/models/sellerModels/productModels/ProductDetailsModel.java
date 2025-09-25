@@ -66,6 +66,22 @@ public class ProductDetailsModel extends BaseEntity {
     //Product key
     private String productKey;
 
+
+    //Service TAX GST , TDS , TCS , SHIPPING CHARGES , FINAL PRODUCT PRICE
+    private String productGst;
+    private String productTcs;
+    private String productTds;
+    private String productPrice;
+    private String productMrp;
+    private String settlementAmount;
+    private String shippingCharges;
+    private String shippingFee;
+    private String shippingTotal;
+
+    //Product Discount
+    private String productDiscount;
+
+
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
     @JsonIgnore
     private List<ProductFiles> productFiles;

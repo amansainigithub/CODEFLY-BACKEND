@@ -27,6 +27,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -106,12 +107,69 @@ public class ProductServiceImple implements ProductService {
                 productRoot.setProductDetailsModels(List.of(productDetailsModel));
 
                 //Set Product-Details to Product Size Rows
+                String productPrice = null;
+                String productMrp = null;
+                int count = 0;
                 for (ProductSizeRows productSizeRows : productDetailsModel.getProductSizeRows()) {
+
+                    if(count == 0)
+                    {
+                        productPrice = productSizeRows.getPrice();
+                        productMrp = productSizeRows.getMrp();
+                    }
                     productSizeRows.setProductDetailsModel(productDetailsModel);
                     //Set UserId and UserName
                     productSizeRows.setUserId(String.valueOf(username.getId()));
                     productSizeRows.setUsername(String.valueOf(username.getUsername()));
+                    count++;
                 }
+
+
+
+                //Calculate TAX Information Starting
+                //GST
+                BigDecimal productGst = productServiceHelper.calculateGST(new BigDecimal(productPrice),
+                        new BigDecimal(productDetailsModel.getGst()));
+                log.info("PRODUCT GST :: " + productGst);
+
+                //TCS
+                BigDecimal productTcs = productServiceHelper.calculateTCS(new BigDecimal(productPrice),
+                        new BigDecimal(productDetailsModel.getGst()));
+                log.info("PRODUCT TCS :: " + productTcs);
+
+                //TDS
+                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice));
+                log.info("PRODUCT TDS :: " + productTds);
+
+
+                //GET SHIPPING CHARGES
+                int shippingCharges = 60;
+                int shippingFee = 10;
+                BigDecimal shippingTotal = new BigDecimal(shippingCharges + shippingFee);
+
+
+                BigDecimal settlementAmount = productServiceHelper
+                                        .bankSettlement(new BigDecimal(productPrice), productGst, productTcs, productTds);
+                //Calculate TAX Ending....
+
+                //Save Product Tax-Service Data
+                productDetailsModel.setProductPrice(productPrice);
+                productDetailsModel.setProductMrp(productMrp);
+                productDetailsModel.setProductGst(String.valueOf(productGst));
+                productDetailsModel.setProductTds(String.valueOf(productTds));
+                productDetailsModel.setProductTcs(String.valueOf(productTcs));
+                productDetailsModel.setSettlementAmount(String.valueOf(settlementAmount));
+                //Save Product Tax-Service Data
+
+                //Shipping Charges
+                productDetailsModel.setShippingCharges(String.valueOf(shippingCharges));
+                productDetailsModel.setShippingFee(String.valueOf(shippingFee));
+
+                //Calculate  Discount of Product
+                float productDiscount = productServiceHelper.calculateDiscountPercent(Float.parseFloat(productMrp),
+                            Float.parseFloat(productPrice));
+                productDetailsModel.setProductDiscount(String.valueOf(productDiscount));
+
 
                 //save Data Details
                 ProductRoot productData = this.productRootRepo.save(productRoot);
