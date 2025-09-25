@@ -67,6 +67,7 @@ public class SellerUrlMappings {
     //    =======PRODUCT OVERVIEW CONTROLLER==========
     public static final String PRODUCT_OVERVIEW_CONTROLLER = SELLER_AUTH_URL + "/productOverviewController";
     public static final String GET_UNDER_REVIEW_PRODUCT = "/getUnderReviewProduct";
+    public static final String GET_APPROVED_PRODUCT = "/getApprovedProduct";
 
 
 }

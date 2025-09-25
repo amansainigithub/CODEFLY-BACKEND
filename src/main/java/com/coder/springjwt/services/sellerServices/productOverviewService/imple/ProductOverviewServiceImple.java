@@ -2,7 +2,6 @@ package com.coder.springjwt.services.sellerServices.productOverviewService.imple
 
 import com.coder.springjwt.dtos.sellerPayloads.productOverviewDtos.ProductDetailsOverviewDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
-import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.repository.UserRepository;
@@ -21,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,55 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
                     .findByUsernameAndProductStatus(
                             currentUser.get("username"),
                             ProductStatus.UNDER_REVIEW.toString(),
-                            PageRequest.of(page, size, Sort.by("id").descending())
+                            PageRequest.of(page, size, Sort.by("productKey").descending())
+                    );
+
+            List<ProductDetailsOverviewDto> overviewList = new ArrayList<>();
+            for (ProductDetailsModel pdm : productDetailsPage) {
+                ProductDetailsOverviewDto overviewDto = new ProductDetailsOverviewDto();
+                overviewDto.setId(pdm.getId());
+                overviewDto.setProductName(pdm.getProductName());
+                overviewDto.setUserId(pdm.getUserId());
+                overviewDto.setProductStatus(pdm.getProductStatus());
+                overviewDto.setProductKey(pdm.getProductKey());
+                overviewDto.setProductDate(pdm.getProductDate());
+                overviewDto.setProductTime(pdm.getProductTime());
+                try {
+                    overviewDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
+                } catch (Exception e) {
+                    overviewDto.setProductMainFile("BLANK");
+                }
+                overviewList.add(overviewDto);
+            }
+
+            // DTO list ko Page me wrap karna
+            Page<ProductDetailsOverviewDto> overviewPageData =
+                    new PageImpl<>(overviewList, productDetailsPage.getPageable(), productDetailsPage.getTotalElements());
+
+            return ResponseGenerator.generateSuccessResponse(overviewPageData, "SUCCESS");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getApprovedProduct(Integer page, Integer size, String username) {
+        try {
+            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+
+            // VALIDATE CURRENT USER
+            Map<String, String> currentUser = userHelper.getCurrentUser();
+            if(!currentUser.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
+
+            Page<ProductDetailsModel> productDetailsPage = this.productDetailsRepo
+                    .findByUsernameAndProductStatus(
+                            currentUser.get("username"),
+                            ProductStatus.APPROVED.toString(),
+                            PageRequest.of(page, size, Sort.by("productKey").descending())
                     );
 
             List<ProductDetailsOverviewDto> overviewList = new ArrayList<>();

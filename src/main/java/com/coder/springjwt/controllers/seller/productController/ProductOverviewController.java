@@ -26,6 +26,21 @@ public class ProductOverviewController {
         return this.productOverviewService.getUnderReviewProduct(page , size , username);
     }
 
+    @PostMapping(SellerUrlMappings.GET_APPROVED_PRODUCT)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getApprovedProduct(@RequestParam Integer page ,
+                                                   @RequestParam  Integer size ,
+                                                   @RequestParam String username) {
+        try {
+            Thread.sleep(1000);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return this.productOverviewService.getApprovedProduct(page , size , username);
+    }
+
 
 
 }
