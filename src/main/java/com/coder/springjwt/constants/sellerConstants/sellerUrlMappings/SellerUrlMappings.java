@@ -61,20 +61,23 @@ public class SellerUrlMappings {
 //    =======SELLER PRODUCT DETAILS CONTROLLER==========
     public static final String PRODUCT_CONTROLLER = SELLER_AUTH_URL + "/productController";
     public static final String SAVE_PRODUCT_DETAILS = "/saveProductDetails/{variantId}";
-
     public static final String SAVE_PRODUCT_FILES = "/saveProductFiles/{productId}";
+
+
+
+//    =======SELLER VARIANT PRODUCT DETAILS CONTROLLER==========
+    public static final String PRODUCT_VARIANT_CONTROLLER = SELLER_AUTH_URL + "/productVariantController";
+    public static final String LOAD_PRODUCT_DETAILS = "/loadProductDetails/{productId}";
+    public static final String SAVE_PRODUCT_VARIANT_DETAILS = "/saveProductVariantDetails/{variantId}/{productId}";
+    public static final String SAVE_PRODUCT_VARIANT_FILES = "/saveProductVariantFiles/{productId}/{existingProductId}";
+
+
+
 
     //    =======PRODUCT OVERVIEW CONTROLLER==========
     public static final String PRODUCT_OVERVIEW_CONTROLLER = SELLER_AUTH_URL + "/productOverviewController";
     public static final String GET_UNDER_REVIEW_PRODUCT = "/getUnderReviewProduct";
     public static final String GET_APPROVED_PRODUCT = "/getApprovedProduct";
     public static final String GET_OLD_PRODUCT_DETAILS = "/getOldProductDetails";
-
-
-
-    public static final String PRODUCT_VARIANT_CONTROLLER = SELLER_AUTH_URL + "/productVariantController";
-    public static final String LOAD_PRODUCT_DETAILS = "/loadProductDetails/{productId}";
-
-
 
 }
