@@ -74,6 +74,8 @@ public class ProductDetailsModel extends BaseEntity {
     private String productPrice;
     private String productMrp;
     private String settlementAmount;
+
+    //Shipping Charges
     private String shippingCharges;
     private String shippingFee;
     private String shippingTotal;
@@ -87,7 +89,7 @@ public class ProductDetailsModel extends BaseEntity {
     private List<ProductFiles> productFiles;
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
-    @JsonIgnore
+//    @JsonIgnore
     private List<ProductSizeRows> productSizeRows;
 
 

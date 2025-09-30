@@ -31,16 +31,8 @@ public class ProductOverviewController {
     public ResponseEntity<?> getApprovedProduct(@RequestParam Integer page ,
                                                    @RequestParam  Integer size ,
                                                    @RequestParam String username) {
-        try {
-            Thread.sleep(1000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productOverviewService.getApprovedProduct(page , size , username);
     }
-
 
 
 }

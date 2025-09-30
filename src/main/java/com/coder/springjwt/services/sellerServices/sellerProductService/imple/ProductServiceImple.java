@@ -126,7 +126,7 @@ public class ProductServiceImple implements ProductService {
 
 
 
-                //Calculate TAX Information Starting
+                //Calculate TAX Information Starting...
                 //GST
                 BigDecimal productGst = productServiceHelper.calculateGST(new BigDecimal(productPrice),
                         new BigDecimal(productDetailsModel.getGst()));
@@ -150,7 +150,7 @@ public class ProductServiceImple implements ProductService {
 
                 BigDecimal settlementAmount = productServiceHelper
                                         .bankSettlement(new BigDecimal(productPrice), productGst, productTcs, productTds);
-                //Calculate TAX Ending....
+                //Calculate TAX Information Ending....
 
                 //Save Product Tax-Service Data
                 productDetailsModel.setProductPrice(productPrice);
