@@ -16,7 +16,6 @@ public class VariantController {
     @Autowired
     private ProductVariantService productVariantService;
 
-
     @GetMapping(SellerUrlMappings.LOAD_PRODUCT_DETAILS)
     public ResponseEntity<?> loadProductDetails(@PathVariable long productId ) {
         return this.productVariantService.loadProductDetails(productId);
@@ -26,6 +25,7 @@ public class VariantController {
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<?> saveProductVariantDetails(@RequestBody ProductDetailsDto productDetailsDto ,
                                                 @PathVariable long variantId , @PathVariable long productId  ) {
+        System.out.println("VARIANT ID :: " + variantId);
         return this.productVariantService.saveProductVariantDetails(productDetailsDto, variantId , productId);
     }
 
@@ -34,8 +34,8 @@ public class VariantController {
     public ResponseEntity<?> saveProductVariantFiles(
             @RequestParam("files") MultipartFile[] files,
             @RequestParam(value = "video", required = false) MultipartFile video,
-            @PathVariable long productId,
+            @PathVariable long newProductId,
             @PathVariable long existingProductId) {
-        return this.productVariantService.saveProductVariantFiles(files,video,productId , existingProductId);
+        return this.productVariantService.saveProductVariantFiles(files,video,newProductId , existingProductId);
     }
 }

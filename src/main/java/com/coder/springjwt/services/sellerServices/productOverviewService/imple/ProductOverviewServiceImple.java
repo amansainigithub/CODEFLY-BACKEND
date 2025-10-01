@@ -75,6 +75,7 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
                 overviewDto.setProductDate(pdm.getProductDate());
                 overviewDto.setProductTime(pdm.getProductTime());
                 overviewDto.setVariantId(String.valueOf(pdm.getVariantId()));
+                overviewDto.setProductSeries(pdm.getProductSeries());
                 try {
                     overviewDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
                 } catch (Exception e) {

@@ -69,7 +69,7 @@ public class SellerUrlMappings {
     public static final String PRODUCT_VARIANT_CONTROLLER = SELLER_AUTH_URL + "/productVariantController";
     public static final String LOAD_PRODUCT_DETAILS = "/loadProductDetails/{productId}";
     public static final String SAVE_PRODUCT_VARIANT_DETAILS = "/saveProductVariantDetails/{variantId}/{productId}";
-    public static final String SAVE_PRODUCT_VARIANT_FILES = "/saveProductVariantFiles/{productId}/{existingProductId}";
+    public static final String SAVE_PRODUCT_VARIANT_FILES = "/saveProductVariantFiles/{newProductId}/{existingProductId}";
 
 
 

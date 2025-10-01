@@ -20,4 +20,5 @@ public class ProductDetailsOverviewDto {
     private String productTime;
     private String variantId;
     private String productMainFile;
+    private String productSeries;
 }

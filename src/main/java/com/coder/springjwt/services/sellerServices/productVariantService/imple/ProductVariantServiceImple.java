@@ -78,14 +78,12 @@ public class ProductVariantServiceImple implements ProductVariantService {
     @Override
     public ResponseEntity<?> saveProductVariantDetails(ProductDetailsDto productDetailsDto, long variantId ,
                                                        long existingProductId) {
-        log.info("saveProductDetails........");
+        log.info("SAVE PRODUCT VARIANTS DETAILS FLYING...");
         try {
             VariantCategoryModel variantCategoryModel = checkVariantId(variantId);
             if (variantCategoryModel == null) {
                 return ResponseGenerator.generateBadRequestResponse();
             }
-
-            ProductDetailsModel existingProductData = checkExistingProduct(existingProductId);
 
             if (variantCategoryModel != null) {
                 //Get User
@@ -108,7 +106,7 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 ProductDetailsModel productDetailsModel = modelMapper.map(productDetailsDto, ProductDetailsModel.class);
                 productDetailsModel.setVariantId(variantCategoryModel.getId());
                 productDetailsModel.setVariantName(variantCategoryModel.getCategoryName());
-                productDetailsModel.setProductSeries("MAIN");
+                productDetailsModel.setProductSeries("VARIANT");
                 //Set UserId and UserName
                 productDetailsModel.setUserId(String.valueOf(username.getId()));
                 productDetailsModel.setUsername(String.valueOf(username.getUsername()));
@@ -143,8 +141,6 @@ public class ProductVariantServiceImple implements ProductVariantService {
                     productSizeRows.setUsername(String.valueOf(username.getUsername()));
                     count++;
                 }
-
-
 
                 //Calculate TAX Information Starting...
                 //GST
@@ -217,33 +213,21 @@ public class ProductVariantServiceImple implements ProductVariantService {
         return null;
     }
 
-    public ProductDetailsModel checkExistingProduct(long existingProductId) {
-        try {
-            ProductDetailsModel productDetails = this.productDetailsRepo.findById(existingProductId)
-                    .orElseThrow(() -> new DataNotFoundException("Product Not found ID :: " + existingProductId));
-            return productDetails;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
 
 
     @Override
-    public ResponseEntity<?> saveProductVariantFiles(MultipartFile[] files, MultipartFile video, long productId ,
+    public ResponseEntity<?> saveProductVariantFiles(MultipartFile[] files, MultipartFile video, long newProductId ,
                                                      long existingProductId) {
         try {
-
-            System.out.println("Product Id :: " + productId);
-            System.out.println("existingProductId Id :: " + existingProductId);
+            log.info("[Variant] New Product Id :: " + newProductId);
+            log.info("[Variant] ExistingProductId Id :: " + existingProductId);
+            log.info("SAVE PRODUCT VARIANTS FILES DATA FLYING...");
 
             ProductDetailsModel existingProductDetails = this.productDetailsRepo.findById(existingProductId)
                     .orElseThrow(() -> new DataNotFoundException("Data Not Found Exception existingProductId"));
 
 
-            ProductDetailsModel productDetails = this.productDetailsRepo.findById(productId)
+            ProductDetailsModel productDetails = this.productDetailsRepo.findById(newProductId)
                     .orElseThrow(() -> new DataNotFoundException("Data Not Found Exception"));
 
             // ============ IMAGE HANDLING ============
@@ -274,11 +258,10 @@ public class ProductVariantServiceImple implements ProductVariantService {
                     log.info("Files Upload to Cloudinary Cloud End");
 
                     // Replace old images with new ones
-                    log.info("SAVE FILE TO DB FLYING...");
                     productDetails.getProductFiles().clear();
                     productDetails.getProductFiles().addAll(productFilesList);
                     this.productDetailsRepo.save(productDetails);
-                    log.info("========= ALL IMAGES SAVED SUCCESSFULLY =========");
+                    log.info("========= IMAGES SAVED SUCCESSFULLY =========");
                 }
             }
 
@@ -310,10 +293,10 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 }
             }
 
-            //Save ProductKey and Product to Binding Data
+            //Save ProductKey to Variant Product Key
             this.saveProductKeysBindingVariant(productDetails.getProductRoot() , existingProductDetails.getProductKey());
-
-            return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + productId);
+            log.info("Product-Variant SAVED SUCCESS...");
+            return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + newProductId);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("Something went wrong while saving product files");
@@ -404,51 +387,13 @@ public class ProductVariantServiceImple implements ProductVariantService {
 
 
 
-    //    Binding Variable ProductId,ProductKey,ProductDetailsId
-//    public void saveProductKeysBinding(ProductRoot productRoot) {
-//        try {
-//            log.info("Flying SAVE-PRODUCT-KEYS-BINDINGS...");
-//            long productId = productRoot.getId();
-//
-//            //Using Existing Product Keys
-//            String productKey = productRoot.getProductKey();
-//
-//            //Set Product Key to Product Root
-//            productRoot.setProductKey(productKey);
-//
-//            for (ProductDetailsModel pdm : productRoot.getProductDetailsModels()) {
-//                pdm.setProductId(productId);
-//                pdm.setProductKey(productKey);
-//
-//                for (ProductFiles pf : pdm.getProductFiles()) {
-//                    pf.setProductId(productId);
-//                    pf.setProductKey(productKey);
-//                    pf.setProductDetailsId(pdm.getId());
-//                }
-//
-//                for (ProductSizeRows psr : pdm.getProductSizeRows()){
-//                    psr.setProductId(productId);
-//                    psr.setProductKey(productKey);
-//                    psr.setProductDetailsId(pdm.getId());
-//                }
-//            }
-//            //save Product Root with Product-Id and OProduct Key Binds
-//            this.productRootRepo.save(productRoot);
-//        } catch (Exception e) {
-//            log.info("Exception generate in saveProductKeysBinding");
-//            e.getMessage();
-//            e.printStackTrace();
-//        }
-//    }
 
     public void saveProductKeysBindingVariant(ProductRoot productRoot , String productKeyExisting) {
         try {
-            log.info("Flying SAVE-PRODUCT-KEYS-BINDINGS...");
             long productId = productRoot.getId();
 
             //Using Existing Product Keys
             String productKey = productKeyExisting;
-            System.out.println("productKeyExisting :: " + productKeyExisting);
             //Set Product Key to Product Root
             productRoot.setProductKey(productKey);
 

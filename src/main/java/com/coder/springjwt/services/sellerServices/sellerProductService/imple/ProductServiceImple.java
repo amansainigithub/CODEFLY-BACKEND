@@ -269,7 +269,7 @@ public class ProductServiceImple implements ProductService {
 
             //Save ProductKey and Product to Binding Data
             this.saveProductKeysBinding(productDetails.getProductRoot());
-
+            log.info("Product SAVED SUCCESS...");
             return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + productId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -364,7 +364,6 @@ public class ProductServiceImple implements ProductService {
 //    Binding Variable ProductId,ProductKey,ProductDetailsId
     public void saveProductKeysBinding(ProductRoot productRoot) {
         try {
-            log.info("Flying SAVE-PRODUCT-KEYS-BINDINGS...");
             long productId = productRoot.getId();
             String productKey = this.productServiceHelper.generateProductKey();
 

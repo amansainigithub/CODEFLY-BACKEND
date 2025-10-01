@@ -11,5 +11,5 @@ public interface ProductVariantService {
 
     ResponseEntity<?> saveProductVariantDetails(ProductDetailsDto productDetailsDto, long variantId , long existingProductId);
 
-    ResponseEntity<?> saveProductVariantFiles(MultipartFile[] files, MultipartFile video, long productId , long existingProductId);
+    ResponseEntity<?> saveProductVariantFiles(MultipartFile[] files, MultipartFile video, long newProductId , long existingProductId);
 }
