@@ -73,7 +73,8 @@ public class ProductDetailsModel extends BaseEntity {
     private String productTds;
     private String productPrice;
     private String productMrp;
-    private String settlementAmount;
+    private String bankSettlementAmount;
+    private String bankSettlementWithShipping;
 
     //Shipping Charges
     private String shippingCharges;

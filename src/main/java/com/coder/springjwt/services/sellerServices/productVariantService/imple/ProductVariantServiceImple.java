@@ -157,16 +157,23 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice));
                 log.info("PRODUCT TDS :: " + productTds);
 
-
-                //GET SHIPPING CHARGES
-                int shippingCharges = 60;
-                int shippingFee = 10;
-                BigDecimal shippingTotal = new BigDecimal(shippingCharges + shippingFee);
-
-
-                BigDecimal settlementAmount = productServiceHelper
+                BigDecimal bankSettlementAmount = productServiceHelper
                         .bankSettlement(new BigDecimal(productPrice), productGst, productTcs, productTds);
                 //Calculate TAX Information Ending....
+
+
+                //Shipping Charges STARTING....
+                //GET SHIPPING CHARGES
+                float shippingCharges = 60;
+                float shippingFee = 10;
+                float shippingTotal = shippingCharges + shippingFee;
+                productDetailsModel.setShippingCharges(String.valueOf(shippingCharges));
+                productDetailsModel.setShippingFee(String.valueOf(shippingFee));
+                productDetailsModel.setShippingTotal(String.valueOf(shippingTotal));
+                productDetailsModel.setBankSettlementWithShipping(
+                        String.valueOf(bankSettlementAmount.add(BigDecimal.valueOf(shippingTotal))));
+                //Shipping Charges ENDING...
+
 
                 //Save Product Tax-Service Data
                 productDetailsModel.setProductPrice(productPrice);
@@ -174,12 +181,10 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 productDetailsModel.setProductGst(String.valueOf(productGst));
                 productDetailsModel.setProductTds(String.valueOf(productTds));
                 productDetailsModel.setProductTcs(String.valueOf(productTcs));
-                productDetailsModel.setSettlementAmount(String.valueOf(settlementAmount));
+                productDetailsModel.setBankSettlementAmount(String.valueOf(bankSettlementAmount));
                 //Save Product Tax-Service Data
 
-                //Shipping Charges
-                productDetailsModel.setShippingCharges(String.valueOf(shippingCharges));
-                productDetailsModel.setShippingFee(String.valueOf(shippingFee));
+
 
                 //Calculate  Discount of Product
                 float productDiscount = productServiceHelper.calculateDiscountPercent(Float.parseFloat(productMrp),
