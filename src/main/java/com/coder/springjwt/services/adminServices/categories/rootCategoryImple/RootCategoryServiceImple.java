@@ -13,6 +13,7 @@ import com.coder.springjwt.services.adminServices.categories.RootCategoryService
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Service
+@Slf4j
 public class RootCategoryServiceImple implements RootCategoryService {
 
     @Autowired
@@ -79,7 +81,7 @@ public class RootCategoryServiceImple implements RootCategoryService {
     public ResponseEntity<?> getRootCategoryList() {
 
         try {
-                System.out.println("First To Get From Database");
+                log.info("First To Get From Database");
                 // Fetch data from the database
                 List<RootCategoryModel> rootList = this.rootCategoryRepo.findAll();
                 return ResponseGenerator.generateSuccessResponse(rootList, AdminMessageResponse.SUCCESS);
