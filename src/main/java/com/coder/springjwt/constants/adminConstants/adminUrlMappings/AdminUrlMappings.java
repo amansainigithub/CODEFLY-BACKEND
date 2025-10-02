@@ -169,6 +169,14 @@ public class AdminUrlMappings {
     public static final String GET_HEIGHT="/getHeight";
 
 
+    //CHARGE CONFIG CONTROLLER
+    public static final String CHARGE_CONFIG_CONTROLLER = ADMIN_AUTHORIZE_URL +"/chargeConfigController";
+    public static final String  CREATE_CHARGE_CONFIG= "/createChargeConfig";
+    public static final String  GET_CHARGE_CONFIG_LIST= "/getChargeConfigList";
+    public static final String  DELETE_CHARGE_CONFIG= "/deleteChargeConfig/{chargeId}";
+    public static final String  GET_CHARGE_CONFIG_BY_ID= "/getChargeConfigById/{chargeId}";
+
+    public static final String  UPDATE_CHARGE_CONFIG= "/updateChargeConfig";
 
 
 }
