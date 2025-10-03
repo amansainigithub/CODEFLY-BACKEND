@@ -9,12 +9,14 @@ import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.adminModels.categories.VariantCategoryModel;
+import com.coder.springjwt.models.adminModels.chargeConfigModels.ChargeConfig;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.models.sellerModels.productModels.ProductRoot;
 import com.coder.springjwt.models.sellerModels.productModels.ProductSizeRows;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.adminRepository.categories.VariantCategoryRepo;
+import com.coder.springjwt.repository.adminRepository.chargeConfigRepo.ChargeConfigRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductRootRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductSizeRowsRepo;
@@ -59,6 +61,9 @@ public class ProductVariantServiceImple implements ProductVariantService {
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
 
+    @Autowired
+    private ChargeConfigRepo chargeConfigRepo;
+
     @Override
     public ResponseEntity<?> loadProductDetails(long productId) {
         try {
@@ -84,6 +89,10 @@ public class ProductVariantServiceImple implements ProductVariantService {
             if (variantCategoryModel == null) {
                 return ResponseGenerator.generateBadRequestResponse();
             }
+
+            //CHARGE CONFIG TCS, TDS, SHIPPING CHARGE
+            ChargeConfig chargeConfig = this.chargeConfigRepo.findByVariantId(String.valueOf(variantId))
+                    .orElseThrow(() -> new DataNotFoundException("Variant Id Not Found ID :: " + variantId));
 
             if (variantCategoryModel != null) {
                 //Get User
@@ -150,11 +159,11 @@ public class ProductVariantServiceImple implements ProductVariantService {
 
                 //TCS
                 BigDecimal productTcs = productServiceHelper.calculateTCS(new BigDecimal(productPrice),
-                        new BigDecimal(productDetailsModel.getGst()));
+                        new BigDecimal(productDetailsModel.getGst()) , chargeConfig.getTcsCharge());
                 log.info("PRODUCT TCS :: " + productTcs);
 
                 //TDS
-                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice));
+                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice) ,chargeConfig.getTdsCharge());
                 log.info("PRODUCT TDS :: " + productTds);
 
                 BigDecimal bankSettlementAmount = productServiceHelper
@@ -164,8 +173,8 @@ public class ProductVariantServiceImple implements ProductVariantService {
 
                 //Shipping Charges STARTING....
                 //GET SHIPPING CHARGES
-                float shippingCharges = 60;
-                float shippingFee = 10;
+                float shippingCharges = Float.parseFloat(chargeConfig.getShippingCharge());
+                float shippingFee = Float.parseFloat(chargeConfig.getShippingChargeFee());;
                 float shippingTotal = shippingCharges + shippingFee;
                 productDetailsModel.setShippingCharges(String.valueOf(shippingCharges));
                 productDetailsModel.setShippingFee(String.valueOf(shippingFee));

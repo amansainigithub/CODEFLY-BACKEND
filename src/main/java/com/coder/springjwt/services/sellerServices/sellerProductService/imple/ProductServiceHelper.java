@@ -46,17 +46,17 @@ public class ProductServiceHelper {
     }
 
     // TCS CALCULATION
-    public static BigDecimal calculateTCS(BigDecimal price, BigDecimal gstPercentage) {
+    public static BigDecimal calculateTCS(BigDecimal price, BigDecimal gstPercentage , String tcsCharge) {
         BigDecimal gstAmount = calculateGST(price, gstPercentage);
         BigDecimal totalPrice = price.add(gstAmount);
-        BigDecimal tcsRate = BigDecimal.valueOf(1); // TCS rate 1%
+        BigDecimal tcsRate = BigDecimal.valueOf(Long.parseLong(tcsCharge)); // TCS rate 1%
         return totalPrice.multiply(tcsRate)
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }
 
     // TDS CALCULATION
-    public static BigDecimal calculateTDS(BigDecimal price) {
-        BigDecimal tdsRate = BigDecimal.valueOf(1); // TDS rate 1%
+    public static BigDecimal calculateTDS(BigDecimal price , String tdsCharge) {
+        BigDecimal tdsRate = BigDecimal.valueOf(Long.parseLong(tdsCharge)); // TDS rate 1%
         return price.multiply(tdsRate)
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
     }

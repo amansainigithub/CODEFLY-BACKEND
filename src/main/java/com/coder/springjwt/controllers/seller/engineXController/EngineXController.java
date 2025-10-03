@@ -22,4 +22,11 @@ public class EngineXController {
     public ResponseEntity<?> getEngineX(@PathVariable long engineXId) {
         return engineXService.getEngineXBuilder(engineXId);
     }
+
+    @PreAuthorize("hasRole('SELLER')")
+    @GetMapping(SellerUrlMappings.GET_CHARGES_BY_SELLER)
+    public ResponseEntity<?> getChargesBySeller(@PathVariable String id) {
+        return engineXService.getChargesBySeller(id);
+    }
+
 }

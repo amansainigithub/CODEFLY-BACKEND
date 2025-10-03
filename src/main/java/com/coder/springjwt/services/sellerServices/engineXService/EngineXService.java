@@ -7,4 +7,6 @@ import org.springframework.stereotype.Component;
 public interface EngineXService {
 
     public ResponseEntity<?> getEngineXBuilder(long engineXId);
+
+    ResponseEntity<?> getChargesBySeller(String id);
 }
