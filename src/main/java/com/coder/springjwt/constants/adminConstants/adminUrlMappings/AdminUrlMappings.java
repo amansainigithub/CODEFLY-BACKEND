@@ -183,4 +183,15 @@ public class AdminUrlMappings {
     public static final String  PRODUCT_UNDER_REVIEW_STAGE= "/productUnderReviewStage";
 
 
+    //MANAGE PRODUCT BY ADMIN CONTROLLER
+    public static final String PRODUCT_MANAGER_CONTROLLER = ADMIN_AUTHORIZE_URL + "/productManagerController";
+    public static final String RETRIEVE_PRODUCT_DETAILS = "/retrieveProductDetails/{productId}";
+
+
+//    ENGINE-X BUILDER ADMIN CONTROLLER
+    public static final String ENGINE_X_BUILDER_ADMIN_CONTROLLER = ADMIN_AUTHORIZE_URL + "/engineXBuilderAdminController";
+    public static final String GET_ENGINE_X_BY_ADMIN = "/getEngineXByAdmin/{engineXId}";
+
+    public static final String UPDATE_PRODUCT_DETAILS = "/updateProductDetails/{productId}";
+
 }

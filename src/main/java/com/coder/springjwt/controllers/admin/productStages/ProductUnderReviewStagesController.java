@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(AdminUrlMappings.PRODUCT_UNDER_REVIEW_STAGE_CONTROLLER)
 public class ProductUnderReviewStagesController {
 
-
     @Autowired
     private ProductUnderReviewStageService productUnderReviewStageService;
 

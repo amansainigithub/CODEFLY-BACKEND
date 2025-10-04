@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public interface ProductVariantService {
+
     ResponseEntity<?> loadProductDetails(long productId);
 
     ResponseEntity<?> saveProductVariantDetails(ProductDetailsDto productDetailsDto, long variantId , long existingProductId);

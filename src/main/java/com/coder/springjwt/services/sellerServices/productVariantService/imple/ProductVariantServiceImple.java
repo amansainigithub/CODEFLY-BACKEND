@@ -55,12 +55,10 @@ public class ProductVariantServiceImple implements ProductVariantService {
     private BucketService bucketService;
     @Autowired
     private ProductServiceHelper productServiceHelper;
-
     @Autowired
     private UserHelper userHelper;
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
-
     @Autowired
     private ChargeConfigRepo chargeConfigRepo;
 
