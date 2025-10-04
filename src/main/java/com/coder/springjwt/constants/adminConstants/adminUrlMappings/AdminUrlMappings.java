@@ -175,8 +175,12 @@ public class AdminUrlMappings {
     public static final String  GET_CHARGE_CONFIG_LIST= "/getChargeConfigList";
     public static final String  DELETE_CHARGE_CONFIG= "/deleteChargeConfig/{chargeId}";
     public static final String  GET_CHARGE_CONFIG_BY_ID= "/getChargeConfigById/{chargeId}";
-
     public static final String  UPDATE_CHARGE_CONFIG= "/updateChargeConfig";
+
+
+    //PRODUCT STAGES CONTROLLER
+    public static final String PRODUCT_UNDER_REVIEW_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productUnderReviewStageController";
+    public static final String  PRODUCT_UNDER_REVIEW_STAGE= "/productUnderReviewStage";
 
 
 }
