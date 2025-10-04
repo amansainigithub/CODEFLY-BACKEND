@@ -83,94 +83,72 @@ public class ProductVariantServiceImple implements ProductVariantService {
                                                        long existingProductId) {
         log.info("SAVE PRODUCT VARIANTS DETAILS FLYING...");
         try {
+            //CHECK VARIANT-ID
             VariantCategoryModel variantCategoryModel = checkVariantId(variantId);
-            if (variantCategoryModel == null) {
-                return ResponseGenerator.generateBadRequestResponse();
-            }
 
             //CHARGE CONFIG TCS, TDS, SHIPPING CHARGE
             ChargeConfig chargeConfig = this.chargeConfigRepo.findByVariantId(String.valueOf(variantId))
                     .orElseThrow(() -> new DataNotFoundException("Variant Id Not Found ID :: " + variantId));
 
             if (variantCategoryModel != null) {
-                //Get User
+                //USER DETAILS
                 Map<String, String> node = userHelper.getCurrentUser();
-                User username = this.getUserDetails(node.get("username"));
+                User user = this.getUserDetails(node.get("username"));
+                String userId = String.valueOf(user.getId());
+                String userName = String.valueOf(user.getUsername());
 
-                //Product Root Data...
+                //Product ROOT DATA
                 ProductRoot productRoot = new ProductRoot();
                 productRoot.setVariantId(variantCategoryModel.getId());
                 productRoot.setVariantName(variantCategoryModel.getCategoryName());
-
-                //Set UserId and UserName
-                productRoot.setUserId(String.valueOf(username.getId()));
-                productRoot.setUsername(String.valueOf(username.getUsername()));
-
-                //Product Status
+                productRoot.setUserId(String.valueOf(userId));
+                productRoot.setUsername(String.valueOf(userName));
                 productRoot.setProductStatus(ProductStatus.UNDER_REVIEW.toString());
 
-                //Convert Data To mapper PRODUCT DETAILS
+                // CONVERT DTO TO MODEL PRODUCT DETAILS
                 ProductDetailsModel productDetailsModel = modelMapper.map(productDetailsDto, ProductDetailsModel.class);
                 productDetailsModel.setVariantId(variantCategoryModel.getId());
                 productDetailsModel.setVariantName(variantCategoryModel.getCategoryName());
                 productDetailsModel.setProductSeries("VARIANT");
-                //Set UserId and UserName
-                productDetailsModel.setUserId(String.valueOf(username.getId()));
-                productDetailsModel.setUsername(String.valueOf(username.getUsername()));
-
-                //Set Product Root to Product Details Model
-                productDetailsModel.setProductRoot(productRoot);
-
-                //SAVE FORMAT PRODUCT DATE AND TIME
+                //USERID AND USERNAME
+                productDetailsModel.setUserId(String.valueOf(userId));
+                productDetailsModel.setUsername(String.valueOf(userName));
+                //PRODUCT DATE AND TIME
                 productDetailsModel.setProductDate(this.getFormatDate());
                 productDetailsModel.setProductTime(this.getFormatTime());
-
-                //Product Status
+                //PRODUCT STATUS
                 productDetailsModel.setProductStatus(ProductStatus.UNDER_REVIEW.toString());
 
-                //Set Product-Details To Product-Root Entity
-                productRoot.setProductDetailsModels(List.of(productDetailsModel));
 
-                //Set Product-Details to Product Size Rows
-                String productPrice = null;
-                String productMrp = null;
-                int count = 0;
-                for (ProductSizeRows productSizeRows : productDetailsModel.getProductSizeRows()) {
+                //Set USERNAME AND USERID SET TO PRODUCT SIZE ROWS
+                Map<String, String> priceAndMrp = this.productSizeRows(userId, userName,
+                        productDetailsModel.getProductSizeRows(), productDetailsModel);
+                String productPrice = priceAndMrp.get("productPrice");
+                String productMrp   =   priceAndMrp.get("productMrp");
 
-                    if(count == 0)
-                    {
-                        productPrice = productSizeRows.getPrice();
-                        productMrp = productSizeRows.getMrp();
-                    }
-                    productSizeRows.setProductDetailsModel(productDetailsModel);
-                    //Set UserId and UserName
-                    productSizeRows.setUserId(String.valueOf(username.getId()));
-                    productSizeRows.setUsername(String.valueOf(username.getUsername()));
-                    count++;
-                }
+                //SET PRODUCT DETAILS TO ACTUAL-PRICE AND MRP
+                productDetailsModel.setProductPrice(productPrice);
+                productDetailsModel.setProductMrp(productMrp);
 
-                //Calculate TAX Information Starting...
-                //GST
+
+                //Calculate TAX [TDS,TCS,GST,BANK-SETTLEMENT] STARTING
                 BigDecimal productGst = productServiceHelper.calculateGST(new BigDecimal(productPrice),
-                        new BigDecimal(productDetailsModel.getGst()));
-                log.info("PRODUCT GST :: " + productGst);
-
-                //TCS
+                                        new BigDecimal(productDetailsModel.getGst()));
+                productDetailsModel.setProductGst(String.valueOf(productGst));
                 BigDecimal productTcs = productServiceHelper.calculateTCS(new BigDecimal(productPrice),
-                        new BigDecimal(productDetailsModel.getGst()) , chargeConfig.getTcsCharge());
-                log.info("PRODUCT TCS :: " + productTcs);
+                                        new BigDecimal(productDetailsModel.getGst()) , chargeConfig.getTcsCharge());
+                productDetailsModel.setProductTcs(String.valueOf(productTcs));
+                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice) ,
+                                        chargeConfig.getTdsCharge());
+                productDetailsModel.setProductTds(String.valueOf(productTds));
 
-                //TDS
-                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice) ,chargeConfig.getTdsCharge());
-                log.info("PRODUCT TDS :: " + productTds);
-
-                BigDecimal bankSettlementAmount = productServiceHelper
-                        .bankSettlement(new BigDecimal(productPrice), productGst, productTcs, productTds);
+                BigDecimal bankSettlementAmount = productServiceHelper.bankSettlement(new BigDecimal(productPrice),
+                                                  productGst, productTcs, productTds);
+                productDetailsModel.setBankSettlementAmount(String.valueOf(bankSettlementAmount));
                 //Calculate TAX Information Ending....
 
 
-                //Shipping Charges STARTING....
-                //GET SHIPPING CHARGES
+                //SHIPPING CHARGES
                 float shippingCharges = Float.parseFloat(chargeConfig.getShippingCharge());
                 float shippingFee = Float.parseFloat(chargeConfig.getShippingChargeFee());;
                 float shippingTotal = shippingCharges + shippingFee;
@@ -179,32 +157,27 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 productDetailsModel.setShippingTotal(String.valueOf(shippingTotal));
                 productDetailsModel.setBankSettlementWithShipping(
                         String.valueOf(bankSettlementAmount.add(BigDecimal.valueOf(shippingTotal))));
-                //Shipping Charges ENDING...
+                //SHIPPING CHARGES ENDING...
 
 
-                //Save Product Tax-Service Data
-                productDetailsModel.setProductPrice(productPrice);
-                productDetailsModel.setProductMrp(productMrp);
-                productDetailsModel.setProductGst(String.valueOf(productGst));
-                productDetailsModel.setProductTds(String.valueOf(productTds));
-                productDetailsModel.setProductTcs(String.valueOf(productTcs));
-                productDetailsModel.setBankSettlementAmount(String.valueOf(bankSettlementAmount));
-                //Save Product Tax-Service Data
-
-
-
-                //Calculate  Discount of Product
+                // PRODUCT DISCOUNT %
                 float productDiscount = productServiceHelper.calculateDiscountPercent(Float.parseFloat(productMrp),
                         Float.parseFloat(productPrice));
                 productDetailsModel.setProductDiscount(String.valueOf(productDiscount));
 
 
-                //save Data Details
+                //PRODUCT ROOT TO PRODUCT-DETAILS-MODEL
+                productDetailsModel.setProductRoot(productRoot);
+
+                //PRODUCT-DETAILS TO PRODUCT ROOT
+                productRoot.setProductDetailsModels(List.of(productDetailsModel));
+
+                //SAVE PRODUCT DETAILS
                 ProductRoot productData = this.productRootRepo.save(productRoot);
 
-                Map<Object, Object> mapNode = new HashMap<>();
-                mapNode.put("id", productData.getProductDetailsModels().get(0).getId());
-                return ResponseGenerator.generateSuccessResponse(mapNode, "Success");
+                Map<Object, Object> productNode = new HashMap<>();
+                productNode.put("id", productData.getProductDetailsModels().get(0).getId());
+                return ResponseGenerator.generateSuccessResponse(productNode, "SUCCESS");
             } else {
                 return ResponseGenerator.generateBadRequestResponse();
             }
@@ -215,15 +188,7 @@ public class ProductVariantServiceImple implements ProductVariantService {
     }
 
 
-    public VariantCategoryModel checkVariantId(long variantId) {
-        try {
-            VariantCategoryModel variantCategoryData = this.variantCategoryRepo.findById(variantId).orElseThrow(() -> new DataNotFoundException("Variant Category Id not found :: " + variantId));
-            return variantCategoryData;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 
 
 
@@ -231,10 +196,7 @@ public class ProductVariantServiceImple implements ProductVariantService {
     public ResponseEntity<?> saveProductVariantFiles(MultipartFile[] files, MultipartFile video, long newProductId ,
                                                      long existingProductId) {
         try {
-            log.info("[Variant] New Product Id :: " + newProductId);
-            log.info("[Variant] ExistingProductId Id :: " + existingProductId);
             log.info("SAVE PRODUCT VARIANTS FILES DATA FLYING...");
-
             ProductDetailsModel existingProductDetails = this.productDetailsRepo.findById(existingProductId)
                     .orElseThrow(() -> new DataNotFoundException("Data Not Found Exception existingProductId"));
 
@@ -264,12 +226,10 @@ public class ProductVariantServiceImple implements ProductVariantService {
                         productFiles.setFileUrl(bucketModel.getBucketUrl());
                         productFiles.setFileName(bucketModel.getFileName());
                         productFiles.setProductDetailsModel(productDetails);
-
                         productFilesList.add(productFiles);
                     }
-                    log.info("Files Upload to Cloudinary Cloud End");
 
-                    // Replace old images with new ones
+                    // REPLACE OLD FILES TO NEW ONE
                     productDetails.getProductFiles().clear();
                     productDetails.getProductFiles().addAll(productFilesList);
                     this.productDetailsRepo.save(productDetails);
@@ -305,7 +265,7 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 }
             }
 
-            //Save ProductKey to Variant Product Key
+            //SAVE PRODUCT-KEY AND BIND DATA
             this.saveProductKeysBindingVariant(productDetails.getProductRoot() , existingProductDetails.getProductKey());
             log.info("Product-Variant SAVED SUCCESS...");
             return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + newProductId);
@@ -316,7 +276,7 @@ public class ProductVariantServiceImple implements ProductVariantService {
     }
 
 
-    // ================= IMAGE HANDLING =================
+    // ================= FILE HANDLING =================
     public ResponseEntity<?> checkAndSaveImages(MultipartFile[] files) {
         List<String> allowedImageExtensions = Arrays.asList("jpg", "jpeg", "png");
         long maxImageSize = 5 * 1024 * 1024; // 5 MB
@@ -388,13 +348,31 @@ public class ProductVariantServiceImple implements ProductVariantService {
     }
 
 
-    private User getUserDetails(String username) {
-        try {
-            return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found.."));
-        } catch (Exception e) {
-            e.printStackTrace();
+
+
+    private Map<String,String> productSizeRows(String userId, String username,
+                                               List<ProductSizeRows> productSizeRows,
+                                               ProductDetailsModel productDetailsModel )
+    {
+        String productPrice = null;
+        String productMrp = null;
+        int count = 0;
+        for (ProductSizeRows sizeRows : productSizeRows) {
+            if(count == 0)
+            {
+                productPrice = sizeRows.getPrice();
+                productMrp = sizeRows.getMrp();
+            }
+            sizeRows.setProductDetailsModel(productDetailsModel);
+            //Set UserId and UserName
+            sizeRows.setUserId(String.valueOf(userId));
+            sizeRows.setUsername(String.valueOf(username));
+            count++;
         }
-        return null;
+        Map<String,String> priceAndMrp = new HashMap<>();
+        priceAndMrp.put("productPrice",productPrice);
+        priceAndMrp.put("productMrp",productMrp);
+        return priceAndMrp;
     }
 
 
@@ -428,13 +406,30 @@ public class ProductVariantServiceImple implements ProductVariantService {
             //save Product Root with Product-Id and OProduct Key Binds
             this.productRootRepo.save(productRoot);
         } catch (Exception e) {
-            log.info("Exception generate in saveProductKeysBinding");
+            log.error("Exception generate in saveProductKeysBinding");
             e.getMessage();
             e.printStackTrace();
         }
     }
 
+    public VariantCategoryModel checkVariantId(long variantId) {
+        try {
+            VariantCategoryModel variantCategoryData = this.variantCategoryRepo.findById(variantId).orElseThrow(() -> new DataNotFoundException("Variant Category Id not found :: " + variantId));
+            return variantCategoryData;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DataNotFoundException("Variant Category Id not found :: " + variantId);
+        }
+    }
 
+    private User getUserDetails(String username) {
+        try {
+            return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found.."));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String getFormatDate() {
         // Current Date
@@ -446,8 +441,6 @@ public class ProductVariantServiceImple implements ProductVariantService {
         return formattedDate;
     }
 
-
-
     public String getFormatTime() {
         // Current Time
         LocalTime now = LocalTime.now();
@@ -457,21 +450,6 @@ public class ProductVariantServiceImple implements ProductVariantService {
         String formattedTime = now.format(formatter);
         return formattedTime;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

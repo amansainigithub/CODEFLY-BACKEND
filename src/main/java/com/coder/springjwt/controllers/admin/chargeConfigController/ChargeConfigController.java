@@ -1,7 +1,6 @@
 package com.coder.springjwt.controllers.admin.chargeConfigController;
 
 import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
-import com.coder.springjwt.dtos.adminDtos.categoriesDtos.VariantCategoryDto;
 import com.coder.springjwt.dtos.adminDtos.chargeConfigDtos.ChargeConfigDto;
 import com.coder.springjwt.services.adminServices.chargeConfigService.ChargeConfigService;
 import org.springframework.beans.factory.annotation.Autowired;

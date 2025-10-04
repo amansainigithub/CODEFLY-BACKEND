@@ -1,7 +1,6 @@
 package com.coder.springjwt.controllers.admin.productManagerController;
 
 import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
-import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
 import com.coder.springjwt.services.adminServices.productManagerService.ProductManageService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,6 +2,7 @@ package com.coder.springjwt.services.sellerServices.sellerProductService.imple;
 
 import com.coder.springjwt.bucket.bucketModels.BucketModel;
 import com.coder.springjwt.bucket.bucketService.BucketService;
+import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
@@ -55,143 +56,110 @@ public class ProductServiceImple implements ProductService {
     private BucketService bucketService;
     @Autowired
     private ProductServiceHelper productServiceHelper;
-
     @Autowired
     private UserHelper userHelper;
-
     @Autowired
     private ChargeConfigRepo chargeConfigRepo;
 
 
-
     @Override
     public ResponseEntity<?> saveProductDetails(ProductDetailsDto productDetailsDto, long variantId) {
-        log.info("saveProductDetails........");
+        log.info("SAVE PRODUCT DETAILS FLYING...");
         try {
+            //CHECK VARIANT-ID
             VariantCategoryModel variantCategoryModel = checkVariantId(variantId);
 
-            if (variantCategoryModel == null) {
-                return ResponseGenerator.generateBadRequestResponse();
-            }
-
-            //CHARGE CONFIG TCS, TDS, SHIPPING CHARGE
+            //CHARGE CONFIG TCS, TDS AND SHIPPING CHARGE
             ChargeConfig chargeConfig = this.chargeConfigRepo.findByVariantId(String.valueOf(variantId))
                     .orElseThrow(() -> new DataNotFoundException("Variant Id Not Found ID :: " + variantId));
 
             if (variantCategoryModel != null) {
-                //Get User
-                Map<String, String> node = userHelper.getCurrentUser();
-                User username = this.getUserDetails(node.get("username"));
 
-                //Product Root Data...
+                //GET CURRENT USER DETAILS
+                Map<String, String> node = userHelper.getCurrentUser();
+                User user = this.getUserDetails(node.get("username"));
+                String userId = String.valueOf(user.getId());
+                String userName = String.valueOf(user.getUsername());
+
+                //PRODUCT-ROOT
                 ProductRoot productRoot = new ProductRoot();
                 productRoot.setVariantId(variantCategoryModel.getId());
                 productRoot.setVariantName(variantCategoryModel.getCategoryName());
-
-                //Set UserId and UserName
-                productRoot.setUserId(String.valueOf(username.getId()));
-                productRoot.setUsername(String.valueOf(username.getUsername()));
-
-                //Product Status
+                productRoot.setUserId(userId);
+                productRoot.setUsername(userName);
                 productRoot.setProductStatus(ProductStatus.UNDER_REVIEW.toString());
 
-                //Convert Data To mapper PRODUCT DETAILS
+                // CONVERT DTO TO MODEL PRODUCT DETAILS
                 ProductDetailsModel productDetailsModel = modelMapper.map(productDetailsDto, ProductDetailsModel.class);
                 productDetailsModel.setVariantId(variantCategoryModel.getId());
                 productDetailsModel.setVariantName(variantCategoryModel.getCategoryName());
                 productDetailsModel.setProductSeries("MAIN");
-                //Set UserId and UserName
-                productDetailsModel.setUserId(String.valueOf(username.getId()));
-                productDetailsModel.setUsername(String.valueOf(username.getUsername()));
-
-                //Set Product Root to Product Details Model
-                productDetailsModel.setProductRoot(productRoot);
-
-                //SAVE FORMAT PRODUCT DATE AND TIME
+                //USERID AND USERNAME
+                productDetailsModel.setUserId(userId);
+                productDetailsModel.setUsername(userName);
+                //PRODUCT DATE AND TIME
                 productDetailsModel.setProductDate(this.getFormatDate());
                 productDetailsModel.setProductTime(this.getFormatTime());
-
-                //Product Status
+                //PRODUCT STATUS
                 productDetailsModel.setProductStatus(ProductStatus.UNDER_REVIEW.toString());
 
-                //Set Product-Details To Product-Root Entity
-                productRoot.setProductDetailsModels(List.of(productDetailsModel));
 
-                //Set Product-Details to Product Size Rows
-                String productPrice = null;
-                String productMrp = null;
-                int count = 0;
-                for (ProductSizeRows productSizeRows : productDetailsModel.getProductSizeRows()) {
+                //Set USERNAME AND USERID SET TO PRODUCT SIZE ROWS
+                Map<String, String> priceAndMrp = this.productSizeRows(userId, userName,
+                                            productDetailsModel.getProductSizeRows(), productDetailsModel);
+                String productPrice = priceAndMrp.get("productPrice");
+                String productMrp   =   priceAndMrp.get("productMrp");
 
-                    if(count == 0)
-                    {
-                        productPrice = productSizeRows.getPrice();
-                        productMrp = productSizeRows.getMrp();
-                    }
-                    productSizeRows.setProductDetailsModel(productDetailsModel);
-                    //Set UserId and UserName
-                    productSizeRows.setUserId(String.valueOf(username.getId()));
-                    productSizeRows.setUsername(String.valueOf(username.getUsername()));
-                    count++;
-                }
+                //SET PRODUCT DETAILS TO ACTUAL-PRICE AND MRP
+                productDetailsModel.setProductPrice(productPrice);
+                productDetailsModel.setProductMrp(productMrp);
 
 
-
-                //Calculate TAX Information Starting...
-                //GST
+                //Calculate TAX [TDS,TCS,GST,BANK-SETTLEMENT] STARTING
                 BigDecimal productGst = productServiceHelper.calculateGST(new BigDecimal(productPrice),
-                        new BigDecimal(productDetailsModel.getGst()));
-                log.info("PRODUCT GST :: " + productGst);
-
-                //TCS
+                                        new BigDecimal(productDetailsModel.getGst()));
+                productDetailsModel.setProductGst(String.valueOf(productGst));
                 BigDecimal productTcs = productServiceHelper.calculateTCS(new BigDecimal(productPrice),
-                        new BigDecimal(productDetailsModel.getGst()) , chargeConfig.getTcsCharge());
-                log.info("PRODUCT TCS :: " + productTcs);
-
-                //TDS
-                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice) ,chargeConfig.getTdsCharge());
-                log.info("PRODUCT TDS :: " + productTds);
+                                        new BigDecimal(productDetailsModel.getGst()) , chargeConfig.getTcsCharge());
+                productDetailsModel.setProductTcs(String.valueOf(productTcs));
+                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice) ,
+                                        chargeConfig.getTdsCharge());
+                productDetailsModel.setProductTds(String.valueOf(productTds));
 
                 BigDecimal bankSettlementAmount = productServiceHelper
-                                        .bankSettlement(new BigDecimal(productPrice), productGst, productTcs, productTds);
-                //Calculate TAX Information Ending....
+                                                  .bankSettlement(new BigDecimal(productPrice), productGst, productTcs, productTds);
+                productDetailsModel.setBankSettlementAmount(String.valueOf(bankSettlementAmount));
+                //CALCULATED TAX ENDING....
 
-
-                //Shipping Charges STARTING....
-                //GET SHIPPING CHARGES AND SHIPPING CHARGE FEE DYNAMICALLY
+                //SHIPPING CHARGES
                 float shippingCharges = Float.parseFloat(chargeConfig.getShippingCharge());
                 float shippingFee = Float.parseFloat(chargeConfig.getShippingChargeFee());
                 float shippingTotal = shippingCharges + shippingFee;
                 productDetailsModel.setShippingCharges(String.valueOf(shippingCharges));
                 productDetailsModel.setShippingFee(String.valueOf(shippingFee));
                 productDetailsModel.setShippingTotal(String.valueOf(shippingTotal));
-                //Shipping Charges ENDING...
+                productDetailsModel.setBankSettlementWithShipping(String.valueOf(bankSettlementAmount.add(BigDecimal.valueOf(shippingTotal))));
+                //SHIPPING CHARGES ENDING...
 
-
-                //Save Product Tax-Service Data
-                productDetailsModel.setProductPrice(productPrice);
-                productDetailsModel.setProductMrp(productMrp);
-                productDetailsModel.setProductGst(String.valueOf(productGst));
-                productDetailsModel.setProductTds(String.valueOf(productTds));
-                productDetailsModel.setProductTcs(String.valueOf(productTcs));
-                productDetailsModel.setBankSettlementAmount(String.valueOf(bankSettlementAmount));
-                productDetailsModel.setBankSettlementWithShipping(
-                        String.valueOf(bankSettlementAmount.add(BigDecimal.valueOf(shippingTotal))));
-                //Save Product Tax-Service Data
-
-
-                //Calculate  Discount of Product
+                //PRODUCT DISCOUNT %
                 float productDiscount = productServiceHelper.calculateDiscountPercent(Float.parseFloat(productMrp),
-                            Float.parseFloat(productPrice));
+                                        Float.parseFloat(productPrice));
                 productDetailsModel.setProductDiscount(String.valueOf(productDiscount));
 
 
-                //save Data Details
+                //PRODUCT ROOT TO PRODUCT-DETAILS-MODEL
+                productDetailsModel.setProductRoot(productRoot);
+
+                //PRODUCT-DETAILS TO PRODUCT ROOT
+                productRoot.setProductDetailsModels(List.of(productDetailsModel));
+
+
+                //SAVE PRODUCT DETAILS
                 ProductRoot productData = this.productRootRepo.save(productRoot);
 
-                Map<Object, Object> mapNode = new HashMap<>();
-                mapNode.put("id", productData.getProductDetailsModels().get(0).getId());
-                return ResponseGenerator.generateSuccessResponse(mapNode, "Success");
+                Map<Object, Object> productNode = new HashMap<>();
+                productNode.put("id", productData.getProductDetailsModels().get(0).getId());
+                return ResponseGenerator.generateSuccessResponse(productNode, SellerMessageResponse.SUCCESS);
             } else {
                 return ResponseGenerator.generateBadRequestResponse();
             }
@@ -202,24 +170,17 @@ public class ProductServiceImple implements ProductService {
     }
 
 
-    public VariantCategoryModel checkVariantId(long variantId) {
-        try {
-            VariantCategoryModel variantCategoryData = this.variantCategoryRepo.findById(variantId).orElseThrow(() -> new DataNotFoundException("Variant Category Id not found :: " + variantId));
-            return variantCategoryData;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
+
 
     @Override
     public ResponseEntity<?> saveProductFiles(MultipartFile[] files, MultipartFile video, long productId) {
         try {
             ProductDetailsModel productDetails = this.productDetailsRepo.findById(productId)
-                    .orElseThrow(() -> new DataNotFoundException("Data Not Found Exception"));
+                    .orElseThrow(() -> new DataNotFoundException("Product Id Not Found " + productId));
 
             // ============ IMAGE HANDLING ============
-            ResponseEntity<?> imageResponse = checkAndSaveImages(files);
+            ResponseEntity<?> imageResponse = productServiceHelper.checkImageValidation(files);
             if (imageResponse != null) {
                 return imageResponse;
             } else {
@@ -227,12 +188,11 @@ public class ProductServiceImple implements ProductService {
                     List<ProductFiles> productFilesList = new ArrayList<>();
 
                     // SAVE IMAGES
-                    log.info("Files Upload to Cloudinary Cloud Start");
                     for (MultipartFile file : files) {
-                        // Upload image to Cloudinary
+                        // UPLOAD FILE TO CLOUDINARY
                         BucketModel bucketModel = this.bucketService.uploadCloudinaryFile(file, "IMAGE");
 
-                        // Create ProductFiles object
+                       //PRODUCT FILES
                         ProductFiles productFiles = new ProductFiles();
                         productFiles.setFileSize(file.getSize());
                         productFiles.setContentType(file.getContentType());
@@ -240,28 +200,22 @@ public class ProductServiceImple implements ProductService {
                         productFiles.setFileUrl(bucketModel.getBucketUrl());
                         productFiles.setFileName(bucketModel.getFileName());
                         productFiles.setProductDetailsModel(productDetails);
-
                         productFilesList.add(productFiles);
                     }
-                    log.info("Files Upload to Cloudinary Cloud End");
-
-                    // Replace old images with new ones
-                    log.info("SAVE FILE TO DB FLYING...");
                     productDetails.getProductFiles().clear();
                     productDetails.getProductFiles().addAll(productFilesList);
                     this.productDetailsRepo.save(productDetails);
-                    log.info("========= ALL IMAGES SAVED SUCCESSFULLY =========");
+                    log.info("========= ALL PRODUCT IMAGES SAVED SUCCESSFULLY =========");
                 }
             }
 
             // ============ VIDEO HANDLING ============
-            ResponseEntity<?> videoResponse = checkIsVideoValid(video);
+            ResponseEntity<?> videoResponse = productServiceHelper.checkIsVideoValid(video);
             if (videoResponse != null) {
                 return videoResponse;
             } else {
                 if (video != null && !video.isEmpty()) {
                     log.info("Video Upload to Cloudinary Cloud Start");
-
                     // Upload video to Cloudinary
                     BucketModel bucketModel = this.bucketService.uploadCloudinaryFile(video,"VIDEO");
 
@@ -277,12 +231,11 @@ public class ProductServiceImple implements ProductService {
                     // Add video without removing images
                     productDetails.getProductFiles().add(productVideo);
                     this.productDetailsRepo.save(productDetails);
-                    log.info("Video Upload to Cloudinary Cloud Ending");
-                    log.info("========= VIDEO SAVED SUCCESSFULLY =========");
+                    log.info("========= PRODUCT VIDEO SAVED SUCCESSFULLY =========");
                 }
             }
 
-            //Save ProductKey and Product to Binding Data
+            //SAVE PRODUCT-KEY AND BIND DATA
             this.saveProductKeysBinding(productDetails.getProductRoot());
             log.info("Product SAVED SUCCESS...");
             return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + productId);
@@ -293,90 +246,35 @@ public class ProductServiceImple implements ProductService {
     }
 
 
-    // ================= IMAGE HANDLING =================
-    public ResponseEntity<?> checkAndSaveImages(MultipartFile[] files) {
-        List<String> allowedImageExtensions = Arrays.asList("jpg", "jpeg", "png");
-        long maxImageSize = 5 * 1024 * 1024; // 5 MB
 
-        int index = 1;
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) {
-                log.info("Slot " + index + " is empty");
-                index++;
-                continue;
+    private Map<String,String> productSizeRows(String userId, String username,
+                                               List<ProductSizeRows> productSizeRows,
+                                               ProductDetailsModel productDetailsModel )
+    {
+        String productPrice = null;
+        String productMrp = null;
+        int count = 0;
+        for (ProductSizeRows sizeRows : productSizeRows) {
+            if(count == 0)
+            {
+                productPrice = sizeRows.getPrice();
+                productMrp = sizeRows.getMrp();
             }
-
-            String fileName = file.getOriginalFilename();
-            if (fileName == null || !fileName.contains(".")) {
-                return ResponseEntity.badRequest().body("Invalid file name at slot " + index);
-            }
-
-            String ext = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
-            if (!allowedImageExtensions.contains(ext)) {
-                return ResponseEntity.badRequest().body("Invalid file type at slot " + index + " (" + fileName + "). Only JPG and PNG allowed.");
-            }
-
-            if (file.getSize() > maxImageSize) {
-                return ResponseEntity.badRequest().body("File " + fileName + " at slot " + index + " exceeds the 1 MB size limit.");
-            }
-
-            // Save image
-            log.info("Image accepted at slot " + index + " :: " + fileName + " | Size: " + file.getSize());
-
-            index++;
+            sizeRows.setProductDetailsModel(productDetailsModel);
+            //Set UserId and UserName
+            sizeRows.setUserId(String.valueOf(userId));
+            sizeRows.setUsername(String.valueOf(username));
+            count++;
         }
-        return null; // null means SUCCESS
-    }
-
-    // ================= VIDEO HANDLING =================
-    public ResponseEntity<?> checkIsVideoValid(MultipartFile video) {
-        if (video == null || video.isEmpty()) {
-            log.info("No video uploaded.");
-            return null; // optional: return ResponseEntity.badRequest().body("Video is required");
-        }
-
-        String videoName = video.getOriginalFilename();
-        if (videoName == null || !videoName.contains(".")) {
-            return ResponseEntity.badRequest().body("Invalid video file name");
-        }
-
-        String videoExt = videoName.substring(videoName.lastIndexOf(".") + 1).toLowerCase();
-        List<String> allowedVideoExtensions = Arrays.asList("mp4");
-
-        long minVideoSize = 1 * 1024 * 1024;   // 1 MB
-        long maxVideoSize = 50 * 1024 * 1024;  // 10 MB
-
-        if (!allowedVideoExtensions.contains(videoExt)) {
-            return ResponseEntity.badRequest().body("Invalid video type (" + videoName + "). Only MP4 allowed.");
-        }
-
-        if (video.getSize() < minVideoSize) {
-            return ResponseEntity.badRequest().body("Video " + videoName + " must be at least 1 MB in size.");
-        }
-
-        if (video.getSize() > maxVideoSize) {
-            return ResponseEntity.badRequest().body("Video " + videoName + " exceeds the 50 MB size limit.");
-        }
-
-        // Save video
-        log.info("Video accepted :: " + videoName + " | Size: " + video.getSize());
-
-        return null; // null means SUCCESS
-    }
-
-
-    private User getUserDetails(String username) {
-        try {
-            return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found.."));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        Map<String,String> priceAndMrp = new HashMap<>();
+        priceAndMrp.put("productPrice",productPrice);
+        priceAndMrp.put("productMrp",productMrp);
+        return priceAndMrp;
     }
 
 
 
-//    Binding Variable ProductId,ProductKey,ProductDetailsId
+    //PRODUCT KEY MAPPING
     public void saveProductKeysBinding(ProductRoot productRoot) {
         try {
             long productId = productRoot.getId();
@@ -404,13 +302,31 @@ public class ProductServiceImple implements ProductService {
             //save Product Root with Product-Id and OProduct Key Binds
             this.productRootRepo.save(productRoot);
         } catch (Exception e) {
-            log.info("Exception generate in saveProductKeysBinding");
+            log.info("Error generate in saveProductKeysBinding");
             e.getMessage();
             e.printStackTrace();
         }
     }
 
+    public VariantCategoryModel checkVariantId(long variantId) {
+        try {
+            VariantCategoryModel variantCategoryData = this.variantCategoryRepo.findById(variantId)
+                    .orElseThrow(() -> new DataNotFoundException("Variant Category Id not found :: " + variantId));
+            return variantCategoryData;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DataNotFoundException("Variant Category Id not found :: " + variantId);
+        }
+    }
 
+    private User getUserDetails(String username) {
+        try {
+            return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found.."));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public String getFormatDate() {
         // Current Date
@@ -431,7 +347,5 @@ public class ProductServiceImple implements ProductService {
         String formattedTime = now.format(formatter);
         return formattedTime;
     }
-
-
 
 }

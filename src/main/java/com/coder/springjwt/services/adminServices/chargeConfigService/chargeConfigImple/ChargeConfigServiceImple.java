@@ -1,12 +1,9 @@
 package com.coder.springjwt.services.adminServices.chargeConfigService.chargeConfigImple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
-import com.coder.springjwt.dtos.adminDtos.categoriesDtos.VariantCategoryDto;
 import com.coder.springjwt.dtos.adminDtos.chargeConfigDtos.ChargeConfigDto;
 import com.coder.springjwt.exception.adminException.CategoryNotFoundException;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
-import com.coder.springjwt.models.adminModels.catalog.catalogType.ProductTypeModel;
-import com.coder.springjwt.models.adminModels.categories.TypeCategoryModel;
 import com.coder.springjwt.models.adminModels.categories.VariantCategoryModel;
 import com.coder.springjwt.models.adminModels.chargeConfigModels.ChargeConfig;
 import com.coder.springjwt.repository.adminRepository.categories.VariantCategoryRepo;
@@ -15,7 +12,6 @@ import com.coder.springjwt.services.adminServices.chargeConfigService.ChargeConf
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
-import lombok.extern.slf4j.XSlf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

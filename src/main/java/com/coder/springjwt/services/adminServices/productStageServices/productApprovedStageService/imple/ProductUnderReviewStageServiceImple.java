@@ -1,9 +1,7 @@
 package com.coder.springjwt.services.adminServices.productStageServices.productApprovedStageService.imple;
 
 import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductUnderReviewStageDto;
-import com.coder.springjwt.dtos.sellerPayloads.productOverviewDtos.ProductDetailsOverviewDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
-import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.services.adminServices.productStageServices.productApprovedStageService.ProductUnderReviewStageService;
@@ -11,18 +9,12 @@ import com.coder.springjwt.services.sellerServices.productOverviewService.imple.
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 @Slf4j
