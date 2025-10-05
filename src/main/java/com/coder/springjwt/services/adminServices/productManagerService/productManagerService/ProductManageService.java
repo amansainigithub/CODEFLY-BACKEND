@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.adminServices.productManagerService;
+package com.coder.springjwt.services.adminServices.productManagerService.productManagerService;
 
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
 import org.springframework.http.ResponseEntity;

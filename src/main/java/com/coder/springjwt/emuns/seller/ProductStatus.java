@@ -4,7 +4,9 @@ public enum ProductStatus {
 
     UNDER_REVIEW,
     APPROVED,
-    REJECTED,
+
+    DIS_APPROVED,
+
     DRAFT,
 
 }

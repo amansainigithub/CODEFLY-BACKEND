@@ -2,7 +2,7 @@ package com.coder.springjwt.controllers.admin.productManagerController;
 
 import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
-import com.coder.springjwt.services.adminServices.productManagerService.ProductManageService;
+import com.coder.springjwt.services.adminServices.productManagerService.productManagerService.ProductManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,8 +26,8 @@ public class ProductManagerController {
     @PostMapping(AdminUrlMappings.UPDATE_PRODUCT_DETAILS)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateProductDetails(@RequestBody ProductDetailsDto productDetailsDto ,@PathVariable long productId  ) {
-        System.out.println("productId ID :: " + productId);
         return this.productManageService.updateProductDetails(productDetailsDto , productId);
     }
+
 
 }

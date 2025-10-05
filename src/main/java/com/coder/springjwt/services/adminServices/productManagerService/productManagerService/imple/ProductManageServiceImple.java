@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.adminServices.productManagerService.imple;
+package com.coder.springjwt.services.adminServices.productManagerService.productManagerService.imple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
@@ -15,7 +15,7 @@ import com.coder.springjwt.repository.adminRepository.categories.VariantCategory
 import com.coder.springjwt.repository.adminRepository.chargeConfigRepo.ChargeConfigRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductRootRepo;
-import com.coder.springjwt.services.adminServices.productManagerService.ProductManageService;
+import com.coder.springjwt.services.adminServices.productManagerService.productManagerService.ProductManageService;
 import com.coder.springjwt.services.sellerServices.sellerProductService.imple.ProductServiceHelper;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -225,6 +225,7 @@ public class ProductManageServiceImple implements ProductManageService {
 
 
 
+
     public String getFormatDate() {
         // Current Date
         LocalDate today = LocalDate.now();
@@ -265,5 +266,9 @@ public class ProductManageServiceImple implements ProductManageService {
         }
         return null;
     }
+
+
+
+
 
 }
