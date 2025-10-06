@@ -197,8 +197,16 @@ public class AdminUrlMappings {
     //PRODUCT APPROVAL CONTROLLER
     public static final String PRODUCT_APPROVAL_CONTROLLER = ADMIN_AUTHORIZE_URL + "/productApprovalController";
     public static final String PRODUCT_APPROVED = "/productApproved/{productId}";
-
     public static final String PRODUCT_DIS_APPROVED = "/productDisApproved/{productId}";
 
+
+    //PRODUCT REJECTION REASON CONTROLLER
+    public static final String PRODUCT_REJECTION_REASON_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productRejectionReasonController";
+    public static final String  CREATE_REJECTION_REASON= "/createRejectionReason";
+    public static final String  GET_REJECTION_REASONS= "/getRejectionReasons";
+    public static final String  DELETE_REJECTION_REASON= "/deleteRejectionReason/{rejectionId}";
+    public static final String  GET_REJECTION_REASON_BY_ID= "/getRejectionReasonById/{rejectionId}";
+
+    public static final String  UPDATE_REJECTION_REASON= "/updateRejectionReason";
 
 }
