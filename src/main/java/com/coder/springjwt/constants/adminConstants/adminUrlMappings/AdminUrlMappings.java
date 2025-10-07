@@ -178,9 +178,18 @@ public class AdminUrlMappings {
     public static final String  UPDATE_CHARGE_CONFIG= "/updateChargeConfig";
 
 
-    //PRODUCT STAGES CONTROLLER
+
+
+    //PRODUCT UNDER-REVIEW STAGES CONTROLLER
     public static final String PRODUCT_UNDER_REVIEW_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productUnderReviewStageController";
     public static final String  PRODUCT_UNDER_REVIEW_STAGE= "/productUnderReviewStage";
+
+
+    //PRODUCT UNDER-REVIEW STAGES CONTROLLER
+    public static final String PRODUCT_APPROVED_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productApprovedStageController";
+    public static final String  PRODUCT_APPROVED_STAGE= "/productApprovedStage";
+
+
 
 
     //MANAGE PRODUCT BY ADMIN CONTROLLER

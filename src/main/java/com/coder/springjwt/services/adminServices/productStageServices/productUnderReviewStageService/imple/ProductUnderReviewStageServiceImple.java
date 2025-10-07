@@ -1,11 +1,11 @@
-package com.coder.springjwt.services.adminServices.productStageServices.productApprovedStageService.imple;
+package com.coder.springjwt.services.adminServices.productStageServices.productUnderReviewStageService.imple;
 
 import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductUnderReviewStageDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
+import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
-import com.coder.springjwt.services.adminServices.productStageServices.productApprovedStageService.ProductUnderReviewStageService;
-import com.coder.springjwt.services.sellerServices.productOverviewService.imple.ProductOverviewServiceImple;
+import com.coder.springjwt.services.adminServices.productStageServices.productUnderReviewStageService.ProductUnderReviewStageService;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,13 @@ public class ProductUnderReviewStageServiceImple implements ProductUnderReviewSt
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
 
+    @Autowired
+    private UserHelper userHelper;
+
     @Override
     public ResponseEntity<?> productUnderReviewStage() {
         try {
-            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+            log.info(ProductUnderReviewStageServiceImple.class.getName() + " working....");
 
             List<ProductDetailsModel> productDetailsData = this.productDetailsRepo
                     .findByProductStatus(ProductStatus.UNDER_REVIEW.toString() , Sort.by("productKey").descending());
@@ -63,4 +66,7 @@ public class ProductUnderReviewStageServiceImple implements ProductUnderReviewSt
             return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
         }
     }
+
+
+
 }

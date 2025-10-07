@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(AdminUrlMappings.PRODUCT_APPROVAL_CONTROLLER)
 public class ProductApprovalController {
-
     @Autowired
     private ProductApprovalService productApprovalService;
 
@@ -28,8 +27,6 @@ public class ProductApprovalController {
         {
             e.printStackTrace();
         }
-
-
         return this.productApprovalService.productApproved( productId );
     }
 

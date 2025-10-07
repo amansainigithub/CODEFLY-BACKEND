@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface ProductUnderReviewStageService {
-    ResponseEntity<?> productUnderReviewStage();
+public interface ProductApprovedStageService {
+
+    ResponseEntity<?> productApprovedStage(Integer page, Integer size);
 }
