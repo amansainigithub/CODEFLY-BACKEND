@@ -206,7 +206,9 @@ public class AdminUrlMappings {
     //PRODUCT APPROVAL CONTROLLER
     public static final String PRODUCT_APPROVAL_CONTROLLER = ADMIN_AUTHORIZE_URL + "/productApprovalController";
     public static final String PRODUCT_APPROVED = "/productApproved/{productId}";
-    public static final String PRODUCT_DIS_APPROVED = "/productDisApproved/{productId}";
+    public static final String PRODUCT_DIS_APPROVED = "/productDisApproved/{productId}/{reasonId}/{description}";
+    public static final String  GET_REJECTION_REASONS_LIST= "/getRejectionReasonsList";
+
 
 
     //PRODUCT REJECTION REASON CONTROLLER

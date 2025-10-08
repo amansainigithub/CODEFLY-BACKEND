@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.List;
 
@@ -83,6 +84,21 @@ public class ProductDetailsModel extends BaseEntity {
 
     //Product Discount
     private String productDiscount;
+
+    //Product Approved and Dis-Approved DateTime and ProductDis-Approved
+    private String productApprovedDate;
+    private String productApprovedTime;
+    private String productDisApprovedDate;
+    private String productDisApprovedTime;
+
+    //Approved By
+    private String approvedBy;
+
+    //Product Approved Reason only Current Reason Stored--
+    private String productApprovedReason;
+
+    //Product Dis Approved Description
+    private String productDisApprovedDesc;
 
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
