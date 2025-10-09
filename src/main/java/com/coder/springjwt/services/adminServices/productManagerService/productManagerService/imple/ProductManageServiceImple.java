@@ -131,8 +131,8 @@ public class ProductManageServiceImple implements ProductManageService {
                     count++;
                 }
 
-                System.out.println("productPrice :: " + productPrice);
-                System.out.println("productMrp :: " + productMrp);
+                log.info("productPrice :: " + productPrice);
+                log.info("productMrp :: " + productMrp);
 
                 //Calculate TAX Information Starting...
                 //GST
