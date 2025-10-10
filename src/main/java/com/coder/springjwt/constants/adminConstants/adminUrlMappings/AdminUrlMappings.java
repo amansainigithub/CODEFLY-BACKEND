@@ -185,13 +185,17 @@ public class AdminUrlMappings {
     public static final String  PRODUCT_UNDER_REVIEW_STAGE= "/productUnderReviewStage";
 
 
-    //PRODUCT UNDER-REVIEW STAGES CONTROLLER
+    //PRODUCT APPROVED STAGES CONTROLLER
     public static final String PRODUCT_APPROVED_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productApprovedStageController";
     public static final String  PRODUCT_APPROVED_STAGE= "/productApprovedStage";
 
     //PRODUCT DIS-APPROVED STAGES CONTROLLER
     public static final String PRODUCT_DIS_APPROVED_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productDisApprovedStageController";
     public static final String  PRODUCT_DIS_APPROVED_STAGE= "/productDisApprovedStage";
+
+    //PRODUCT DIS-APPROVED STAGES CONTROLLER
+    public static final String PRODUCT_DRAFT_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productDraftStageController";
+    public static final String  PRODUCT_DRAFT_STAGE= "/productDraftStage";
 
 
 

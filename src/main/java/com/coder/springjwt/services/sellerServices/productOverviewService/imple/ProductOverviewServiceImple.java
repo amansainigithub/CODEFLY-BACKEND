@@ -1,6 +1,9 @@
 package com.coder.springjwt.services.sellerServices.productOverviewService.imple;
 
+import com.coder.springjwt.dtos.sellerPayloads.productOverviewDtos.UserAllProductOverviewDto;
 import com.coder.springjwt.dtos.sellerPayloads.productOverviewDtos.ProductDetailsOverviewDto;
+import com.coder.springjwt.dtos.sellerPayloads.productOverviewDtos.ProductDisApprovedOverviewDto;
+import com.coder.springjwt.dtos.sellerPayloads.productOverviewDtos.ProductDraftOverviewDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
@@ -142,5 +145,151 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
     }
 
 
+
+    @Override
+    public ResponseEntity<?> getDisApprovedProduct(Integer page, Integer size, String username) {
+        try {
+            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+
+            // VALIDATE CURRENT USER
+            Map<String, String> currentUser = userHelper.getCurrentUser();
+            System.out.println("Seller Name  :: " + currentUser.get("username"));
+            if(!currentUser.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
+
+            Page<ProductDetailsModel> productDetailsPage = this.productDetailsRepo
+                    .findByUsernameAndProductStatus(
+                            currentUser.get("username"),
+                            ProductStatus.DIS_APPROVED.toString(),
+                            PageRequest.of(page, size, Sort.by("productKey").descending())
+                    );
+
+            List<ProductDisApprovedOverviewDto> overviewList = new ArrayList<>();
+            for (ProductDetailsModel pdm : productDetailsPage) {
+                ProductDisApprovedOverviewDto overviewDto = new ProductDisApprovedOverviewDto();
+                overviewDto.setId(pdm.getId());
+                overviewDto.setProductName(pdm.getProductName());
+                overviewDto.setUserId(pdm.getUserId());
+                overviewDto.setProductStatus(pdm.getProductStatus());
+                overviewDto.setProductKey(pdm.getProductKey());
+                overviewDto.setProductDate(pdm.getProductDate());
+                overviewDto.setProductTime(pdm.getProductTime());
+                overviewDto.setVariantId(String.valueOf(pdm.getVariantId()));
+                try {
+                    overviewDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
+                } catch (Exception e) {
+                    overviewDto.setProductMainFile("BLANK");
+                }
+                overviewList.add(overviewDto);
+            }
+
+            // DTO list ko Page Wrapping
+            Page<ProductDisApprovedOverviewDto> overviewPageData =
+                    new PageImpl<>(overviewList, productDetailsPage.getPageable(), productDetailsPage.getTotalElements());
+
+            return ResponseGenerator.generateSuccessResponse(overviewPageData, "SUCCESS");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getDraftProduct(Integer page, Integer size, String username) {
+        try {
+            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+
+            // VALIDATE CURRENT USER
+            Map<String, String> currentUser = userHelper.getCurrentUser();
+            System.out.println("Seller Name  :: " + currentUser.get("username"));
+            if(!currentUser.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
+
+            Page<ProductDetailsModel> productDetailsPage = this.productDetailsRepo
+                    .findByUsernameAndProductStatus(
+                            currentUser.get("username"),
+                            ProductStatus.DRAFT.toString(),
+                            PageRequest.of(page, size, Sort.by("productKey").descending())
+                    );
+
+            List<ProductDraftOverviewDto> overviewList = new ArrayList<>();
+            for (ProductDetailsModel pdm : productDetailsPage) {
+                ProductDraftOverviewDto overviewDto = new ProductDraftOverviewDto();
+                overviewDto.setId(pdm.getId());
+                overviewDto.setProductName(pdm.getProductName());
+                overviewDto.setUserId(pdm.getUserId());
+                overviewDto.setProductStatus(pdm.getProductStatus());
+                overviewDto.setProductKey(pdm.getProductKey());
+                overviewDto.setProductDate(pdm.getProductDate());
+                overviewDto.setProductTime(pdm.getProductTime());
+                overviewDto.setVariantId(String.valueOf(pdm.getVariantId()));
+                try {
+                    overviewDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
+                } catch (Exception e) {
+                    overviewDto.setProductMainFile("BLANK");
+                }
+                overviewList.add(overviewDto);
+            }
+            // DTO list ko Page Wrapping
+            Page<ProductDraftOverviewDto> overviewPageData =
+                    new PageImpl<>(overviewList, productDetailsPage.getPageable(), productDetailsPage.getTotalElements());
+
+            return ResponseGenerator.generateSuccessResponse(overviewPageData, "SUCCESS");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> fetchAllUserProduct(Integer page, Integer size, String username) {
+        try {
+            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+
+            // VALIDATE CURRENT USER
+            Map<String, String> currentUser = userHelper.getCurrentUser();
+            System.out.println("Seller Name  :: " + currentUser.get("username"));
+            if(!currentUser.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
+
+            Page<ProductDetailsModel> userProductData = this.productDetailsRepo
+                                            .findByUsername( currentUser.get("username"),
+                                             PageRequest.of(page, size, Sort.by("productKey").descending()) );
+
+            List<UserAllProductOverviewDto> overviewList = new ArrayList<>();
+            for (ProductDetailsModel pdm : userProductData) {
+                UserAllProductOverviewDto overviewDto = new UserAllProductOverviewDto();
+                overviewDto.setId(pdm.getId());
+                overviewDto.setProductName(pdm.getProductName());
+                overviewDto.setUserId(pdm.getUserId());
+                overviewDto.setProductStatus(pdm.getProductStatus());
+                overviewDto.setProductKey(pdm.getProductKey());
+                overviewDto.setProductDate(pdm.getProductDate());
+                overviewDto.setProductTime(pdm.getProductTime());
+                overviewDto.setVariantId(String.valueOf(pdm.getVariantId()));
+                try {
+                    overviewDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
+                } catch (Exception e) {
+                    overviewDto.setProductMainFile("BLANK");
+                }
+                overviewList.add(overviewDto);
+            }
+
+            // DTO list ko Page Wrapping
+            Page<UserAllProductOverviewDto> overviewPageData =
+                    new PageImpl<>(overviewList, userProductData.getPageable(), userProductData.getTotalElements());
+
+            return ResponseGenerator.generateSuccessResponse(overviewPageData, "SUCCESS");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
+        }
+    }
 
 }

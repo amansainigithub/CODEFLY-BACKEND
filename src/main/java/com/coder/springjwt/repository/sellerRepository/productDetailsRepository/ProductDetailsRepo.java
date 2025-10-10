@@ -20,4 +20,6 @@ public interface ProductDetailsRepo extends JpaRepository<ProductDetailsModel, L
     List<ProductDetailsModel> findByProductStatus(String productStatus ,Sort sort);
 
     Page<ProductDetailsModel> findByProductStatus(String productStatus ,Pageable pageable);
+
+    Page<ProductDetailsModel> findByUsername(String username ,Pageable pageable);
 }

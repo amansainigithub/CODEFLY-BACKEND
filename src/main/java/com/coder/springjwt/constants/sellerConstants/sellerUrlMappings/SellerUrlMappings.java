@@ -80,8 +80,10 @@ public class SellerUrlMappings {
     public static final String PRODUCT_OVERVIEW_CONTROLLER = SELLER_AUTH_URL + "/productOverviewController";
     public static final String GET_UNDER_REVIEW_PRODUCT = "/getUnderReviewProduct";
     public static final String GET_APPROVED_PRODUCT = "/getApprovedProduct";
-    public static final String GET_OLD_PRODUCT_DETAILS = "/getOldProductDetails";
+    public static final String GET_DIS_APPROVED_PRODUCT = "/getDisApprovedProduct";
+    public static final String GET_DRAFT_PRODUCT = "/getDraftProduct";
 
+    public static final String FETCH_ALL_USER_PRODUCTS = "/fetchAllUserProduct";
 
 
     //ENGINE X BY ADMIN

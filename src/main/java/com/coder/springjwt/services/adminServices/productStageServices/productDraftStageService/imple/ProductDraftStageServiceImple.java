@@ -1,10 +1,11 @@
-package com.coder.springjwt.services.adminServices.productStageServices.productApprovedStageService.imple;
+package com.coder.springjwt.services.adminServices.productStageServices.productDraftStageService.imple;
 
-import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductApprovedStageDto;
+import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductDisApprovedStageDto;
+import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductDraftStageDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
-import com.coder.springjwt.services.adminServices.productStageServices.productApprovedStageService.ProductApprovedStageService;
+import com.coder.springjwt.services.adminServices.productStageServices.productDraftStageService.ProductDraftStageService;
 import com.coder.springjwt.services.adminServices.productStageServices.productUnderReviewStageService.imple.ProductUnderReviewStageServiceImple;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -22,25 +23,26 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ProductApprovedStageServiceImple implements ProductApprovedStageService {
+public class ProductDraftStageServiceImple implements ProductDraftStageService {
 
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
 
+
     @Override
-    public ResponseEntity<?> productApprovedStage(Integer page, Integer size) {
+    public ResponseEntity<?> productDraftStage(Integer page, Integer size) {
         try {
             log.info("Data fetch Success :::: {}" + ProductUnderReviewStageServiceImple.class.getName());
 
             Page<ProductDetailsModel> productDetails = this.productDetailsRepo.findByProductStatus(
-                    ProductStatus.APPROVED.toString(),
+                    ProductStatus.DRAFT.toString(),
                     PageRequest.of(page, size, Sort.by("productKey").descending())
             );
 
             // DTO list
-            List<ProductApprovedStageDto> dtoList = productDetails.getContent()
+            List<ProductDraftStageDto> draftData = productDetails.getContent()
                     .stream()
-                    .map(p -> new ProductApprovedStageDto(
+                    .map(p -> new ProductDraftStageDto(
                             p.getId(),
                             p.getUserId(),
                             p.getProductName(),
@@ -57,7 +59,7 @@ public class ProductApprovedStageServiceImple implements ProductApprovedStageSer
 
             // Response body with pagination info
             Map<String, Object> response = new HashMap<>();
-            response.put("content", dtoList);
+            response.put("content", draftData);
             response.put("currentPage", productDetails.getNumber());
             response.put("totalElements", productDetails.getTotalElements());
             response.put("totalPages", productDetails.getTotalPages());

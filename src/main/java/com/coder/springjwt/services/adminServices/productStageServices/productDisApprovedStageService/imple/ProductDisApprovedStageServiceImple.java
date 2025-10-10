@@ -59,7 +59,7 @@ public class ProductDisApprovedStageServiceImple implements ProductDisApprovedSt
             Map<String, Object> response = new HashMap<>();
             response.put("content", dtoList);
             response.put("currentPage", productDetails.getNumber());
-            response.put("totalItems", productDetails.getTotalElements());
+            response.put("totalElements", productDetails.getTotalElements());
             response.put("totalPages", productDetails.getTotalPages());
 
             return ResponseGenerator.generateSuccessResponse(response , "Success");
