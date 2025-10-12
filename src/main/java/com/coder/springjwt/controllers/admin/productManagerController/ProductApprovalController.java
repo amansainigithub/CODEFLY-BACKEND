@@ -16,14 +16,6 @@ public class ProductApprovalController {
     @PostMapping(AdminUrlMappings.PRODUCT_APPROVED)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> productApproved(@PathVariable long productId  ) {
-
-        try {
-            Thread.sleep(3000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productApprovalService.productApproved( productId );
     }
 
@@ -32,13 +24,6 @@ public class ProductApprovalController {
     public ResponseEntity<?> productDisApproved(@PathVariable long productId  ,
                                                 @PathVariable long reasonId ,
                                                 @PathVariable String description) {
-        try {
-            Thread.sleep(2000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productApprovalService.productDisApproved( productId , reasonId, description);
     }
 

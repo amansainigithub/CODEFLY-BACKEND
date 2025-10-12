@@ -14,8 +14,6 @@ import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -45,24 +43,17 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Logger logger =  LoggerFactory.getLogger(VariantCategoryServiceImple.class);
-
-
     @Override
     public ResponseEntity<?> saveVariantCategory(VariantCategoryDto variantCategoryDto) {
         MessageResponse response =new MessageResponse();
         try {
             VariantCategoryModel variantCategoryModel=  modelMapper.map(variantCategoryDto , VariantCategoryModel.class);
-            logger.info("Mapper Convert Success");
 
             Optional<TypeCategoryModel> typeOptional =
                     this.typeCategoryRepo.findById(Long.parseLong(variantCategoryDto.getTypeCategoryId()));
 
-            logger.info("bornOptional Running 1.....");
-            logger.info("IS pResent :: "+String.valueOf(typeOptional.isPresent()));
-
             if(typeOptional.isPresent()) {
-                logger.info("Data Present Success");
+                log.info("Data Present Success");
                 variantCategoryModel.setTypeCategoryModel(typeOptional.get());
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -70,13 +61,13 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
                 //save Category
                 this.variantCategoryRepo.save(variantCategoryModel);
 
-                logger.info("Born-Category Saved Success");
+                log.info("Born-Category Saved Success");
                 response.setMessage("Born-Category Saved Success");
                 response.setStatus(HttpStatus.OK);
                 return ResponseGenerator.generateSuccessResponse(response, "Success");
             }
             else{
-                logger.error("Type Category Not Found Via Id : "+ variantCategoryDto.getTypeCategoryId());
+                log.error("Type Category Not Found Via Id : "+ variantCategoryDto.getTypeCategoryId());
                 response.setMessage("Type Category Not Found Via Id : "+ variantCategoryDto.getTypeCategoryId());
                 response.setStatus(HttpStatus.BAD_REQUEST);
                 return ResponseGenerator.generateBadRequestResponse(response);
@@ -84,7 +75,7 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
         }
         catch (DataIntegrityViolationException ex) {
             // Handle exception here
-            logger.error("Duplicate entry error: ");
+            log.error("Duplicate entry error: ");
             response.setMessage("Duplicate entry error: ");
             response.setStatus(HttpStatus.BAD_REQUEST);
             return ResponseGenerator.generateBadRequestResponse(response);
@@ -122,14 +113,14 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
                     () -> new CategoryNotFoundException("Category id not Found"));
 
             this.variantCategoryRepo.deleteById(data.getId());
-            logger.info("Delete Success => Category id :: " + categoryId );
+            log.info("Delete Success => Category id :: " + categoryId );
             return ResponseGenerator.generateSuccessResponse("Delete Success" , "Success");
 
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Category Could Not deleted");
+            log.error("Category Could Not deleted");
             return ResponseGenerator.generateBadRequestResponse
                     ("Category Could not deleted :: " + e.getMessage() , "Error");
         }
@@ -140,7 +131,7 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
         MessageResponse response = new MessageResponse();
         try {
 
-            logger.info(variantCategoryDto.toString());
+            log.info(variantCategoryDto.toString());
 
             //get Born Data
             VariantCategoryModel variantData =   this.variantCategoryRepo.findById(variantCategoryDto.getId()).
@@ -159,13 +150,13 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
 
             this.variantCategoryRepo.save(variantCategoryModel);
 
-            logger.info("Data Update Success");
+            log.info("Data Update Success");
             return ResponseGenerator.generateSuccessResponse("Success" , "Data update Success");
 
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.info("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("failed" ," Data Update Failed");
         }
@@ -177,13 +168,13 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
             VariantCategoryModel variantCategoryModel = this.variantCategoryRepo.findById(categoryId).orElseThrow(
                     () -> new RuntimeException("Data not Found ! Error"));
             VariantCategoryDto variantCategoryDto = modelMapper.map(variantCategoryModel, VariantCategoryDto.class);
-            logger.info("Born Category Fetch Success !");
+            log.info("Born Category Fetch Success !");
             return ResponseGenerator.generateSuccessResponse(variantCategoryDto , "Success");
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("");
+            log.error("");
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , "Error");
         }
     }
@@ -198,7 +189,7 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
                 bucketService.deleteFile(variantCategoryModel.getCategoryFile());
             }catch (Exception e)
             {
-                logger.error("File Not deleted Id:: " + variantCategoryId);
+                log.error("File Not deleted Id:: " + variantCategoryId);
             }
             //upload New File
             BucketModel bucketModel = bucketService.uploadFile(file);
@@ -209,13 +200,13 @@ public class VariantCategoryServiceImple implements VariantCategoryService {
                 return ResponseGenerator.generateSuccessResponse("Success","File Update Success");
             }
             else {
-                logger.error("Bucket Model is null | please check AWS bucket configuration");
+                log.error("Bucket Model is null | please check AWS bucket configuration");
                 throw new Exception("Bucket AWS is Empty");
             }
         }
         catch (Exception e)
         {
-            logger.info("Exception" , e.getMessage());
+            log.info("Exception" , e.getMessage());
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("Error" ,"File Not Update");
         }

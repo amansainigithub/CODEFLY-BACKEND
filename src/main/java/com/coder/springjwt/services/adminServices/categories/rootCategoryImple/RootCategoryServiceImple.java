@@ -15,8 +15,6 @@ import com.coder.springjwt.util.ResponseGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -40,7 +38,6 @@ public class RootCategoryServiceImple implements RootCategoryService {
     private ModelMapper modelMapper;
     @Autowired
     private ObjectMapper objectMapper;
-    Logger logger =  LoggerFactory.getLogger(RootCategoryServiceImple.class);
 
 
     @Override
@@ -52,7 +49,7 @@ public class RootCategoryServiceImple implements RootCategoryService {
 
             //Convert DTO TO Model Class...
             RootCategoryModel rootCategoryModel =  modelMapper.map(rootCategoryDto , RootCategoryModel.class);
-            logger.info("model mapper Conversion Success");
+            log.info("model mapper Conversion Success");
 
             //save Category
             this.rootCategoryRepo.save(rootCategoryModel);
@@ -100,14 +97,14 @@ public class RootCategoryServiceImple implements RootCategoryService {
                     () -> new CategoryNotFoundException("Category id not Found"));
 
             this.rootCategoryRepo.deleteById(data.getId());
-            logger.info("Delete Success => Category id :: " + categoryId );
+            log.info("Delete Success => Category id :: " + categoryId );
             return ResponseGenerator.generateSuccessResponse("Delete Success" , "Success");
 
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Category Could Not deleted");
+            log.error("Category Could Not deleted");
             return ResponseGenerator.generateBadRequestResponse
                     ("Category Could not deleted :: " + e.getMessage() , "Error");
         }
@@ -123,7 +120,7 @@ public class RootCategoryServiceImple implements RootCategoryService {
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("");
+            log.error(e.getMessage());
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , "Error");
         }
     }
@@ -132,24 +129,24 @@ public class RootCategoryServiceImple implements RootCategoryService {
     public ResponseEntity<?> updateRootCategory(RootCategoryDto rootCategoryDto) {
         MessageResponse response = new MessageResponse();
         try {
-            logger.info(rootCategoryDto.toString());
-            logger.info("Update Process Starting....");
+            log.info(rootCategoryDto.toString());
+            log.info("Update Process Starting....");
             RootCategoryModel rootData =  this.rootCategoryRepo.findById(rootCategoryDto.getId()).orElseThrow(()->new DataNotFoundException("Dara not Found"));
 
             //Delete Bucket -->AWS
-            logger.info("File Delete Success AWS");
+            log.info("File Delete Success AWS");
             this.bucketService.deleteFile(rootData.getCategoryFile());
 
             RootCategoryModel rootCategoryModel =  modelMapper.map(rootCategoryDto , RootCategoryModel.class);
             this.rootCategoryRepo.save(rootCategoryModel);
 
-            logger.info("Data Update Success");
+            log.info("Data Update Success");
             return ResponseGenerator.generateSuccessResponse("Success" , "Data update Success");
 
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.error("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("failed" ," Data Update Failed");
         }
@@ -172,13 +169,13 @@ public class RootCategoryServiceImple implements RootCategoryService {
                 return ResponseGenerator.generateSuccessResponse("Success","File Update Success");
             }
             else {
-                logger.error("Bucket Model is null | please check AWS bucket configuration");
+                log.error("Bucket Model is null | please check AWS bucket configuration");
                 throw new Exception("Bucket AWS is Empty");
             }
         }
         catch (Exception e)
         {
-            logger.info("Exception" , e.getMessage());
+            log.error("Exception" , e.getMessage());
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("Error" ,"File Not Update");
         }

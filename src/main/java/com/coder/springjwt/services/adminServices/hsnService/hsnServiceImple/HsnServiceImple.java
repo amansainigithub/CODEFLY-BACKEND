@@ -13,8 +13,6 @@ import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -35,17 +33,16 @@ public class HsnServiceImple implements HsnCodeService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Logger logger  = LoggerFactory.getLogger(HsnServiceImple.class);
 
     @Override
     public ResponseEntity<?> saveHsn(HsnCodesDto hsnCodesDto) {
         MessageResponse response =new MessageResponse();
         try {
             HsnCodes hsnCodes=  modelMapper.map(hsnCodesDto , HsnCodes.class);
-            logger.info("Object Mapper Convert Success");
+            log.info("Object Mapper Convert Success");
 
                 this.hsnRepository.save(hsnCodes);
-                logger.info("HSN Saved Success");
+            log.info("HSN Saved Success");
 
                 response.setMessage("HSN Saved Success");
                 response.setStatus(HttpStatus.OK);
@@ -73,14 +70,14 @@ public class HsnServiceImple implements HsnCodeService {
                         () -> new CategoryNotFoundException("HSN Code id not Found"));
 
                 this.hsnRepository.deleteById(hsnCode.getId());
-                logger.info("Delete Success => HSN id :: " + hsnCodeId );
+                log.info("Delete Success => HSN id :: " + hsnCodeId );
                 return ResponseGenerator.generateSuccessResponse("Delete Success" , AdminMessageResponse.SUCCESS);
 
             }
             catch (Exception e)
             {
                 e.printStackTrace();
-                logger.error("HSN Code Could Not be deleted");
+                log.error("HSN Code Could Not be deleted");
                 return ResponseGenerator.generateBadRequestResponse
                         ("HSN Could not deleted :: " + e.getMessage() , AdminMessageResponse.FAILED);
             }
@@ -92,13 +89,13 @@ public class HsnServiceImple implements HsnCodeService {
             HsnCodes  hsnCodes= this.hsnRepository.findById(hsnCodeId).orElseThrow(
                     () -> new RuntimeException("Data not Found ! Error"));
             HsnCodesDto hsnCodesDto = modelMapper.map(hsnCodes, HsnCodesDto.class);
-            logger.info("Hsn Code Fetch Success !");
+            log.info("Hsn Code Fetch Success !");
             return ResponseGenerator.generateSuccessResponse(hsnCodesDto , AdminMessageResponse.SUCCESS);
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Failed To fetch Hsn Code By Id");
+            log.error("Failed To fetch Hsn Code By Id");
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , AdminMessageResponse.FAILED);
         }
     }
@@ -106,7 +103,7 @@ public class HsnServiceImple implements HsnCodeService {
     @Override
     public ResponseEntity<?> updateHsnCode(HsnCodesDto hsnCodesDto) {
         try {
-            logger.info("Update Child Process Starting....");
+            log.info("Update Child Process Starting....");
             log.info("ID :: "  + hsnCodesDto.getId());
             this.hsnRepository.findById(hsnCodesDto.getId())
                                     .orElseThrow(()->new DataNotFoundException("Data not Found"));
@@ -114,13 +111,13 @@ public class HsnServiceImple implements HsnCodeService {
             HsnCodes hsnCodes =  modelMapper.map(hsnCodesDto , HsnCodes.class);
             this.hsnRepository.save(hsnCodes);
 
-            logger.info("Data Updated Success");
+            log.info("Data Updated Success");
             return ResponseGenerator.generateSuccessResponse(AdminMessageResponse.SUCCESS ,
                                                                 AdminMessageResponse.DATA_UPDATE_SUCCESS);
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.info("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse(AdminMessageResponse.FAILED ,AdminMessageResponse.DATA_UPDATE_FAILED);
         }

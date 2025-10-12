@@ -19,7 +19,6 @@ import com.coder.springjwt.repository.adminRepository.categories.VariantCategory
 import com.coder.springjwt.repository.adminRepository.chargeConfigRepo.ChargeConfigRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductRootRepo;
-import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductSizeRowsRepo;
 import com.coder.springjwt.services.sellerServices.sellerProductService.ProductService;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +45,6 @@ public class ProductServiceImple implements ProductService {
     private ModelMapper modelMapper;
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
-    @Autowired
-    private ProductSizeRowsRepo productSizeRowsRepo;
     @Autowired
     private ProductRootRepo productRootRepo;
     @Autowired

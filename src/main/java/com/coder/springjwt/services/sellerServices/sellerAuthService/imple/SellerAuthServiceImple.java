@@ -1,9 +1,7 @@
 package com.coder.springjwt.services.sellerServices.sellerAuthService.imple;
 
 import com.coder.springjwt.constants.OtpMessageContent;
-import com.coder.springjwt.constants.sellerConstants.sellerEmailConstants.SellerEmailConstants;
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
-import com.coder.springjwt.dtos.emailPayloads.EmailHtmlPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerMobilePayload;
 import com.coder.springjwt.helpers.OsLeaked.OsLeaked;
@@ -15,14 +13,8 @@ import com.coder.springjwt.models.sellerModels.SellerMobile.SellerMobile;
 import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
-import com.coder.springjwt.repository.sellerRepository.sellerBankRepository.SellerBankRepository;
-import com.coder.springjwt.repository.sellerRepository.sellerGstRepository.SellerTaxRepository;
 import com.coder.springjwt.repository.sellerRepository.sellerMobileRepository.SellerMobileRepository;
-import com.coder.springjwt.repository.sellerRepository.sellerPickupRepository.SellerPickUpRepository;
-import com.coder.springjwt.repository.sellerRepository.sellerStoreRepository.SellerStoreRepository;
-import com.coder.springjwt.security.jwt.JwtUtils;
 import com.coder.springjwt.services.MobileOtpService.MobileOtpService;
-import com.coder.springjwt.services.emailServices.EmailService.EmailService;
 import com.coder.springjwt.services.sellerServices.sellerAuthService.SellerAuthService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
@@ -58,33 +50,12 @@ public class SellerAuthServiceImple implements SellerAuthService {
     private PasswordEncoder encoder;
 
     @Autowired
-    private JwtUtils jwtUtils;
-
-    @Autowired
-    private EmailService simpleEmailService;
-
-    @Autowired
-    private SellerTaxRepository sellerTaxRepository;
-
-    @Autowired
     private MobileOtpService mobileOtpService;
-
-    private static final long OTP_VALIDITY_DURATION = 1;
 
     @Autowired
     private ModelMapper modelMapper;
 
-    @Autowired
-    private EmailService emailService;
-
-    @Autowired
-    private SellerPickUpRepository sellerPickUpRepository;
-
-    @Autowired
-    private SellerBankRepository sellerBankRepository;
-
-    @Autowired
-    private SellerStoreRepository sellerStoreRepository;
+    private static final long OTP_VALIDITY_DURATION = 1;
 
 
     @Override
@@ -233,13 +204,6 @@ public class SellerAuthServiceImple implements SellerAuthService {
         log.info("Seller Sign Up Starting..");
         MessageResponse response =new MessageResponse();
 
-//        if (userRepository.existsByUsername(sellerLoginPayload.getEmail())) {
-//            System.out.println("Username Existes");
-//            response.setMessage(SellerMessageResponse.EMAIL_ID_ALREADY_TAKEN );
-//            response.setStatus(HttpStatus.BAD_GATEWAY);
-//            return ResponseGenerator.generateBadRequestResponse(response , "Failed");
-//        }
-
         if (userRepository.existsBySellerEmailAndSellerEmailVerify(sellerLoginPayload.getEmail() , "N")) {
             log.info("Email Exist but Not Verified");
             response.setMessage( SellerMessageResponse.EMAIL_ID_ALREADY_TAKEN );
@@ -298,20 +262,6 @@ public class SellerAuthServiceImple implements SellerAuthService {
 
             userRepository.save(user);
             log.info("Data Saved Success :: usr");
-
-            //send Mail To seller
-            log.info("mail Process Starting");
-            EmailHtmlPayload emailHtmlPayload = new EmailHtmlPayload();
-            emailHtmlPayload.setRole("ROLE_SELLER");
-            emailHtmlPayload.setSubject("Registration Complete Successfully");
-            emailHtmlPayload.setAreaMode("SELLER_REGISTRATION");
-            System.out.println("sellerLoginPayload.getEmail( ==== :: "+ sellerLoginPayload.getEmail());
-            emailHtmlPayload.setRecipient(sellerLoginPayload.getEmail());
-            emailHtmlPayload.setHtmlContent(SellerEmailConstants.registrationCompleted());
-            emailHtmlPayload.setStatus("");
-
-            this.emailService.sendHtmlMail(emailHtmlPayload);
-            log.info("mail Sent Success");
 
             response.setMessage(SellerMessageResponse.SELLER_ACCOUNT_CREATED_SUCCESS);
             response.setStatus(HttpStatus.CREATED);

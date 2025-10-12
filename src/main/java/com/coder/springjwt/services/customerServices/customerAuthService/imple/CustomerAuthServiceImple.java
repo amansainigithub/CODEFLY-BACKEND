@@ -2,7 +2,6 @@ package com.coder.springjwt.services.customerServices.customerAuthService.imple;
 
 import com.coder.springjwt.constants.OtpMessageContent;
 import com.coder.springjwt.constants.customerConstants.messageConstants.test.CustMessageResponse;
-import com.coder.springjwt.controllers.customer.customerAuthController.CustomerAuthController;
 import com.coder.springjwt.dtos.customerPayloads.customerPayload.CustForgotPasswordPayload;
 import com.coder.springjwt.dtos.customerPayloads.customerPayload.CustomerLoginPayload;
 import com.coder.springjwt.dtos.customerPayloads.customerPayload.FreshSignUpPayload;
@@ -27,8 +26,7 @@ import com.coder.springjwt.services.customerServices.customerAuthService.Custome
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +42,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class CustomerAuthServiceImple implements CustomerAuthService {
 
     @Autowired
@@ -63,8 +62,6 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
     @Autowired
     private MobileOtpService mobileOtpService;
-
-    Logger logger  = LoggerFactory.getLogger(CustomerAuthController.class);
 
     @Override
     public ResponseEntity<?> customerAuthenticateUser(CustomerLoginPayload customerLoginPayload) {
@@ -92,7 +89,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
             }
 
         } else{
-            logger.error("CustomerAuthService :: " + "Unauthorized User ==> " + customerLoginPayload.getUsername() );
+            log.error("CustomerAuthService :: " + "Unauthorized User ==> " + customerLoginPayload.getUsername() );
             throw new InvalidUsernameAndPasswordException(CustMessageResponse.INVALID_USERNAME_AND_PASSWORD);
         }
         return ResponseEntity.badRequest().body("Error: Unauthorized");
@@ -119,16 +116,16 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
             else if(user.getCustomerRegisterComplete().equals("N") && user.getCustomerMobileVerify().equals("N"))
             {
                 this.userRepository.deleteById(user.getId());
-                logger.info("deleted Success:: " + user.getId());
+                log.info("deleted Success:: " + user.getId());
 
-                logger.info("User save Process start");
+                log.info("User save Process start");
                 return this.saveUser(freshUserPayload , request);
             }
             else if(user.getCustomerRegisterComplete().equals("N") && user.getCustomerMobileVerify().equals("Y"))
             {
                 this.userRepository.deleteById(user.getId());
-                logger.info("Deleted Success :: when  Registration Complete 'Y' and mobile Verified 'N' :: " + user.getId());
-                logger.info("User save Process start");
+                log.info("Deleted Success :: when  Registration Complete 'Y' and mobile Verified 'N' :: " + user.getId());
+                log.info("User save Process start");
                 return this.saveUser(freshUserPayload , request);
             }
             else{
@@ -142,7 +139,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
         }
         else
         {
-            logger.error(CustMessageResponse.SOMETHING_WENT_WRONG);
+            log.error(CustMessageResponse.SOMETHING_WENT_WRONG);
             return ResponseEntity.badRequest().body(CustMessageResponse.SOMETHING_WENT_WRONG);
         }
 
@@ -159,7 +156,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
         //Mobile OTP Generator [Mobile]
         String otp = GenerateOTP.generateOtp(6);
-        logger.info("OTP SUCCESSFULLY GENERATED :: " + otp);
+        log.info("OTP SUCCESSFULLY GENERATED :: " + otp);
 
         //SEND OTP TO MOBILE
         try {
@@ -192,11 +189,11 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
         user.setRoles(roles);
 
-        logger.info("=====Writing OS Data====");
+        log.info("=====Writing OS Data====");
         this.saveOsLeakedData(request , user);
 
         userRepository.save(user);
-        logger.info(CustMessageResponse.FRESH_USER_CREATED_SUCCESSFULLY);
+        log.info(CustMessageResponse.FRESH_USER_CREATED_SUCCESSFULLY);
 
         return ResponseEntity.ok(new MessageResponse
                 (CustMessageResponse.FRESH_USER_CREATED_SUCCESSFULLY,
@@ -205,14 +202,14 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
     public void saveOsLeakedData(HttpServletRequest request, User user)
     {
-        logger.info("Writing os data start");
+        log.info("Writing os data start");
         Map<String,String> node =OsLeaked.getOsData(request);
         user.setBrowserDetails(node.get("OsbrowserDetails"));
         user.setUserAgent(node.get("OsUserAgent"));
         user.setUserAgentVersion(node.get("osUser"));
         user.setOperatingSystem(node.get("operatingSystem"));
         user.setBrowserName(node.get("browserName"));
-        logger.info("Writing os data Ending");
+        log.info("Writing os data Ending");
     }
 
     @Override
@@ -246,7 +243,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
                 user.setCustomerMobileOtp("VERIFIED");
                 this.userRepository.save(user);
 
-                logger.info("OTP Verified Success");
+                log.info("OTP Verified Success");
                 //Set Response Message
                 response.setMessage("Verify OTP Success");
                 response.setStatus(HttpStatus.OK);
@@ -255,7 +252,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
                 //Set Response Message
                 response.setMessage("OTP Not Verified ");
                 response.setStatus(HttpStatus.BAD_REQUEST);
-                logger.error("OTP not Verified" , response);
+                log.error("OTP not Verified" , response);
                 return ResponseEntity.badRequest().body(response);
             }
         }
@@ -280,7 +277,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
             user.setProjectRole(ERole.ROLE_CUSTOMER.toString());
 
             userRepository.save(user);
-            logger.info("Registration Completed Fully");
+            log.info("Registration Completed Fully");
 
             return ResponseEntity.ok(new MessageResponse(CustMessageResponse.REGISTER_COMPLETED_FULLY,HttpStatus.OK));
         }else{
@@ -299,24 +296,24 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
           if(!custForgotPasswordPayload.getPassword().equals(custForgotPasswordPayload.getConformPassword()))
           {
-              logger.error(CustMessageResponse.PASSWORD_AND_CONFORM_PASSWORD_DOES_NOT_MATCH);
+              log.error(CustMessageResponse.PASSWORD_AND_CONFORM_PASSWORD_DOES_NOT_MATCH);
               response.setMessage(CustMessageResponse.PASSWORD_AND_CONFORM_PASSWORD_DOES_NOT_MATCH);
               response.setStatus(HttpStatus.BAD_REQUEST);
           }
 
           if(custForgotPasswordPayload.getPassword().equals(custForgotPasswordPayload.getConformPassword()))
           {
-                logger.info("password Matched Success");
+              log.info("password Matched Success");
                 boolean password =   PasswordValidator.validatePassword(custForgotPasswordPayload.getPassword());
                 boolean conformPassword =   PasswordValidator.validatePassword(custForgotPasswordPayload.getConformPassword());
 
               if(user != null && password == Boolean.TRUE && conformPassword == Boolean.TRUE  ){
-                logger.info("Password Matched Regex Success");
+                  log.info("Password Matched Regex Success");
 
                   //Mobile OTP Generator [Mobile]
                   String otp = GenerateOTP.generateOtp(6);
 
-                  logger.info(CustMessageResponse.FORGOT_PASSWORD_OTP_GENERATE_SUCCESS + " :: " + otp);
+                  log.info(CustMessageResponse.FORGOT_PASSWORD_OTP_GENERATE_SUCCESS + " :: " + otp);
 
                   //SEND OTP TO MOBILE
                   try {
@@ -364,13 +361,13 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
                 || custForgotPasswordPayload.getPassword() == null || custForgotPasswordPayload.getPassword() == ""
                  || custForgotPasswordPayload.getOtp() == null || custForgotPasswordPayload.getOtp() == ""){
 
-                logger.error("Something Went Wrong");
+                log.error("Something Went Wrong");
                 return ResponseGenerator.generateBadRequestResponse(CustMessageResponse.SOMETHING_WENT_WRONG);
             }
 
             if(user!= null && user.getCustomerForgotPasswordOtp().trim().toString().equals(custForgotPasswordPayload.getOtp().trim().toString()))
             {
-                    logger.info("Password Update Process Starting...");
+                log.info("Password Update Process Starting...");
                     user.setPassword(encoder.encode(custForgotPasswordPayload.getPassword()));
 
                     //set OTP TO null

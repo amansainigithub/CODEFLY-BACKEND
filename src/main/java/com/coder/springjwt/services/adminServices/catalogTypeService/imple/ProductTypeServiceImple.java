@@ -12,8 +12,6 @@ import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -33,19 +31,16 @@ public class ProductTypeServiceImple implements ProductTypeService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Logger logger  = LoggerFactory.getLogger(ProductTypeServiceImple.class);
-
-
     @Override
     public ResponseEntity<?> saveType(ProductTypeDto productTypeDto) {
 
         MessageResponse response =new MessageResponse();
         try {
             ProductTypeModel productTypeModel =  modelMapper.map(productTypeDto, ProductTypeModel.class);
-            logger.info("Object Mapper Convert Success");
+            log.info("Object Mapper Convert Success");
 
             this.productTypeRepo.save(productTypeModel);
-            logger.info("Catalog-Type Saved Success");
+            log.info("Catalog-Type Saved Success");
 
             response.setMessage("Catalog-Type Saved Success");
             response.setStatus(HttpStatus.OK);
@@ -73,14 +68,14 @@ public class ProductTypeServiceImple implements ProductTypeService {
                     () -> new CategoryNotFoundException("Catalog Type id not Found"));
 
             this.productTypeRepo.deleteById(productTypeModel.getId());
-            logger.info("Delete Success => Type id :: " + typeId );
+            log.info("Delete Success => Type id :: " + typeId );
             return ResponseGenerator.generateSuccessResponse("Delete Success" , AdminMessageResponse.SUCCESS);
 
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Catalog Type Could Not be deleted");
+            log.error("Catalog Type Could Not be deleted");
             return ResponseGenerator.generateBadRequestResponse
                     ("Catalog Type Could not deleted :: " + e.getMessage() , AdminMessageResponse.FAILED);
         }
@@ -92,13 +87,13 @@ public class ProductTypeServiceImple implements ProductTypeService {
             ProductTypeModel productTypeModel = this.productTypeRepo.findById(typeId).orElseThrow(
                     () -> new RuntimeException("Data not Found ! Error"));
             ProductTypeDto productTypeDto = modelMapper.map(productTypeModel, ProductTypeDto.class);
-            logger.info("Catalog Type Fetch Success !");
+            log.info("Catalog Type Fetch Success !");
             return ResponseGenerator.generateSuccessResponse(productTypeDto, AdminMessageResponse.SUCCESS);
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Failed To fetch Catalog Type By Id");
+            log.error("Failed To fetch Catalog Type By Id");
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , AdminMessageResponse.FAILED);
         }
     }
@@ -106,20 +101,20 @@ public class ProductTypeServiceImple implements ProductTypeService {
     @Override
     public ResponseEntity<?> updateType(ProductTypeDto productTypeDto) {
         try {
-            logger.info("Update Child Process Starting....");
+            log.info("Update Child Process Starting....");
             this.productTypeRepo.findById(productTypeDto.getId())
                     .orElseThrow(()->new DataNotFoundException("Data not Found"));
 
             ProductTypeModel productTypeModel =  modelMapper.map(productTypeDto, ProductTypeModel.class);
             this.productTypeRepo.save(productTypeModel);
 
-            logger.info("Data Updated Success");
+            log.info("Data Updated Success");
             return ResponseGenerator.generateSuccessResponse(AdminMessageResponse.SUCCESS ,
                     AdminMessageResponse.DATA_UPDATE_SUCCESS);
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.info("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse(AdminMessageResponse.FAILED ,AdminMessageResponse.DATA_UPDATE_FAILED);
         }

@@ -225,7 +225,11 @@ public class AdminUrlMappings {
     public static final String  GET_REJECTION_REASONS= "/getRejectionReasons";
     public static final String  DELETE_REJECTION_REASON= "/deleteRejectionReason/{rejectionId}";
     public static final String  GET_REJECTION_REASON_BY_ID= "/getRejectionReasonById/{rejectionId}";
-
     public static final String  UPDATE_REJECTION_REASON= "/updateRejectionReason";
+
+
+    //EMAIL TEMPLATE CONTROLLER
+    public static final String EMAIL_TEMPLATE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/emailTemplateController";
+    public static final String  CREATE_TEMPLATE= "/createTemplate";
 
 }

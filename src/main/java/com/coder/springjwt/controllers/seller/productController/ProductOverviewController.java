@@ -23,13 +23,6 @@ public class ProductOverviewController {
     public ResponseEntity<?> getUnderReviewProduct(@RequestParam Integer page ,
                                                    @RequestParam  Integer size ,
                                                    @RequestParam String username) {
-        try {
-            Thread.sleep(2000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productOverviewService.getUnderReviewProduct(page , size , username);
     }
 
@@ -38,13 +31,6 @@ public class ProductOverviewController {
     public ResponseEntity<?> getApprovedProduct(@RequestParam Integer page ,
                                                    @RequestParam  Integer size ,
                                                    @RequestParam String username) {
-        try {
-            Thread.sleep(2000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productOverviewService.getApprovedProduct(page , size , username);
     }
 
@@ -53,13 +39,6 @@ public class ProductOverviewController {
     public ResponseEntity<?> getDisApprovedProduct(@RequestParam Integer page ,
                                                 @RequestParam  Integer size ,
                                                 @RequestParam String username) {
-        try {
-            Thread.sleep(2000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productOverviewService.getDisApprovedProduct(page , size , username);
     }
 
@@ -68,13 +47,6 @@ public class ProductOverviewController {
     public ResponseEntity<?> getDraftProduct(@RequestParam Integer page ,
                                              @RequestParam  Integer size ,
                                              @RequestParam String username) {
-        try {
-            Thread.sleep(2000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productOverviewService.getDraftProduct(page , size , username);
     }
 
@@ -85,13 +57,6 @@ public class ProductOverviewController {
     public ResponseEntity<?> fetchAllUserProduct(@RequestParam Integer page ,
                                                    @RequestParam  Integer size ,
                                                    @RequestParam String username) {
-        try {
-            Thread.sleep(2000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return this.productOverviewService.fetchAllUserProduct(page , size , username);
     }
 

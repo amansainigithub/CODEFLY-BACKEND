@@ -9,8 +9,6 @@ import com.coder.springjwt.dtos.customerPayloads.freshUserPayload.VerifyMobileOt
 import com.coder.springjwt.services.customerServices.customerAuthService.CustomerAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,21 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(CustomerUrlMappings.CUSTOMER_BASE_URL)
 public class CustomerAuthController {
-
-    Logger logger  = LoggerFactory.getLogger(CustomerAuthController.class);
-
     @Autowired
     private CustomerAuthService customerAuthService;
 
     @PostMapping(CustomerUrlMappings.CUSTOMER_SIGN_IN)
     public ResponseEntity<?> customerAuthenticateUser(@Validated @RequestBody CustomerLoginPayload customerLoginPayload) {
-        try {
-            Thread.sleep(3000);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
         return customerAuthService.customerAuthenticateUser(customerLoginPayload);
     }
 

@@ -13,7 +13,6 @@ import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.security.jwt.JwtUtils;
 import com.coder.springjwt.security.services.UserDetailsImpl;
-import com.coder.springjwt.services.emailServices.EmailService.EmailService;
 import com.coder.springjwt.services.sellerServices.sellerAuthService.SellerAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,13 +45,7 @@ public class SellerAuthController {
     private RoleRepository roleRepository;
 
     @Autowired
-    private PasswordEncoder encoder;
-
-    @Autowired
     private  JwtUtils jwtUtils;
-
-    @Autowired
-    private EmailService simpleEmailService;
 
     @Autowired
     SellerAuthService sellerAuthService;

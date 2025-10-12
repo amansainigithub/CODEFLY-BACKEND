@@ -12,8 +12,6 @@ import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -33,16 +31,15 @@ public class ProductBrandServiceImple implements ProductBrandService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Logger logger  = LoggerFactory.getLogger(ProductBrandServiceImple.class);
     @Override
     public ResponseEntity<?> saveBrand(ProductBrandDto productBrandDto) {
         MessageResponse response =new MessageResponse();
         try {
             ProductBrandModel productBrandModel =  modelMapper.map(productBrandDto, ProductBrandModel.class);
-            logger.info("Object Mapper Convert Success");
+            log.info("Object Mapper Convert Success");
 
             this.productBrandRepo.save(productBrandModel);
-            logger.info("Brand Saved Success");
+            log.info("Brand Saved Success");
 
             response.setMessage("Brand Saved Success");
             response.setStatus(HttpStatus.OK);
@@ -70,14 +67,14 @@ public class ProductBrandServiceImple implements ProductBrandService {
                     () -> new CategoryNotFoundException("HSN Code id not Found"));
 
             this.productBrandRepo.deleteById(productBrandModel.getId());
-            logger.info("Delete Success => BRAND id :: " + brandId );
+            log.info("Delete Success => BRAND id :: " + brandId );
             return ResponseGenerator.generateSuccessResponse("Delete Success" , AdminMessageResponse.SUCCESS);
 
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("BRAND Could Not be deleted");
+            log.error("BRAND Could Not be deleted");
             return ResponseGenerator.generateBadRequestResponse
                     ("BRAND Could not deleted :: " + e.getMessage() , AdminMessageResponse.FAILED);
         }
@@ -89,13 +86,13 @@ public class ProductBrandServiceImple implements ProductBrandService {
             ProductBrandModel productBrandModel = this.productBrandRepo.findById(brandId).orElseThrow(
                     () -> new RuntimeException("Data not Found ! Error"));
             ProductBrandDto productBrandDto = modelMapper.map(productBrandModel, ProductBrandDto.class);
-            logger.info("Brand Code Fetch Success !");
+            log.info("Brand Code Fetch Success !");
             return ResponseGenerator.generateSuccessResponse(productBrandDto, AdminMessageResponse.SUCCESS);
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Failed To fetch Brand By Id");
+            log.error("Failed To fetch Brand By Id");
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , AdminMessageResponse.FAILED);
         }
     }
@@ -103,20 +100,20 @@ public class ProductBrandServiceImple implements ProductBrandService {
     @Override
     public ResponseEntity<?> updateBrand(ProductBrandDto productBrandDto) {
         try {
-            logger.info("Update Brand Process Starting....");
+            log.info("Update Brand Process Starting....");
             this.productBrandRepo.findById(productBrandDto.getId())
                     .orElseThrow(()->new DataNotFoundException("Data not Found"));
 
             ProductBrandModel productBrandModel =  modelMapper.map(productBrandDto, ProductBrandModel.class);
             this.productBrandRepo.save(productBrandModel);
 
-            logger.info("Data Updated Success");
+            log.info("Data Updated Success");
             return ResponseGenerator.generateSuccessResponse(AdminMessageResponse.SUCCESS ,
                     AdminMessageResponse.DATA_UPDATE_SUCCESS);
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.info("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse(AdminMessageResponse.FAILED ,AdminMessageResponse.DATA_UPDATE_FAILED);
         }

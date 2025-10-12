@@ -12,9 +12,8 @@ import com.coder.springjwt.repository.adminRepository.categories.SubCategoryRepo
 import com.coder.springjwt.services.adminServices.categories.SubCategoryService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -29,6 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class SubCategoryServiceImple implements SubCategoryService {
 
     @Autowired
@@ -44,20 +44,19 @@ public class SubCategoryServiceImple implements SubCategoryService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Logger logger  = LoggerFactory.getLogger(SubCategoryServiceImple.class);
 
     @Override
     public ResponseEntity<?> saveSubCategory(SubCategoryDto subCategoryDto) {
         MessageResponse response =new MessageResponse();
         try {
             SubCategoryModel subCategoryModel =  modelMapper.map(subCategoryDto , SubCategoryModel.class);
-            logger.info("Mapper Convert Success");
+            log.info("Mapper Convert Success");
 
             Optional<RootCategoryModel> rootOptional=
                     this.rootCategoryRepo.findById(Long.parseLong(subCategoryDto.getRootCategoryId()));
 
             if(rootOptional.isPresent()) {
-                logger.info("Data Present Success");
+                log.info("Data Present Success");
                 subCategoryModel.setRootCategory(rootOptional.get());
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -65,13 +64,13 @@ public class SubCategoryServiceImple implements SubCategoryService {
                 //save Category
                 this.subCategoryRepo.save(subCategoryModel);
 
-                logger.info("SUB-Category Saved Success");
+                log.info("SUB-Category Saved Success");
                 response.setMessage("Child-Category Saved Success");
                 response.setStatus(HttpStatus.OK);
                 return ResponseGenerator.generateSuccessResponse(response, "Success");
             }
             else{
-                logger.error("Root Category Not Found Via Id : "+ subCategoryDto.getRootCategoryId());
+                log.error("Root Category Not Found Via Id : "+ subCategoryDto.getRootCategoryId());
                 response.setMessage("Root Category Not Found Via Id : "+ subCategoryDto.getRootCategoryId());
                 response.setStatus(HttpStatus.BAD_REQUEST);
                 return ResponseGenerator.generateBadRequestResponse(response);
@@ -79,7 +78,7 @@ public class SubCategoryServiceImple implements SubCategoryService {
         }
         catch (DataIntegrityViolationException ex) {
             // Handle exception here
-            logger.error("Duplicate entry error: ");
+            log.error("Duplicate entry error: ");
             response.setMessage("Duplicate entry error: ");
             response.setStatus(HttpStatus.BAD_REQUEST);
             return ResponseGenerator.generateBadRequestResponse(response);
@@ -117,14 +116,14 @@ public class SubCategoryServiceImple implements SubCategoryService {
                     () -> new CategoryNotFoundException("Category id not Found"));
 
             this.subCategoryRepo.deleteById(data.getId());
-            logger.info("Delete Success => Category id :: " + categoryId );
+            log.info("Delete Success => Category id :: " + categoryId );
             return ResponseGenerator.generateSuccessResponse("Delete Success" , "Success");
 
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Category Could Not deleted");
+            log.error("Category Could Not deleted");
             return ResponseGenerator.generateBadRequestResponse
                     ("Category Could not deleted :: " + e.getMessage() , "Error");
         }
@@ -136,13 +135,13 @@ public class SubCategoryServiceImple implements SubCategoryService {
             SubCategoryModel subCategoryModel = this.subCategoryRepo.findById(categoryId).orElseThrow(
                     () -> new RuntimeException("Data not Found ! Error"));
             SubCategoryDto subCategoryDto = modelMapper.map(subCategoryModel, SubCategoryDto.class);
-            logger.info("Sub Category Fetch Success !");
+            log.info("Sub Category Fetch Success !");
             return ResponseGenerator.generateSuccessResponse(subCategoryDto , "Success");
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("");
+            log.error(e.getMessage());
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , "Error");
         }
     }
@@ -151,20 +150,20 @@ public class SubCategoryServiceImple implements SubCategoryService {
     public ResponseEntity<?> updateSubCategory(SubCategoryDto subCategoryDto) {
         MessageResponse response = new MessageResponse();
         try {
-            logger.info(subCategoryDto.toString());
-            logger.info("Update Sub Process Starting....");
+            log.info(subCategoryDto.toString());
+            log.info("Update Sub Process Starting....");
             this.subCategoryRepo.findById(subCategoryDto.getId()).orElseThrow(()->new DataNotFoundException("Data not Found"));
 
             SubCategoryModel subCategoryModel =  modelMapper.map(subCategoryDto , SubCategoryModel.class);
             this.subCategoryRepo.save(subCategoryModel);
 
-            logger.info("Data Update Success");
+            log.info("Data Update Success");
             return ResponseGenerator.generateSuccessResponse("Success" , "Data update Success");
 
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.info("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("failed" ," Data Update Failed");
         }
@@ -187,13 +186,13 @@ public class SubCategoryServiceImple implements SubCategoryService {
                 return ResponseGenerator.generateSuccessResponse("Success","File Update Success");
             }
             else {
-                logger.error("Bucket Model is null | please check AWS bucket configuration");
+                log.error("Bucket Model is null | please check AWS bucket configuration");
                 throw new Exception("Bucket AWS is Empty");
             }
         }
         catch (Exception e)
         {
-            logger.info("Exception" , e.getMessage());
+            log.info("Exception" , e.getMessage());
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("Error" ,"File Not Update");
         }

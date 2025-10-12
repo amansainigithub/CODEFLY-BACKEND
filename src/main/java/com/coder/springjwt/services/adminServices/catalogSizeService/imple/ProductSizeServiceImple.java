@@ -13,8 +13,6 @@ import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -34,18 +32,16 @@ public class ProductSizeServiceImple implements ProductSizeService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Logger logger  = LoggerFactory.getLogger(ProductSizeServiceImple.class);
-
 
     @Override
     public ResponseEntity<?> saveSize(ProductSizeVariantDto productSizeVariantDto) {
         MessageResponse response =new MessageResponse();
         try {
             ProductSizeVariantModel productSizeVariantModel =  modelMapper.map(productSizeVariantDto, ProductSizeVariantModel.class);
-            logger.info("Object Mapper Convert Success");
+            log.info("Object Mapper Convert Success");
 
             this.productSizeRepo.save(productSizeVariantModel);
-            logger.info("CATALOG size Saved Success");
+            log.info("CATALOG size Saved Success");
 
             response.setMessage("Catalog Size Saved Success");
             response.setStatus(HttpStatus.OK);
@@ -73,14 +69,14 @@ public class ProductSizeServiceImple implements ProductSizeService {
                     () -> new CategoryNotFoundException("HSN Code id not Found"));
 
             this.productSizeRepo.deleteById(productSizeVariantModel.getId());
-            logger.info("Delete Success => Catalog id :: " + sizeId );
+            log.info("Delete Success => Catalog id :: " + sizeId );
             return ResponseGenerator.generateSuccessResponse("Delete Success" , AdminMessageResponse.SUCCESS);
 
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Catlog Size Could Not be deleted");
+            log.error("Catalog Size Could Not be deleted");
             return ResponseGenerator.generateBadRequestResponse
                     ("HSN Could not deleted :: " + e.getMessage() , AdminMessageResponse.FAILED);
         }
@@ -92,13 +88,13 @@ public class ProductSizeServiceImple implements ProductSizeService {
             ProductSizeVariantModel productSizeVariantModel = this.productSizeRepo.findById(sizeId).orElseThrow(
                     () -> new RuntimeException("Data not Found ! Error"));
             ProductSizeVariantDto productSizeVariantDto = modelMapper.map(productSizeVariantModel, ProductSizeVariantDto.class);
-            logger.info("Catalog Size Fetch Success !");
+            log.info("Catalog Size Fetch Success !");
             return ResponseGenerator.generateSuccessResponse(productSizeVariantDto, AdminMessageResponse.SUCCESS);
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Failed To fetch Catalog size By Id");
+            log.error("Failed To fetch Catalog size By Id");
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , AdminMessageResponse.FAILED);
         }
     }
@@ -106,20 +102,20 @@ public class ProductSizeServiceImple implements ProductSizeService {
     @Override
     public ResponseEntity<?> updateSize(ProductSizeVariantDto productSizeVariantDto) {
         try {
-            logger.info("Update Catalog Size Process Starting....");
+            log.info("Update Catalog Size Process Starting....");
             this.productSizeRepo.findById(productSizeVariantDto.getId())
                     .orElseThrow(()->new DataNotFoundException("Data not Found"));
 
             ProductSizeVariantModel productSizeVariantModel =  modelMapper.map(productSizeVariantDto, ProductSizeVariantModel.class);
             this.productSizeRepo.save(productSizeVariantModel);
 
-            logger.info("Data Updated Success");
+            log.info("Data Updated Success");
             return ResponseGenerator.generateSuccessResponse(AdminMessageResponse.SUCCESS ,
                     AdminMessageResponse.DATA_UPDATE_SUCCESS);
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.info("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse(AdminMessageResponse.FAILED ,AdminMessageResponse.DATA_UPDATE_FAILED);
         }

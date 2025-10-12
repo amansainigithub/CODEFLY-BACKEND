@@ -1,7 +1,6 @@
 package com.coder.springjwt.services.adminServices.adminAuthService.imple;
 
 import com.coder.springjwt.controllers.admin.adminAuthController.AdminAuthController;
-import com.coder.springjwt.dtos.emailPayloads.EmailPayload;
 import com.coder.springjwt.dtos.request.LoginRequest;
 import com.coder.springjwt.dtos.request.Passkey;
 import com.coder.springjwt.dtos.request.SignupRequest;
@@ -16,8 +15,8 @@ import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.security.jwt.JwtUtils;
 import com.coder.springjwt.security.services.UserDetailsImpl;
 import com.coder.springjwt.services.adminServices.adminAuthService.AdminAuthService;
-import com.coder.springjwt.services.emailServices.EmailService.EmailService;
 import com.coder.springjwt.util.MessageResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +33,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class AdminAuthServiceImple implements AdminAuthService {
 
     @Autowired
@@ -50,9 +50,6 @@ public class AdminAuthServiceImple implements AdminAuthService {
 
     @Autowired
     private JwtUtils jwtUtils;
-
-    @Autowired
-    private EmailService simpleEmailService;
 
     @Override
     public ResponseEntity<?>
@@ -81,13 +78,6 @@ public class AdminAuthServiceImple implements AdminAuthService {
         if(passKey == null || passKey.length() < 10){
             throw new RuntimeException("PassKey Error " + AdminAuthController.class.getName());
         }
-        //send PassKey To E-MAIL
-        EmailPayload emailPayload = new EmailPayload();
-        emailPayload.setRecipient(userDetails.getEmail());
-        emailPayload.setSubject("Pass-Key");
-        emailPayload.setContent("Hi Your Pass-Key : " + passKey);
-        simpleEmailService.sendSimpleMail(emailPayload);
-
 
         System.out.println("PASS KEY :: " + passKey );
         User user =  this.userRepository.findByUsername(userDetails.getUsername()).get();

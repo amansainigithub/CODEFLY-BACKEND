@@ -12,9 +12,8 @@ import com.coder.springjwt.repository.adminRepository.categories.TypeCategoryRep
 import com.coder.springjwt.services.adminServices.categories.TypeCategoryService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -29,6 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class TypeCategoryServiceImple implements TypeCategoryService {
 
     @Autowired
@@ -43,21 +43,18 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
     @Autowired
     private ModelMapper modelMapper;
 
-    Logger logger =  LoggerFactory.getLogger(TypeCategoryServiceImple.class);
-
-
     @Override
     public ResponseEntity<?> saveTypeCategory(TypeCategoryDto typeCategoryDto) {
         MessageResponse response =new MessageResponse();
         try {
             TypeCategoryModel typeCategoryModel =  modelMapper.map(typeCategoryDto , TypeCategoryModel.class);
-            logger.info("Mapper Convert Success");
+            log.info("Mapper Convert Success");
 
             Optional<SubCategoryModel> subOptional =
                     this.subCategoryRepo.findById(Long.parseLong(typeCategoryDto.getSubCategoryId()));
 
             if(subOptional.isPresent()) {
-                logger.info("Data Present Success");
+                log.info("Data Present Success");
                 typeCategoryModel.setSubCategoryModel(subOptional.get());
 
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -65,13 +62,13 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
                 //save Category
                 this.typeCategoryRepo.save(typeCategoryModel);
 
-                logger.info("Type-Category Saved Success");
+                log.info("Type-Category Saved Success");
                 response.setMessage("Type-Category Saved Success");
                 response.setStatus(HttpStatus.OK);
                 return ResponseGenerator.generateSuccessResponse(response, "Success");
             }
             else{
-                logger.error("Sub Category Not Found Via Id : "+ typeCategoryDto.getSubCategoryId());
+                log.error("Sub Category Not Found Via Id : "+ typeCategoryDto.getSubCategoryId());
                 response.setMessage("Sub Category Not Found Via Id : "+ typeCategoryDto.getSubCategoryId());
                 response.setStatus(HttpStatus.BAD_REQUEST);
                 return ResponseGenerator.generateBadRequestResponse(response);
@@ -79,7 +76,7 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
         }
         catch (DataIntegrityViolationException ex) {
             // Handle exception here
-            logger.error("Duplicate entry error: ");
+            log.error("Duplicate entry error: ");
             response.setMessage("Duplicate entry error: ");
             response.setStatus(HttpStatus.BAD_REQUEST);
             return ResponseGenerator.generateBadRequestResponse(response);
@@ -117,14 +114,14 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
                     () -> new CategoryNotFoundException("Category id not Found"));
 
             this.typeCategoryRepo.deleteById(data.getId());
-            logger.info("Delete Success => Category id :: " + categoryId );
+            log.info("Delete Success => Category id :: " + categoryId );
             return ResponseGenerator.generateSuccessResponse("Delete Success" , "Success");
 
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("Category Could Not deleted");
+            log.error("Category Could Not deleted");
             return ResponseGenerator.generateBadRequestResponse
                     ("Category Could not deleted :: " + e.getMessage() , "Error");
         }
@@ -135,7 +132,7 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
         MessageResponse response = new MessageResponse();
         try {
 
-            logger.info(typeCategoryDto.toString());
+            log.info(typeCategoryDto.toString());
 
             this.typeCategoryRepo.findById(typeCategoryDto.getId()).orElseThrow(()->new DataNotFoundException("Data not Found"));
             TypeCategoryModel typeCategoryModel =  modelMapper.map(typeCategoryDto , TypeCategoryModel.class);
@@ -147,13 +144,13 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
 
             this.typeCategoryRepo.save(typeCategoryModel);
 
-            logger.info("Data Update Success");
+            log.info("Data Update Success");
             return ResponseGenerator.generateSuccessResponse("Success" , "Data update Success");
 
         }
         catch (Exception e)
         {
-            logger.info("Data Update Failed");
+            log.info("Data Update Failed");
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("failed" ," Data Update Failed");
         }
@@ -165,13 +162,13 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
             TypeCategoryModel typeCategoryModel = this.typeCategoryRepo.findById(categoryId).orElseThrow(
                     () -> new RuntimeException("Data not Found ! Error"));
             TypeCategoryDto typeCategoryDto = modelMapper.map(typeCategoryModel, TypeCategoryDto.class);
-            logger.info("Child Category Fetch Success !");
+            log.info("Child Category Fetch Success !");
             return ResponseGenerator.generateSuccessResponse(typeCategoryDto , "Success");
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            logger.error("");
+            log.error("");
             return ResponseGenerator.generateBadRequestResponse(e.getMessage() , "Error");
         }
     }
@@ -186,7 +183,7 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
                 bucketService.deleteFile(typeCategoryModel.getCategoryFile());
             }catch (Exception e)
             {
-                logger.error("File Not deleted Id:: " + typeCategoryId);
+                log.error("File Not deleted Id:: " + typeCategoryId);
             }
             //upload New File
             BucketModel bucketModel = bucketService.uploadFile(file);
@@ -197,13 +194,13 @@ public class TypeCategoryServiceImple implements TypeCategoryService {
                 return ResponseGenerator.generateSuccessResponse("Success","File Update Success");
             }
             else {
-                logger.error("Bucket Model is null | please check AWS bucket configuration");
+                log.error("Bucket Model is null | please check AWS bucket configuration");
                 throw new Exception("Bucket AWS is Empty");
             }
         }
         catch (Exception e)
         {
-            logger.info("Exception" , e.getMessage());
+            log.info("Exception" , e.getMessage());
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("Error" ,"File Not Update");
         }

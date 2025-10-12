@@ -19,7 +19,6 @@ import com.coder.springjwt.repository.adminRepository.categories.VariantCategory
 import com.coder.springjwt.repository.adminRepository.chargeConfigRepo.ChargeConfigRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductRootRepo;
-import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductSizeRowsRepo;
 import com.coder.springjwt.services.sellerServices.productVariantService.ProductVariantService;
 import com.coder.springjwt.services.sellerServices.sellerProductService.imple.ProductServiceHelper;
 import com.coder.springjwt.util.ResponseGenerator;
@@ -45,8 +44,6 @@ public class ProductVariantServiceImple implements ProductVariantService {
     private VariantCategoryRepo variantCategoryRepo;
     @Autowired
     private ModelMapper modelMapper;
-    @Autowired
-    private ProductSizeRowsRepo productSizeRowsRepo;
     @Autowired
     private ProductRootRepo productRootRepo;
     @Autowired
