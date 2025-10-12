@@ -42,6 +42,7 @@ public class ProductBrandController {
     }
 
     @PostMapping(AdminUrlMappings.GET_BRAND)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getBrand(@RequestParam Integer page , @RequestParam  Integer size) {
         return this.productBrandService.getBrand(page,size);
     }

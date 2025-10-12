@@ -230,6 +230,11 @@ public class AdminUrlMappings {
 
     //EMAIL TEMPLATE CONTROLLER
     public static final String EMAIL_TEMPLATE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/emailTemplateController";
-    public static final String  CREATE_TEMPLATE= "/createTemplate";
+    public static final String  CREATE_EMAIL_TEMPLATE= "/createEmailTemplate";
+    public static final String  DELETE_EMAIL_TEMPLATE= "/deleteEmailTemplate/{templateId}";
+    public static final String  GET_EMAIL_TEMPLATE= "/getEmailTemplate/{templateId}";
+    public static final String  UPDATE_EMAIL_TEMPLATE= "/updateEmailTemplate";
+    public static final String GET_EMAIL_TEMPLATE_DATA="/getEmailTemplateData";
+
 
 }

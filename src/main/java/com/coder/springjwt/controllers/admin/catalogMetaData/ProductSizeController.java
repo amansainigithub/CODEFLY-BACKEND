@@ -44,6 +44,7 @@ public class ProductSizeController {
     }
 
     @PostMapping(AdminUrlMappings.GET_SIZE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getSize(@RequestParam Integer page , @RequestParam  Integer size) {
         return this.productSizeService.getSize(page,size);
     }

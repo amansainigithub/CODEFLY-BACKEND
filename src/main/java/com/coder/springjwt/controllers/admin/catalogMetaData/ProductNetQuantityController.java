@@ -42,6 +42,7 @@ public class ProductNetQuantityController {
     }
 
     @PostMapping(AdminUrlMappings.GET_NET_QUANTITY)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getNetQuantity(@RequestParam Integer page , @RequestParam  Integer size) {
         return this.productNetQuantityService.getNetQuantity(page,size);
     }

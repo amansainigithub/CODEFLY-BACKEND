@@ -43,6 +43,7 @@ public class HsnController {
     }
 
     @PostMapping(AdminUrlMappings.GET_HSN_LIST_BY_PAGINATION)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getHsnListByPagination(@RequestParam Integer page , @RequestParam  Integer size) {
         return this.hsnCodeService.getHsnCodesPagination(page,size);
     }

@@ -42,6 +42,7 @@ public class ProductTypeController {
 
 
     @PostMapping(AdminUrlMappings.GET_TYPE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getType(@RequestParam Integer page , @RequestParam  Integer size) {
         return this.productTypeService.getType(page,size);
     }
