@@ -44,7 +44,7 @@ public class EmailTemplateController {
     }
 
 
-    @PostMapping(AdminUrlMappings.GET_EMAIL_TEMPLATE_DATA)
+    @GetMapping(AdminUrlMappings.GET_EMAIL_TEMPLATE_DATA)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getEmailTemplateData(@RequestParam Integer page , @RequestParam  Integer size) {
         return this.emailTemplateService.getEmailTemplateData(page,size);
