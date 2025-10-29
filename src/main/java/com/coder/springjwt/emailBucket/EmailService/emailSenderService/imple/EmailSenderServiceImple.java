@@ -1,6 +1,10 @@
 package com.coder.springjwt.emailBucket.EmailService.emailSenderService.imple;
 
 import com.coder.springjwt.emailBucket.EmailService.emailSenderService.EmailSenderService;
+import com.coder.springjwt.emailBucket.EmailService.emailTemplateService.EmailTemplateService;
+import com.coder.springjwt.emailBucket.emailBucketDtos.EmailTemplateDto;
+import com.coder.springjwt.emailBucket.emailPayloads.EmailTemplate;
+import com.coder.springjwt.emailBucket.emailRepository.EmailTemplateRepo;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
@@ -14,6 +18,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @Slf4j
 public class EmailSenderServiceImple implements EmailSenderService {
@@ -28,30 +36,39 @@ public class EmailSenderServiceImple implements EmailSenderService {
     @Autowired
     private UserHelper userHelper;
 
+    @Autowired
+    private EmailTemplateRepo emailTemplateRepo;
 
-    public ResponseEntity<?> sendSimpleMail()
+
+    public ResponseEntity<?> sendSimpleMail(String templateKey
+                                            ,Map<String,Object> emailBodyData
+                                            ,Map<String,Object>  emailSubjectData)
     {
         log.info("Simple Mail Process Starting");
         MessageResponse response = new MessageResponse();
 
-        // Try block to check for exceptions
         try {
-            // Creating a simple mail message
-            SimpleMailMessage mailMessage
-                    = new SimpleMailMessage();
+            EmailTemplate emailTemplate = emailTemplateRepo.findByTemplateKey(templateKey)
+                    .orElseThrow(() -> new RuntimeException("Template not found"));
 
-            // Setting up necessary details
+
+            //Building Email Subject Dynamically
+            String buildEmailSubject = this.buildEmailSubject(emailTemplate.getSubject(), emailSubjectData);
+
+            //Building Email Body Dynamically
+            String buildEmailBody = this.buildEmailBody(emailTemplate.getBodyHtml(), emailBodyData);
+
+            // Creating a simple mail message
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(sender);
             mailMessage.setTo("amansaini1407@gmail.com");
-            mailMessage.setSubject("SUBJECT HAIN YE");
-            mailMessage.setText("BODY HAIN YE WITH-OUT HTML DATA");
+            mailMessage.setSubject(buildEmailSubject);
+            mailMessage.setText(buildEmailBody);
+
             // Sending the mail
             javaMailSender.send(mailMessage);
 
-            //Save Data to DB
-//            this.saveEmailData(emailPayload);
             log.info("======Mail Sent Success========");
-
             response.setMessage("MAIL SEND SUCCESS");
             response.setStatus(HttpStatus.OK);
             return ResponseGenerator.generateSuccessResponse(response,"Success");
@@ -59,12 +76,6 @@ public class EmailSenderServiceImple implements EmailSenderService {
 
         // Catch block to handle the exceptions
         catch (Exception e) {
-            //set mail Status
-//            emailPayload.setStatus("FAILED");
-
-            //Save Data to DB
-//            this.saveEmailData(emailPayload);
-
             e.printStackTrace();
             response.setMessage("MAIL SEND FAILED");
             response.setStatus(HttpStatus.BAD_REQUEST);
@@ -73,64 +84,40 @@ public class EmailSenderServiceImple implements EmailSenderService {
 
     }
 
-//    public void saveEmailData(EmailPayload emailPayload)
-//    {
-//        Map<String,String> node =  userHelper.getCurrentUser();
-//        node.get("username");
-//        node.get("roles");
-//
-//        EmailBucket emailBucket = new EmailBucket();
-//        emailBucket.setUser(node.get("username"));
-//        emailBucket.setRole(emailPayload.getRole());
-//        emailBucket.setContent(emailPayload.getContent());
-//        emailBucket.setAreaMode(emailPayload.getAreaMode());
-//        emailBucket.setStatus(emailPayload.getStatus());
-//        emailBucket.setMailFrom(sender);
-//        emailBucket.setMailTo(emailPayload.getRecipient());
-//
-//        this.emailRepository.save(emailBucket);
-//        log.info("Data Saved Success Email Content ");
-//    }
 
     @Override
-    public ResponseEntity<?> sendHtmlMail() {
+    public ResponseEntity<?> sendHtmlMail(String templateKey , Map<String,Object> emailBodyData , Map<String,Object>  emailSubjectData) {
 
         log.info("HTML Mail Process Starting");
-
         MessageResponse response = new MessageResponse();
 
-        // Try block to check for exceptions
         try {
+            EmailTemplate emailTemplate = emailTemplateRepo.findByTemplateKey(templateKey)
+                    .orElseThrow(() -> new RuntimeException("Template not found"));
+
+            //Building Email Subject Dynamically
+            String buildEmailSubject = this.buildEmailSubject(emailTemplate.getSubject(), emailSubjectData);
+            //Building Email Body Dynamically
+            String buildEmailBody = this.buildEmailBody(emailTemplate.getBodyHtml(), emailBodyData);
+
             // Creating a simple mail message
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
-            // Setting up necessary details
-            helper.setText("SEND HTML DATA", true);
+
             helper.setTo("amansaini1407@gmail.com");
-            helper.setSubject("html subject");
+            helper.setSubject(buildEmailSubject);
+            helper.setText(buildEmailBody, true);
             helper.setFrom(sender);
 
-            // Sending the mail
+            // Mail Sending
             javaMailSender.send(mimeMessage);
-
-            //set mail Status
-//            emailHtmlPayload.setStatus("SUCCESS");
-
-            //Save Data to DB
-//            this.saveEmailHtmlData(emailHtmlPayload);
             log.info("======HTML Mail Sent Success========");
 
             response.setMessage("MAIL SEND SUCCESS");
             response.setStatus(HttpStatus.OK);
             return ResponseGenerator.generateSuccessResponse(response,"Success");
         }
-
-        // Catch block to handle the exceptions
         catch (Exception e) {
-            //set mail Status
-//            emailHtmlPayload.setStatus("FAILED");
-//            //Save Data to DB
-//            this.saveEmailHtmlData(emailHtmlPayload);
 
             e.printStackTrace();
 
@@ -140,32 +127,20 @@ public class EmailSenderServiceImple implements EmailSenderService {
         }
     }
 
+    public String buildEmailBody(String emailTemplateBody , Map<String, Object> variables) {
+        String body = emailTemplateBody;
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            body = body.replace("{" + entry.getKey() + "}", entry.getValue().toString());
+        }
+        return body;
+    }
 
-//    public void saveEmailHtmlData(EmailHtmlPayload emailHtmlPayload)
-//    {
-//        String username = "NEW_USER";
-//        try {
-//            Map<String,String> node =  userHelper.getCurrentUser();
-//            username = node.get("username");
-//        }
-//        catch (Exception e)
-//        {
-//            e.getMessage();
-//            log.error("User Registration New....");
-//        }
-//
-//        EmailBucket emailBucket = new EmailBucket();
-//        emailBucket.setUser(username);
-//        emailBucket.setRole(emailHtmlPayload.getRole());
-//        emailBucket.setContent(emailHtmlPayload.getHtmlContent());
-//        emailBucket.setAreaMode(emailHtmlPayload.getAreaMode());
-//        emailBucket.setStatus(emailHtmlPayload.getStatus());
-//        emailBucket.setIsHtmlContent(Boolean.TRUE);
-//        emailBucket.setMailFrom(sender);
-//        emailBucket.setMailTo(emailHtmlPayload.getRecipient());
-//
-//        this.emailRepository.save(emailBucket);
-//        log.info("Data Saved Success Email Content ");
-//    }
+    public String buildEmailSubject(String emailTemplateSubject , Map<String, Object> variables) {
+        String subject = emailTemplateSubject;
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            subject = subject.replace("{" + entry.getKey() + "}", entry.getValue().toString());
+        }
+        return subject;
+    }
 
 }

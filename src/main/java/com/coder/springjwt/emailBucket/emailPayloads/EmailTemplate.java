@@ -23,6 +23,7 @@ public class EmailTemplate extends BaseEntity {
     private String subject;
 
     @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String bodyHtml;
 
     private String module;
