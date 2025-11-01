@@ -1,8 +1,6 @@
 package com.coder.springjwt.emailBucket.EmailService.emailSenderService.imple;
 
 import com.coder.springjwt.emailBucket.EmailService.emailSenderService.EmailSenderService;
-import com.coder.springjwt.emailBucket.EmailService.emailTemplateService.EmailTemplateService;
-import com.coder.springjwt.emailBucket.emailBucketDtos.EmailTemplateDto;
 import com.coder.springjwt.emailBucket.emailPayloads.EmailSendAudit;
 import com.coder.springjwt.emailBucket.emailPayloads.EmailTemplate;
 import com.coder.springjwt.emailBucket.emailRepository.EmailSendAuditRepo;
@@ -21,7 +19,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service

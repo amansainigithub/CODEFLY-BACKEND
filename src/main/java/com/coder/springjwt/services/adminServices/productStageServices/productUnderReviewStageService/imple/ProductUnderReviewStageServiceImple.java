@@ -1,6 +1,5 @@
 package com.coder.springjwt.services.adminServices.productStageServices.productUnderReviewStageService.imple;
 
-import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductApprovedStageDto;
 import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductUnderReviewStageDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
@@ -16,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

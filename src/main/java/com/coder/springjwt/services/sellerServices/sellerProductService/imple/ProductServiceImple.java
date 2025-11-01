@@ -9,7 +9,6 @@ import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
-import com.coder.springjwt.models.adminModels.ProductRejectionReasonModel.ProductRejectionReason;
 import com.coder.springjwt.models.adminModels.categories.VariantCategoryModel;
 import com.coder.springjwt.models.adminModels.chargeConfigModels.ChargeConfig;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
