@@ -19,4 +19,7 @@ public class ProductDisApprovedStageDto {
     private String variantId;
     private String productMainFile;
     private String productSeries;
+
+    private String productDisApprovedDate;
+        private String productDisApprovedDesc;
 }

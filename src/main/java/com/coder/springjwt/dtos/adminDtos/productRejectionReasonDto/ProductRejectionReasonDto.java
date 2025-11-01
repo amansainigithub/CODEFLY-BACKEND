@@ -10,9 +10,12 @@ import lombok.NoArgsConstructor;
 public class ProductRejectionReasonDto {
 
     private long id;
+
     private String code;
+
     private String reason;
-    private String category;
+
     private String description;
+
     private boolean isActive;
 }

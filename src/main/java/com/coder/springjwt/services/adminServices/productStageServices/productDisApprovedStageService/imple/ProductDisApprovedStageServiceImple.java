@@ -51,7 +51,9 @@ public class ProductDisApprovedStageServiceImple implements ProductDisApprovedSt
                             String.valueOf(p.getVariantId()),
                             (p.getProductFiles().get(0).getFileUrl() != null )?
                                     p.getProductFiles().get(0).getFileUrl() : "BLANK",
-                            p.getProductSeries()
+                            p.getProductSeries(),
+                            p.getProductDisApprovedDate(),
+                            p.getProductDisApprovedCode()
                     ))
                     .collect(Collectors.toList());
 

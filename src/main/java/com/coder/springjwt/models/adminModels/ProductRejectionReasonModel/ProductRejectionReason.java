@@ -24,7 +24,7 @@ public class ProductRejectionReason extends BaseEntity {
     private String code;
 
     private String reason;
-    private String category;
+
     private String description;
 
     private boolean isActive = Boolean.FALSE;

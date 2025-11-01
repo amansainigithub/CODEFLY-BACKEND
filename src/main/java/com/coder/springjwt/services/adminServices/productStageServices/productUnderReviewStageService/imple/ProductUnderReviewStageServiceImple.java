@@ -36,7 +36,7 @@ public class ProductUnderReviewStageServiceImple implements ProductUnderReviewSt
     @Override
     public ResponseEntity<?> productUnderReviewStage(Integer page, Integer size) {
         try {
-            log.info(ProductUnderReviewStageServiceImple.class.getName() + " working....");
+            log.info("ProductUnderReviewStageServiceImple working....");
 
 
             Page<ProductDetailsModel> productDetails = this.productDetailsRepo.findByProductStatus(

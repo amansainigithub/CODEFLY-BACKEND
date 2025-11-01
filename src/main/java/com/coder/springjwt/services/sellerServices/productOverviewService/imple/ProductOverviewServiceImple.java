@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -247,6 +248,7 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
 
     @Override
     public ResponseEntity<?> fetchAllUserProduct(Integer page, Integer size, String username) {
+
         try {
             log.info(ProductOverviewServiceImple.class.getName() + " working....");
 
@@ -263,6 +265,7 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
                                              PageRequest.of(page, size, Sort.by("productKey").descending()) );
 
             List<UserAllProductOverviewDto> overviewList = new ArrayList<>();
+
             for (ProductDetailsModel pdm : userProductData) {
                 UserAllProductOverviewDto overviewDto = new UserAllProductOverviewDto();
                 overviewDto.setId(pdm.getId());
@@ -273,6 +276,7 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
                 overviewDto.setProductDate(pdm.getProductDate());
                 overviewDto.setProductTime(pdm.getProductTime());
                 overviewDto.setVariantId(String.valueOf(pdm.getVariantId()));
+                overviewDto.setProductSeries(pdm.getProductSeries());
                 try {
                     overviewDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
                 } catch (Exception e) {
@@ -285,7 +289,23 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
             Page<UserAllProductOverviewDto> overviewPageData =
                     new PageImpl<>(overviewList, userProductData.getPageable(), userProductData.getTotalElements());
 
-            return ResponseGenerator.generateSuccessResponse(overviewPageData, "SUCCESS");
+            //Product Count
+            int totalProducts = Integer.parseInt(String.valueOf(userProductData.getTotalElements()));
+            int underReviewCount = productDetailsRepo.countByProductStatusAndUsername(ProductStatus.UNDER_REVIEW.toString(), username);
+            int approvedCount = productDetailsRepo.countByProductStatusAndUsername(ProductStatus.APPROVED.toString(), username);
+            int disApprovedCount = productDetailsRepo.countByProductStatusAndUsername(ProductStatus.DIS_APPROVED.toString(), username);
+            int draftCount = productDetailsRepo.countByProductStatusAndUsername(ProductStatus.DRAFT.toString(), username);
+
+            Map<String,Object> productData = new HashMap<>();
+            productData.put("totalProducts",totalProducts);
+            productData.put("underReviewCount",underReviewCount);
+            productData.put("approvedCount",approvedCount);
+            productData.put("disApprovedCount",disApprovedCount);
+            productData.put("draftCount",draftCount);
+            productData.put("overviewPageData",overviewPageData);
+
+
+            return ResponseGenerator.generateSuccessResponse(productData, "SUCCESS");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");

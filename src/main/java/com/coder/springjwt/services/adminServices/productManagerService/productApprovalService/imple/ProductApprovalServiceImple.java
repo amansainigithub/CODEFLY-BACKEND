@@ -16,10 +16,12 @@ import com.coder.springjwt.repository.adminRepository.productStatusTracker.Produ
 import com.coder.springjwt.repository.productRejectionReasonRepo.ProductRejectionReasonRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.services.adminServices.productManagerService.productApprovalService.ProductApprovalService;
+import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -58,7 +60,8 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
 
 
     @Override
-    public ResponseEntity<?> productApproved(long productId ) {
+    public ResponseEntity<?> productApproved(long productId) {
+
         try {
             ProductDetailsModel productData = this.productDetailsRepo.findById(productId)
                     .orElseThrow(() -> new DataNotFoundException("Product Id Not found :: " + productId));
@@ -66,50 +69,68 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             User user = userRepository.findByUsername(productData.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("User Not Found Exception"));
 
-            //Product Root
-            ProductRoot productRoot = productData.getProductRoot();
-            productRoot.setProductStatus(ProductStatus.APPROVED.toString());
+            if ("VARIANT".equals(productData.getProductSeries())) {
 
-            //Product Details
-            productData.setProductStatus(ProductStatus.APPROVED.toString());
-            //Product Approved Date and Time
-            String todayDate = GenerateDateAndTime.getTodayDate();
-            productData.setProductApprovedDate(todayDate);
-            String currentTime = GenerateDateAndTime.getCurrentTime();
-            productData.setProductApprovedTime(currentTime);
-            //Product Reason
-            productData.setProductApprovedReason("APPROVED SUCCESSFULLY");
-            //Approved By
-            productData.setApprovedBy( user.getUsername() );
-            this.productDetailsRepo.save(productData);
-            log.info("Product Approved Successfully");
+                ProductDetailsModel mainProduct = this.productDetailsRepo
+                        .findByProductKeyAndProductSeries(productData.getProductKey(), "MAIN")
+                        .orElseThrow(() -> new DataNotFoundException("Main Product Not Found"));
 
-            //Set DisApproved Reason To Product Status Tracker Starting
-            ProductStatusTracker productStatusTracker = new ProductStatusTracker();
-            productStatusTracker.setProductId(productData.getId());
-            productStatusTracker.setStatusDate(todayDate);
-            productStatusTracker.setStatusTime(currentTime);
-            productStatusTracker.setStatusDateTime(GenerateDateAndTime.getLocalDateTime());
-            productStatusTracker.setReason("APPROVED SUCCESSFULLY");
-            productStatusTracker.setReasonId(1l);
-            productStatusTracker.setProductDescription("APPROVED SUCCESSFULLY");
-            this.productStatusTrackerRepo.save(productStatusTracker);
-            log.info("PRODUCT STATUS TRACKER SAVED SUCCESS");
-            //Set DisApproved Reason To Product Status Tracker Ending...
+                if ("UNDER_REVIEW".equals(mainProduct.getProductStatus())) {
+                    return ResponseGenerator.generateBadRequestResponse(
+                            new MessageResponse("First approve the main product, then approve the variant product.")
+                    );
+                }
+            }
 
+            //Product Approved Logic
+            this.approveProduct(productData, user);
 
-            //Send Product Approval Mail Start....
-            log.info("Mail Trigger Process Starting .. ");
-            this.sendProductApprovalMail(productData , user.getSellerEmail());
+            log.info("Mail Trigger Process Starting...");
+            this.sendProductApprovalMail(productData, user.getSellerEmail());
 
             return ResponseGenerator.generateSuccessResponse("SUCCESS");
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse();
         }
     }
+
+    /*Product Approval Logic */
+    private void approveProduct(ProductDetailsModel productData, User user) {
+
+        //Product Root Status
+        ProductRoot productRoot = productData.getProductRoot();
+        productRoot.setProductStatus(ProductStatus.APPROVED.toString());
+
+        //product Data Status
+        productData.setProductStatus(ProductStatus.APPROVED.toString());
+
+        String todayDate = GenerateDateAndTime.getTodayDate();
+        String currentTime = GenerateDateAndTime.getCurrentTime();
+
+        productData.setProductApprovedDate(todayDate);
+        productData.setProductApprovedTime(currentTime);
+        productData.setProductApprovedReason("PRODUCT_APPROVED_SUCCESS");
+        productData.setApprovedBy(user.getUsername());
+
+        this.productDetailsRepo.save(productData);
+        log.info("Product Approved Successfully");
+
+        // Status Tracker
+        ProductStatusTracker tracker = new ProductStatusTracker();
+        tracker.setProductId(productData.getId());
+        tracker.setStatusDate(todayDate);
+        tracker.setStatusTime(currentTime);
+        tracker.setStatusDateTime(GenerateDateAndTime.getLocalDateTime());
+        tracker.setReason("APPROVED SUCCESSFULLY");
+        tracker.setReasonId(1L);
+        tracker.setProductDescription("APPROVED SUCCESSFULLY");
+
+        this.productStatusTrackerRepo.save(tracker);
+        log.info("PRODUCT STATUS TRACKER SAVED SUCCESSFULLY");
+    }
+
 
 
 
@@ -142,7 +163,7 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             //Dis-Approved Reason
             productData.setProductApprovedReason(productRejectionReason.getReason());
             //Dis-Approved Description
-            productData.setProductDisApprovedDesc(description);
+            productData.setProductDisApprovedCode(productRejectionReason.getCode());
             //Approved By
             productData.setApprovedBy( userHelper.getCurrentUser().get("username") );
             this.productDetailsRepo.save(productData);

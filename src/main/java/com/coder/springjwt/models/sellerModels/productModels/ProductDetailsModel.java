@@ -101,7 +101,7 @@ public class ProductDetailsModel extends BaseEntity {
     private String productApprovedReason;
 
     //Product Dis Approved Description
-    private String productDisApprovedDesc;
+    private String productDisApprovedCode;
 
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
