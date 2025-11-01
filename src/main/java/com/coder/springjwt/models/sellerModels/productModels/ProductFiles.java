@@ -33,9 +33,10 @@ public class ProductFiles extends BaseEntity {
 
 
     //Binding Variable
-    private long productId;
+    private long productRootId;
     private String productKey;
     private long productDetailsId;
+
 
     @ManyToOne
     @JoinColumn( referencedColumnName = "id" , name = "product_files_joiner")

@@ -385,17 +385,17 @@ public class ProductVariantServiceImple implements ProductVariantService {
             productRoot.setProductKey(productKey);
 
             for (ProductDetailsModel pdm : productRoot.getProductDetailsModels()) {
-                pdm.setProductId(productId);
+                pdm.setProductRootId(productId);
                 pdm.setProductKey(productKey);
 
                 for (ProductFiles pf : pdm.getProductFiles()) {
-                    pf.setProductId(productId);
+                    pf.setProductRootId(productId);
                     pf.setProductKey(productKey);
                     pf.setProductDetailsId(pdm.getId());
                 }
 
                 for (ProductSizeRows psr : pdm.getProductSizeRows()){
-                    psr.setProductId(productId);
+                    psr.setProductRootId(productId);
                     psr.setProductKey(productKey);
                     psr.setProductDetailsId(pdm.getId());
                 }

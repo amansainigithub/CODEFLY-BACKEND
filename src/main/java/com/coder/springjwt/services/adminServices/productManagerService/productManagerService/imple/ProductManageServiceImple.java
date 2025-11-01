@@ -200,7 +200,8 @@ public class ProductManageServiceImple implements ProductManageService {
                         sizeRow.setUserId(username.getId() + "");
                         sizeRow.setUsername(username.getUsername());
                         sizeRow.setProductDetailsModel(productData);
-                        sizeRow.setProductId(productData.getProductId());
+                        sizeRow.setProductRootId(productData.getProductRootId());
+                        sizeRow.setProductUid(productData.getProductUid());
                         sizeRow.setProductKey(productData.getProductKey());
                         productData.getProductSizeRows().add(sizeRow);
                     }

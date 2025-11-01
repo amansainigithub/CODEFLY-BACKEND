@@ -8,6 +8,6 @@ import java.util.Map;
 @Component
 public interface EmailSenderService  {
 
-    ResponseEntity<?> sendSimpleMail(String templateKey ,  Map<String,Object> data , Map<String,Object> emailSubjectData);
-    ResponseEntity<?> sendHtmlMail(String templateKey , Map<String,Object> emailBodyData, Map<String,Object> emailSubjectData);
+    ResponseEntity<?> sendSimpleMail(String templateKey , Map<String,Object> emailSubjectData ,  Map<String,Object> emailBodyData ,String toEmail);
+    ResponseEntity<?> sendHtmlMail(String templateKey ,Map<String,Object> emailSubjectData , Map<String,Object> emailBodyData ,String toEmail);
 }

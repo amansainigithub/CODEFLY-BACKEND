@@ -46,6 +46,7 @@ public class ProductDetailsModel extends BaseEntity {
     private String stretchType;
     private String careInstruction;
     private String description;
+    private String cottonType;
 
     //Added Columns Extra
     private long variantId;
@@ -61,10 +62,13 @@ public class ProductDetailsModel extends BaseEntity {
     //Product Status
     private String productStatus;
 
-    //Product ID
-    private long productId;
+    //Product Root ID
+    private long productRootId;
     //Product key
     private String productKey;
+
+    //Product UID
+    private String productUid;
 
 
     //Service TAX GST , TDS , TCS , SHIPPING CHARGES , FINAL PRODUCT PRICE

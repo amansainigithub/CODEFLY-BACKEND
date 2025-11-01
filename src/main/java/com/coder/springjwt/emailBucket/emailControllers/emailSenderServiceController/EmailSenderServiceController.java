@@ -29,7 +29,7 @@ public class EmailSenderServiceController {
         emailBody.put("productName", "Wireless Mouse");
         emailBody.put("sellerName", "Aman Suryavanshi");
 
-        return this.emailSenderService.sendSimpleMail("PRODUCT_APPROVED", emailSubjectData ,emailBody);
+        return this.emailSenderService.sendSimpleMail("PRODUCT_APPROVED", emailSubjectData ,emailBody,"amansaini407@gmail.com");
     }
 
 
@@ -45,8 +45,7 @@ public class EmailSenderServiceController {
         emailBodyData.put("sellerName", "Aman Suryavanshi");
         emailBodyData.put("product_id", "10020030015487800");
 
-
-        return this.emailSenderService.sendHtmlMail("PRODUCT_APPROVED", emailBodyData , emailSubjectData);
+        return this.emailSenderService.sendHtmlMail("PRODUCT_APPROVED", emailBodyData , emailSubjectData,"amansaini407@gmail.com");
     }
 
 

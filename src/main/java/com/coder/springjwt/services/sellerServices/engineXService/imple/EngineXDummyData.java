@@ -646,6 +646,22 @@ public class EngineXDummyData {
         description.setDescription("Please enter the description name only. Avoid adding details like size, weight, price, or dimensions.");
         description.setIsFieldDisabled("");
 
+
+        FormBuilderTool cottonType = new FormBuilderTool();
+        cottonType.setId("01");
+        cottonType.setIdentifier("cotton");
+        cottonType.setName("cotton");
+        cottonType.setPlaceHolder("Enter Cotton");
+        cottonType.setType("TEXT");
+        cottonType.setRequired(true);
+        cottonType.setExclamationDesc("Please enter the Cotton Type name only, or dimensions.");
+        cottonType.setMinLength("");
+        cottonType.setMaxLength("");
+        cottonType.setPattern("");
+        cottonType.setDescription("Please enter the cotton name only. Avoid adding details like size, weight, price, or dimensions.");
+        cottonType.setIsFieldDisabled("");
+
+
         //ADDITIONAL DETAILS ENDING
         List<FormBuilderTool> additionalDetails = new ArrayList<>();
         additionalDetails.add(brand);
@@ -654,6 +670,7 @@ public class EngineXDummyData {
         additionalDetails.add(stretchType);
         additionalDetails.add(careInstruction);
         additionalDetails.add(description);
+        additionalDetails.add(cottonType);
 
 
         FormRootCapture formRootCapture = new FormRootCapture();

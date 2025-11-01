@@ -35,9 +35,12 @@ public class ProductSizeRows extends BaseEntity {
     private String username;
 
     ////Binding Variable
-    private long productId;
+    private long productRootId;
     private String productKey;
     private long productDetailsId;
+
+    //Product UID
+    private String productUid;
 
     @ManyToOne
     @JoinColumn( referencedColumnName = "id" , name = "product_details_joiner")

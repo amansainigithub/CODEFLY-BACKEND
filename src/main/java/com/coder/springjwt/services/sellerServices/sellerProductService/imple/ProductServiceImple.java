@@ -4,10 +4,12 @@ import com.coder.springjwt.bucket.bucketModels.BucketModel;
 import com.coder.springjwt.bucket.bucketService.BucketService;
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
+import com.coder.springjwt.emailBucket.EmailService.emailSenderService.EmailSenderService;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
+import com.coder.springjwt.models.adminModels.ProductRejectionReasonModel.ProductRejectionReason;
 import com.coder.springjwt.models.adminModels.categories.VariantCategoryModel;
 import com.coder.springjwt.models.adminModels.chargeConfigModels.ChargeConfig;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
@@ -58,6 +60,9 @@ public class ProductServiceImple implements ProductService {
     @Autowired
     private ChargeConfigRepo chargeConfigRepo;
 
+    @Autowired
+    private EmailSenderService emailSenderService;
+
 
     @Override
     public ResponseEntity<?> saveProductDetails(ProductDetailsDto productDetailsDto, long variantId) {
@@ -105,7 +110,7 @@ public class ProductServiceImple implements ProductService {
                 Map<String, String> priceAndMrp = this.productSizeRows(userId, userName,
                                             productDetailsModel.getProductSizeRows(), productDetailsModel);
                 String productPrice = priceAndMrp.get("productPrice");
-                String productMrp   =   priceAndMrp.get("productMrp");
+                String productMrp   = priceAndMrp.get("productMrp");
 
                 //SET PRODUCT DETAILS TO ACTUAL-PRICE AND MRP
                 productDetailsModel.setProductPrice(productPrice);
@@ -176,6 +181,9 @@ public class ProductServiceImple implements ProductService {
             ProductDetailsModel productDetails = this.productDetailsRepo.findById(productId)
                     .orElseThrow(() -> new DataNotFoundException("Product Id Not Found " + productId));
 
+            User user = userRepository.findByUsername(productDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User Not Found Exception"));
+
             // ============ IMAGE HANDLING ============
             ResponseEntity<?> imageResponse = productServiceHelper.checkImageValidation(files);
             if (imageResponse != null) {
@@ -235,6 +243,15 @@ public class ProductServiceImple implements ProductService {
             //SAVE PRODUCT-KEY AND BIND DATA
             this.saveProductKeysBinding(productDetails.getProductRoot());
             log.info("Product SAVED SUCCESS...");
+            log.info("Product UPLOAD SUCCESSFULLY...");
+
+
+            //Mail Trigger Start....
+            log.info("Mail Trigger Process Starting .. ");
+            this.sendProductUploadSuccessMail(productDetails , user.getSellerEmail());
+
+            log.info("Mail Sent Success....");
+
             return ResponseGenerator.generateSuccessResponse("Files uploaded successfully for productId: " + productId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -275,23 +292,25 @@ public class ProductServiceImple implements ProductService {
     public void saveProductKeysBinding(ProductRoot productRoot) {
         try {
             long productId = productRoot.getId();
+
+            //Generate Product Key
             String productKey = this.productServiceHelper.generateProductKey();
 
             //Set Product Key to Product Root
             productRoot.setProductKey(productKey);
 
             for (ProductDetailsModel pdm : productRoot.getProductDetailsModels()) {
-                pdm.setProductId(productId);
+                pdm.setProductRootId(productId);
                 pdm.setProductKey(productKey);
 
                 for (ProductFiles pf : pdm.getProductFiles()) {
-                    pf.setProductId(productId);
+                    pf.setProductRootId(productId);
                     pf.setProductKey(productKey);
                     pf.setProductDetailsId(pdm.getId());
                 }
 
                 for (ProductSizeRows psr : pdm.getProductSizeRows()){
-                    psr.setProductId(productId);
+                    psr.setProductRootId(productId);
                     psr.setProductKey(productKey);
                     psr.setProductDetailsId(pdm.getId());
                 }
@@ -343,6 +362,26 @@ public class ProductServiceImple implements ProductService {
         // Format time
         String formattedTime = now.format(formatter);
         return formattedTime;
+    }
+
+
+    public void sendProductUploadSuccessMail(ProductDetailsModel productData, String emailTo)
+    {
+        Map<String,Object> mailSubject = new HashMap<>();
+        mailSubject.put("productId",productData.getProductKey());
+
+        Map<String,Object> mailBody = new HashMap<>();
+        mailBody.put("productName",productData.getProductName());
+        mailBody.put("productId",productData.getProductKey());
+        mailBody.put("dashboardLink","http://localhost:61795/admin/dashboard");
+        mailBody.put("year","2025");
+
+        this.mailTrigger("PRODUCT_UPLOAD_SUCCESSFULLY",mailSubject , mailBody , emailTo);
+    }
+
+    public void mailTrigger(String templateKey , Map<String,Object> mailSubject , Map<String,Object> mailBody ,  String emailTo)
+    {
+        this.emailSenderService.sendHtmlMail(templateKey ,mailSubject , mailBody , emailTo);
     }
 
 }

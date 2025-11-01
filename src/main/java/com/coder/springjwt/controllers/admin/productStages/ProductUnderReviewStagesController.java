@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,8 +19,8 @@ public class ProductUnderReviewStagesController {
 
     @GetMapping(AdminUrlMappings.PRODUCT_UNDER_REVIEW_STAGE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> productUnderReviewStage() {
-        return this.productUnderReviewStageService.productUnderReviewStage();
+    public ResponseEntity<?> productUnderReviewStage(@RequestParam Integer page , @RequestParam  Integer size) {
+        return this.productUnderReviewStageService.productUnderReviewStage(page , size);
     }
 
 

@@ -32,6 +32,9 @@ public class ProductRoot extends BaseEntity {
 
     private String productKey;
 
+    //Product UID
+    private String productUid;
+
     //Product Status
     private String productStatus;
 

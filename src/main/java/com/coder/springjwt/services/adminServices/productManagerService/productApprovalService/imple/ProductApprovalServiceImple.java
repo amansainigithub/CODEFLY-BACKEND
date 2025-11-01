@@ -1,14 +1,17 @@
 package com.coder.springjwt.services.adminServices.productManagerService.productApprovalService.imple;
 
 import com.coder.springjwt.dtos.adminDtos.productRejectionReasonDto.ProductRejectionReasonDto;
+import com.coder.springjwt.emailBucket.EmailService.emailSenderService.EmailSenderService;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.generateDateandTime.GenerateDateAndTime;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
+import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.adminModels.ProductRejectionReasonModel.ProductRejectionReason;
 import com.coder.springjwt.models.adminModels.productStatusTracker.ProductStatusTracker;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductRoot;
+import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.adminRepository.productStatusTracker.ProductStatusTrackerRepo;
 import com.coder.springjwt.repository.productRejectionReasonRepo.ProductRejectionReasonRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
@@ -18,9 +21,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -44,6 +50,11 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
 
     @Autowired
     private UserHelper userHelper;
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Override
@@ -51,6 +62,9 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
         try {
             ProductDetailsModel productData = this.productDetailsRepo.findById(productId)
                     .orElseThrow(() -> new DataNotFoundException("Product Id Not found :: " + productId));
+
+            User user = userRepository.findByUsername(productData.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User Not Found Exception"));
 
             //Product Root
             ProductRoot productRoot = productData.getProductRoot();
@@ -66,7 +80,7 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             //Product Reason
             productData.setProductApprovedReason("APPROVED SUCCESSFULLY");
             //Approved By
-            productData.setApprovedBy( userHelper.getCurrentUser().get("username") );
+            productData.setApprovedBy( user.getUsername() );
             this.productDetailsRepo.save(productData);
             log.info("Product Approved Successfully");
 
@@ -83,6 +97,11 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             log.info("PRODUCT STATUS TRACKER SAVED SUCCESS");
             //Set DisApproved Reason To Product Status Tracker Ending...
 
+
+            //Send Product Approval Mail Start....
+            log.info("Mail Trigger Process Starting .. ");
+            this.sendProductApprovalMail(productData , user.getSellerEmail());
+
             return ResponseGenerator.generateSuccessResponse("SUCCESS");
         }
         catch (Exception e)
@@ -92,14 +111,20 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
         }
     }
 
+
+
     @Override
     public ResponseEntity<?> productDisApproved(long productId , long reasonId , String description) {
         try {
+
             ProductRejectionReason productRejectionReason = this.productRejectionReasonRepo.findById(reasonId)
                     .orElseThrow(() -> new DataNotFoundException("Reason Id Not found :: " + reasonId));
 
             ProductDetailsModel productData = this.productDetailsRepo.findById(productId)
                     .orElseThrow(() -> new DataNotFoundException("Product Id Not found :: " + productId));
+
+            User user = userRepository.findByUsername(productData.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User Not Found Exception"));
 
             //Product Root
             ProductRoot productRoot = productData.getProductRoot();
@@ -136,6 +161,9 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             log.info("PRODUCT STATUS TRACKER SAVED SUCCESS");
             //Set DisApproved Reason To Product Status Tracker Ending...
 
+            //Mail Trigger Start....
+            log.info("Mail Trigger Process Starting .. ");
+            this.sendProductDisApprovalMail(productData , productRejectionReason , user.getSellerEmail());
 
             return ResponseGenerator.generateSuccessResponse("SUCCESS");
         }
@@ -160,5 +188,39 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse("Failed");
         }
+    }
+
+    public void sendProductApprovalMail(ProductDetailsModel productData ,
+                                        String emailTo)
+    {
+        Map<String,Object> mailSubject = new HashMap<>();
+        mailSubject.put("productId",productData.getProductKey());
+        Map<String,Object> mailBody = new HashMap<>();
+        mailBody.put("productName",productData.getProductName());
+        mailBody.put("productId",productData.getProductKey());
+        mailBody.put("currentYear","2025");
+        this.mailTrigger("PRODUCT_APPROVED_SUCCESS",mailSubject , mailBody , emailTo);
+    }
+
+    public void sendProductDisApprovalMail(ProductDetailsModel productData,
+                                           ProductRejectionReason productRejectionReason,
+                                           String emailTo)
+    {
+        Map<String,Object> mailSubject = new HashMap<>();
+        mailSubject.put("productId",productData.getProductKey());
+        Map<String,Object> mailBody = new HashMap<>();
+        mailBody.put("productName",productData.getProductName());
+        mailBody.put("productId",productData.getProductKey());
+        mailBody.put("disapprovalReason",productRejectionReason.getReason());
+        mailBody.put("disapprovalDescription",productRejectionReason.getDescription());
+        mailBody.put("supportUrl","http://localhost:61795/admin/dashboard/");
+        mailBody.put("currentYear","2025");
+        this.mailTrigger("PRODUCT_DISAPPROVED" , mailSubject , mailBody ,emailTo);
+    }
+
+
+    public void mailTrigger(String templateKey , Map<String,Object> mailSubject , Map<String,Object> mailBody, String emailTo)
+    {
+        this.emailSenderService.sendHtmlMail(templateKey ,mailSubject , mailBody , emailTo);
     }
 }

@@ -9,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.SecureRandom;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,6 +24,7 @@ public class ProductServiceHelper {
     // SecureRandom for cryptographic quality randomness
     private static final SecureRandom RANDOM = new SecureRandom();
 
+    private static final AtomicInteger counter = new AtomicInteger(0);
     /**
      * Generates a 30-digit numeric product key.
      * Format: [13-digit epoch millis][05-digit counter][12-digit random]
@@ -34,6 +37,14 @@ public class ProductServiceHelper {
         long rand12 = (Math.abs(RANDOM.nextLong()) % 1_000_000_000_000L);
         return String.format("%013d%05d%012d", millis, count, rand12);
     }
+
+
+    public static synchronized String nextKey() {
+        String datePart = new SimpleDateFormat("yyMMdd").format(new Date()); // e.g. 251031
+        int seq = counter.incrementAndGet();
+        return datePart + String.format("%06d", seq); // total 12 digits (6 date + 6 counter)
+    }
+
 
 
 //    =============================================================================

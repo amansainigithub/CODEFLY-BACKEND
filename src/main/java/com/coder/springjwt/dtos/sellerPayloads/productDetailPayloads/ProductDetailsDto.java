@@ -36,6 +36,7 @@ public class ProductDetailsDto {
     private String stretchType;
     private String careInstruction;
     private String description;
+    private String cottonType;
 
     private List<ProductSizeRowsDto> productSizeRows;
 

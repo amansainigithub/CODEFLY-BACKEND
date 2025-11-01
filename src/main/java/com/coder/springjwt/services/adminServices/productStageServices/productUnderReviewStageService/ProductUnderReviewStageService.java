@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface ProductUnderReviewStageService {
-    ResponseEntity<?> productUnderReviewStage();
+    ResponseEntity<?> productUnderReviewStage(Integer page, Integer size);
 
 
 }
