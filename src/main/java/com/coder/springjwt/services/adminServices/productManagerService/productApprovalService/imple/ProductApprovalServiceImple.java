@@ -1,7 +1,7 @@
 package com.coder.springjwt.services.adminServices.productManagerService.productApprovalService.imple;
 
 import com.coder.springjwt.dtos.adminDtos.productRejectionReasonDto.ProductRejectionReasonDto;
-import com.coder.springjwt.emailBucket.EmailService.emailSenderService.EmailSenderService;
+import com.coder.springjwt.buckets.emailBucket.EmailService.emailSenderService.EmailSenderService;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.generateDateandTime.GenerateDateAndTime;

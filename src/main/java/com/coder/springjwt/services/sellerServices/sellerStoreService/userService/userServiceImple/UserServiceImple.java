@@ -1,6 +1,6 @@
 package com.coder.springjwt.services.sellerServices.sellerStoreService.userService.userServiceImple;
 
-import com.coder.springjwt.bucket.bucketService.BucketService;
+import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.services.sellerServices.sellerStoreService.userService.UserService;

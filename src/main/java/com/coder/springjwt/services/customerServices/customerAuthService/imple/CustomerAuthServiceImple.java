@@ -21,7 +21,7 @@ import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.security.jwt.JwtUtils;
 import com.coder.springjwt.security.services.UserDetailsImpl;
-import com.coder.springjwt.services.MobileOtpService.MobileOtpService;
+import com.coder.springjwt.buckets.smsBucket.MobileOtpService.MobileOtpService;
 import com.coder.springjwt.services.customerServices.customerAuthService.CustomerAuthService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;

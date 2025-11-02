@@ -1,7 +1,7 @@
 package com.coder.springjwt.services.adminServices.categories.rootCategoryImple;
 
-import com.coder.springjwt.bucket.bucketModels.BucketModel;
-import com.coder.springjwt.bucket.bucketService.BucketService;
+import com.coder.springjwt.buckets.filesBucket.bucketModels.BucketModel;
+import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.constants.adminConstants.adminMessageConstants.AdminMessageResponse;
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.adminDtos.categoriesDtos.RootCategoryDto;

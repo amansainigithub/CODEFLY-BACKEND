@@ -1,7 +1,7 @@
 package com.coder.springjwt.services.adminServices.categories.subCategoryImple;
 
-import com.coder.springjwt.bucket.bucketModels.BucketModel;
-import com.coder.springjwt.bucket.bucketService.BucketService;
+import com.coder.springjwt.buckets.filesBucket.bucketModels.BucketModel;
+import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.dtos.adminDtos.categoriesDtos.SubCategoryDto;
 import com.coder.springjwt.exception.adminException.CategoryNotFoundException;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
