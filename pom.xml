@@ -134,22 +134,18 @@
 			<artifactId>cloudinary-http5</artifactId>
 			<version>2.0.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.cloudinary</groupId>
 			<artifactId>cloudinary-taglib</artifactId>
 			<version>2.0.0</version>
 		</dependency>
+
 		<dependency>
 			<groupId>io.github.cdimascio</groupId>
 			<artifactId>dotenv-java</artifactId>
 			<version>2.2.4</version>
 		</dependency>
-
-<!--		<dependency>-->
-<!--			<groupId>org.springframework.boot</groupId>-->
-<!--			<artifactId>spring-boot-starter-data-redis</artifactId>-->
-<!--		</dependency>-->
-
 
 		<dependency>
 			<groupId>com.cashfree.pg.java</groupId>
@@ -157,21 +153,12 @@
 			<version>4.3.6</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>
 			<artifactId>okhttp</artifactId>
 			<version>4.10.0</version>
 		</dependency>
-
-
-<!--		Redis Server Automatically Start From Spring boot Apllication-->
-<!--		<dependency>-->
-<!--			<groupId>com.github.kstyrc</groupId>-->
-<!--			<artifactId>embedded-redis</artifactId>-->
-<!--			<version>0.6</version>-->
-<!--		</dependency>-->
-
-
 
 	</dependencies>
 
