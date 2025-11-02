@@ -21,7 +21,6 @@ import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.security.jwt.JwtUtils;
 import com.coder.springjwt.security.services.UserDetailsImpl;
-import com.coder.springjwt.buckets.smsBucket.MobileOtpService.MobileOtpService;
 import com.coder.springjwt.services.customerServices.customerAuthService.CustomerAuthService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
@@ -60,8 +59,6 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @Autowired
-    private MobileOtpService mobileOtpService;
 
     @Override
     public ResponseEntity<?> customerAuthenticateUser(CustomerLoginPayload customerLoginPayload) {
@@ -158,15 +155,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
         String otp = GenerateOTP.generateOtp(6);
         log.info("OTP SUCCESSFULLY GENERATED :: " + otp);
 
-        //SEND OTP TO MOBILE
-        try {
-            mobileOtpService.sendSMS(freshUserPayload.getUsername(),
-                    OtpMessageContent.getMessageContent(otp),"CUSTOMER" ,"MODE");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+
 
         //Set Project Role
         user.setProjectRole(ERole.ROLE_CUSTOMER.toString());
@@ -315,16 +304,6 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
                   log.info(CustMessageResponse.FORGOT_PASSWORD_OTP_GENERATE_SUCCESS + " :: " + otp);
 
-                  //SEND OTP TO MOBILE
-                  try {
-                      //Username == MobileNumber
-                      mobileOtpService.sendSMS(custForgotPasswordPayload.getUsername(), OtpMessageContent.forgotPasswordOtpContent(otp),"CUSTOMER" ,"MODE");
-                  }
-                  catch (Exception e)
-                  {
-                      response.setMessage(CustMessageResponse.ERROR_THIRD_PARTY_API);
-                      e.printStackTrace();
-                  }
                   //Forgot Password Otp set to user Object
                   user.setCustomerForgotPasswordOtp(otp);
                   this.userRepository.save(user);

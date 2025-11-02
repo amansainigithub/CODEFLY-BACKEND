@@ -14,7 +14,6 @@ import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.sellerRepository.sellerMobileRepository.SellerMobileRepository;
-import com.coder.springjwt.buckets.smsBucket.MobileOtpService.MobileOtpService;
 import com.coder.springjwt.services.sellerServices.sellerAuthService.SellerAuthService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
@@ -48,9 +47,6 @@ public class SellerAuthServiceImple implements SellerAuthService {
 
     @Autowired
     private PasswordEncoder encoder;
-
-    @Autowired
-    private MobileOtpService mobileOtpService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -108,17 +104,6 @@ public class SellerAuthServiceImple implements SellerAuthService {
         String otp =  GenerateOTP.generateOtp(6);
         log.info("Otp Generated Success  :: {}" + otp );
 
-        //Send OTP SMS
-       try {
-           this.mobileOtpService.sendSMS( sellerMobile.getMobile() ,
-                                          OtpMessageContent.sellerRegistrationContent(otp),
-                                   "ROLE_SELLER" ,
-                                   "REGISTER");
-       }catch (Exception e)
-       {
-           log.error("Error :: " + e.getMessage());
-           e.printStackTrace();
-       }
         sellerMobile.setOtp(otp);
 
         // Set expiration time to 5 minutes from now
