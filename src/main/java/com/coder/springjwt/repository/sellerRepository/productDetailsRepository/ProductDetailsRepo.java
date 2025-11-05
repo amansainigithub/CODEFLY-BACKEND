@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,5 +29,18 @@ public interface ProductDetailsRepo extends JpaRepository<ProductDetailsModel, L
 
     Optional<ProductDetailsModel> findByProductKeyAndProductSeries(String productKey , String productSeries);
 
+
+
+    @Query("SELECT DISTINCT p FROM ProductDetailsModel p " +
+            "JOIN p.productSizeRows ps " +
+            "WHERE ps.inventory = '0' AND p.username = :username")
+    Page<ProductDetailsModel> getProductsByInventoryZeroAndUserName(@Param("username") String username, Pageable pageable);
+
+    @Query("SELECT DISTINCT p FROM ProductDetailsModel p " +
+            "JOIN p.productSizeRows ps " +
+            "WHERE CAST(ps.inventory AS int) > 0 " +
+            "AND CAST(ps.inventory AS int) <= 10 " +
+            "AND p.username = :username")
+    Page<ProductDetailsModel> findLowInventoryProductsByUsername(@Param("username") String username, Pageable pageable);
 
 }

@@ -25,6 +25,24 @@ public class InventoryController {
     }
 
 
+    @PostMapping(SellerUrlMappings.GET_OUT_OF_STOCK_PRODUCT)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getOutOfStockProduct(@RequestParam Integer page ,
+                                             @RequestParam  Integer size ,
+                                             @RequestParam String username) {
+
+        return this.inventoryService.getOutOfStockProduct(page , size ,username);
+    }
+
+    @PostMapping(SellerUrlMappings.GET_LOW_STOCK_PRODUCT)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getLowStockProduct(@RequestParam Integer page ,
+                                                  @RequestParam  Integer size ,
+                                                  @RequestParam String username) {
+
+        return this.inventoryService.getLowStockProduct(page , size ,username);
+    }
+
     @PostMapping(SellerUrlMappings.UPDATE_PRODUCT_INVENTORY)
     @PreAuthorize("hasRole('SELLER')")
     public ResponseEntity<?> updateProductInventory(@RequestBody UpdateProductInventoryDto updateProductInventoryDto) {

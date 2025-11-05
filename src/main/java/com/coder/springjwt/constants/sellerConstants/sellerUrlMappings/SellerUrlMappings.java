@@ -89,7 +89,8 @@ public class SellerUrlMappings {
     //    =======PRODUCTS INVENTORY MANAGER==========
     public static final String INVENTORY_CONTROLLER = SELLER_AUTH_URL + "/inventoryController";
     public static final String GET_ALL_INVENTORY = "/getAllInventory";
-
+    public static final String GET_OUT_OF_STOCK_PRODUCT = "/getOutOfStockProduct";
+    public static final String GET_LOW_STOCK_PRODUCT = "/getLowStockProduct";
     public static final String UPDATE_PRODUCT_INVENTORY = "/updateProductInventory";
 
 

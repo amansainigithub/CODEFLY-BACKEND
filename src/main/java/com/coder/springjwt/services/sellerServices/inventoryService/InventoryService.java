@@ -8,5 +8,10 @@ import org.springframework.stereotype.Component;
 public interface InventoryService {
     ResponseEntity<?> getAllInventory(Integer page , Integer size, String username);
 
+    ResponseEntity<?> getOutOfStockProduct(Integer page, Integer size, String username);
+    ResponseEntity<?> getLowStockProduct(Integer page, Integer size, String username);
+
     ResponseEntity<?> updateProductInventory(UpdateProductInventoryDto updateProductInventoryDto);
+
+
 }

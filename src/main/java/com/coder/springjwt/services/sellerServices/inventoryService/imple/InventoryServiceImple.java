@@ -49,7 +49,6 @@ public class InventoryServiceImple implements InventoryService {
             // VALIDATE CURRENT USER---
             Map<String, String> userData = userHelper.getCurrentUser();
             String currentUser= userData.get("username").trim();
-            log.info("Current User Name :: " + currentUser);
             if(!userData.get("username").trim().equals(username.trim()))
             {
                 throw new UsernameNotFoundException("Username not found Exception...");
@@ -106,6 +105,134 @@ public class InventoryServiceImple implements InventoryService {
     }
 
     @Override
+    public ResponseEntity<?> getOutOfStockProduct(Integer page, Integer size, String username) {
+        try {
+            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+
+            // VALIDATE CURRENT USER---
+            Map<String, String> userData = userHelper.getCurrentUser();
+            String currentUser= userData.get("username").trim();
+            if(!userData.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
+
+            Page<ProductDetailsModel> productDetails = this.productDetailsRepo.
+                                                        getProductsByInventoryZeroAndUserName(username ,
+                                                        PageRequest.of(page, size,
+                                                        Sort.by("productKey").descending()));
+
+            List<AllStockDto> allStockDtoList = new ArrayList<>();
+            for (ProductDetailsModel pdm : productDetails) {
+                AllStockDto allStockDto = new AllStockDto();
+                allStockDto.setId(pdm.getId());
+                allStockDto.setProductName(pdm.getProductName());
+                allStockDto.setProductStatus(pdm.getProductStatus());
+                allStockDto.setProductKey(pdm.getProductKey());
+                allStockDto.setProductDate(pdm.getProductDate());
+                allStockDto.setProductTime(pdm.getProductTime());
+
+                //Product Main File--
+                try {
+                    allStockDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
+                } catch (Exception e) {
+                    allStockDto.setProductMainFile("BLANK");
+                }
+
+                List<ProductSizeRows> productSizeRows = pdm.getProductSizeRows();
+                List<ProductInventoryDto> productInventoryCollector = new ArrayList<>();
+                for (ProductSizeRows psr : productSizeRows) {
+                        ProductInventoryDto productInventoryDto = new ProductInventoryDto();
+                        productInventoryDto.setId(psr.getId());
+                        productInventoryDto.setSize(psr.get__msVal());
+                        productInventoryDto.setInventory(psr.getInventory());
+                        productInventoryCollector.add(productInventoryDto);
+
+                }
+                    /**---Set Product Size rows Or
+                     Product Inventory to Product
+                     Details for Out Of Stock---**/
+                    allStockDto.setProductInventories(productInventoryCollector);
+                    allStockDtoList.add(allStockDto);
+            }
+
+            // DTO list convert to Page Wrap
+            Page<AllStockDto> stockData =
+                    new PageImpl<>(allStockDtoList, productDetails.getPageable(), productDetails.getTotalElements());
+            return ResponseGenerator.generateSuccessResponse(stockData, "SUCCESS");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> getLowStockProduct(Integer page, Integer size, String username) {
+        try {
+            log.info(ProductOverviewServiceImple.class.getName() + " working....");
+
+            // VALIDATE CURRENT USER---
+            Map<String, String> userData = userHelper.getCurrentUser();
+            String currentUser= userData.get("username").trim();
+            if(!userData.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
+
+            Page<ProductDetailsModel> productDetails = this.productDetailsRepo.
+                    findLowInventoryProductsByUsername(username ,
+                            PageRequest.of(page, size,
+                                    Sort.by("productKey").descending()));
+
+            List<AllStockDto> allStockDtoList = new ArrayList<>();
+            for (ProductDetailsModel pdm : productDetails) {
+                AllStockDto allStockDto = new AllStockDto();
+                allStockDto.setId(pdm.getId());
+                allStockDto.setProductName(pdm.getProductName());
+                allStockDto.setProductStatus(pdm.getProductStatus());
+                allStockDto.setProductKey(pdm.getProductKey());
+                allStockDto.setProductDate(pdm.getProductDate());
+                allStockDto.setProductTime(pdm.getProductTime());
+
+                //Product Main File--
+                try {
+                    allStockDto.setProductMainFile(pdm.getProductFiles().get(0).getFileUrl());
+                } catch (Exception e) {
+                    allStockDto.setProductMainFile("BLANK");
+                }
+
+                List<ProductSizeRows> productSizeRows = pdm.getProductSizeRows();
+                List<ProductInventoryDto> productInventoryCollector = new ArrayList<>();
+                for (ProductSizeRows psr : productSizeRows) {
+                    ProductInventoryDto productInventoryDto = new ProductInventoryDto();
+                    productInventoryDto.setId(psr.getId());
+                    productInventoryDto.setSize(psr.get__msVal());
+                    productInventoryDto.setInventory(psr.getInventory());
+                    productInventoryCollector.add(productInventoryDto);
+
+                }
+                /**---Set Product Size rows Or
+                 Product Inventory to Product
+                 Details for Low Stocks---**/
+                allStockDto.setProductInventories(productInventoryCollector);
+                allStockDtoList.add(allStockDto);
+            }
+
+            // DTO list convert to Page Wrap
+            Page<AllStockDto> stockData =
+                    new PageImpl<>(allStockDtoList, productDetails.getPageable(), productDetails.getTotalElements());
+            return ResponseGenerator.generateSuccessResponse(stockData, "SUCCESS");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("BAD REQUEST");
+        }
+    }
+
+    @Override
     public ResponseEntity<?> updateProductInventory(UpdateProductInventoryDto updateProductInventoryDto) {
         try {
             // VALIDATE CURRENT USER---
@@ -115,7 +242,6 @@ public class InventoryServiceImple implements InventoryService {
                 throw new UsernameNotFoundException("Username not found Exception...");
             }
             // VALIDATE CURRENT USER ENDING---
-
             ProductSizeRows productSizeRows = this.productSizeRowsRepo.findById(updateProductInventoryDto.getId())
                     .orElseThrow(() -> new DataNotFoundException("Product Size Rows | Data Not Found Exception "));
 
