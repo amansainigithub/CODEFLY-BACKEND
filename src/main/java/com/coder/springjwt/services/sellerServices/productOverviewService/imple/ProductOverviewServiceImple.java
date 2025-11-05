@@ -154,7 +154,7 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
 
             // VALIDATE CURRENT USER
             Map<String, String> currentUser = userHelper.getCurrentUser();
-            System.out.println("Seller Name  :: " + currentUser.get("username"));
+            log.info("Seller Name  :: " + currentUser.get("username"));
             if(!currentUser.get("username").trim().equals(username.trim()))
             {
                 throw new UsernameNotFoundException("Username not found Exception...");
@@ -204,7 +204,7 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
 
             // VALIDATE CURRENT USER
             Map<String, String> currentUser = userHelper.getCurrentUser();
-            System.out.println("Seller Name  :: " + currentUser.get("username"));
+            log.info("Seller Name  :: " + currentUser.get("username"));
             if(!currentUser.get("username").trim().equals(username.trim()))
             {
                 throw new UsernameNotFoundException("Username not found Exception...");
@@ -254,7 +254,7 @@ public class ProductOverviewServiceImple implements ProductOverviewService {
 
             // VALIDATE CURRENT USER
             Map<String, String> currentUser = userHelper.getCurrentUser();
-            System.out.println("Seller Name  :: " + currentUser.get("username"));
+            log.info("Seller Name  :: " + currentUser.get("username"));
             if(!currentUser.get("username").trim().equals(username.trim()))
             {
                 throw new UsernameNotFoundException("Username not found Exception...");

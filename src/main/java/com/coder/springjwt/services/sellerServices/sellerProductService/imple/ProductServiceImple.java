@@ -1,10 +1,10 @@
 package com.coder.springjwt.services.sellerServices.sellerProductService.imple;
 
+import com.coder.springjwt.buckets.emailBucket.EmailService.emailSenderService.EmailSenderService;
 import com.coder.springjwt.buckets.filesBucket.bucketModels.BucketModel;
 import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.productDetailPayloads.ProductDetailsDto;
-import com.coder.springjwt.buckets.emailBucket.EmailService.emailSenderService.EmailSenderService;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;

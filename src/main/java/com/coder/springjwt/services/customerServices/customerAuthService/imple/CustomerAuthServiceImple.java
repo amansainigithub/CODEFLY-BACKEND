@@ -1,6 +1,5 @@
 package com.coder.springjwt.services.customerServices.customerAuthService.imple;
 
-import com.coder.springjwt.constants.OtpMessageContent;
 import com.coder.springjwt.constants.customerConstants.messageConstants.test.CustMessageResponse;
 import com.coder.springjwt.dtos.customerPayloads.customerPayload.CustForgotPasswordPayload;
 import com.coder.springjwt.dtos.customerPayloads.customerPayload.CustomerLoginPayload;

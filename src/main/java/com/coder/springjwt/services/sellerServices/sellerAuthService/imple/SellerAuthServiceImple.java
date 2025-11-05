@@ -1,6 +1,5 @@
 package com.coder.springjwt.services.sellerServices.sellerAuthService.imple;
 
-import com.coder.springjwt.constants.OtpMessageContent;
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerMobilePayload;

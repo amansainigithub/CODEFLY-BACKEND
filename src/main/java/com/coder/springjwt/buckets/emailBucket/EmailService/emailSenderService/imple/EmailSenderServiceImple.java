@@ -2,8 +2,8 @@ package com.coder.springjwt.buckets.emailBucket.EmailService.emailSenderService.
 
 import com.coder.springjwt.buckets.emailBucket.EmailService.emailSenderService.EmailSenderService;
 import com.coder.springjwt.buckets.emailBucket.emailPayloads.EmailSendAudit;
-import com.coder.springjwt.buckets.emailBucket.emailRepository.EmailSendAuditRepo;
 import com.coder.springjwt.buckets.emailBucket.emailPayloads.EmailTemplate;
+import com.coder.springjwt.buckets.emailBucket.emailRepository.EmailSendAuditRepo;
 import com.coder.springjwt.buckets.emailBucket.emailRepository.EmailTemplateRepo;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.util.MessageResponse;

@@ -1,7 +1,7 @@
 package com.coder.springjwt.buckets.emailBucket.emailControllers.emailSenderServiceController;
 
-import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
 import com.coder.springjwt.buckets.emailBucket.EmailService.emailSenderService.EmailSenderService;
+import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

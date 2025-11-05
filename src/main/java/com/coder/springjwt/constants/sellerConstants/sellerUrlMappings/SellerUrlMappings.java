@@ -82,11 +82,15 @@ public class SellerUrlMappings {
     public static final String GET_APPROVED_PRODUCT = "/getApprovedProduct";
     public static final String GET_DIS_APPROVED_PRODUCT = "/getDisApprovedProduct";
     public static final String GET_DRAFT_PRODUCT = "/getDraftProduct";
-
     public static final String FETCH_ALL_USER_PRODUCTS = "/fetchAllUserProduct";
 
 
-    //ENGINE X BY ADMIN
+
+    //    =======PRODUCTS INVENTORY MANAGER==========
+    public static final String INVENTORY_CONTROLLER = SELLER_AUTH_URL + "/inventoryController";
+    public static final String GET_ALL_INVENTORY = "/getAllInventory";
+
+    public static final String UPDATE_PRODUCT_INVENTORY = "/updateProductInventory";
 
 
 }
