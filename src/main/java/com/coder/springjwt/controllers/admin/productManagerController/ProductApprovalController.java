@@ -23,8 +23,9 @@ public class ProductApprovalController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> productDisApproved(@PathVariable long productId  ,
                                                 @PathVariable long reasonId ,
-                                                @PathVariable String description) {
-        return this.productApprovalService.productDisApproved( productId , reasonId, description);
+                                                @PathVariable String description,
+                                                @PathVariable String rejectionRootCategory) {
+        return this.productApprovalService.productDisApproved( productId , reasonId, description , rejectionRootCategory);
     }
 
 

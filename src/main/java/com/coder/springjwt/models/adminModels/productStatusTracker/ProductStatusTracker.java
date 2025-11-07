@@ -31,5 +31,9 @@ public class ProductStatusTracker extends BaseEntity {
 
     private String productDescription;
 
+    private String productRootRejectionCategory;
+
+    private String productRootRejectionCategoryId;
+
 
 }

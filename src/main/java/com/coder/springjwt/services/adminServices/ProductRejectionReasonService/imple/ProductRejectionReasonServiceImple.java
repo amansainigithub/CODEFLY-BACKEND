@@ -4,7 +4,9 @@ import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.Sell
 import com.coder.springjwt.dtos.adminDtos.productRejectionReasonDto.ProductRejectionReasonDto;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.models.adminModels.ProductRejectionReasonModel.ProductRejectionReason;
+import com.coder.springjwt.models.adminModels.ProductRejectionReasonModel.RootRejectionCategory;
 import com.coder.springjwt.repository.productRejectionReasonRepo.ProductRejectionReasonRepo;
+import com.coder.springjwt.repository.productRejectionReasonRepo.RootRejectionCategoryRepo;
 import com.coder.springjwt.services.adminServices.ProductRejectionReasonService.ProductRejectionReasonService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
@@ -27,6 +29,9 @@ public class ProductRejectionReasonServiceImple implements ProductRejectionReaso
     private ProductRejectionReasonRepo rejectionReasonRepo;
 
     @Autowired
+    private RootRejectionCategoryRepo rootRejectionCategoryRepo;
+
+    @Autowired
     private ModelMapper modelMapper;
     @Override
     public ResponseEntity<?> createRejectionReason(ProductRejectionReasonDto productRejectionReasonDto) {
@@ -35,7 +40,13 @@ public class ProductRejectionReasonServiceImple implements ProductRejectionReaso
             ProductRejectionReason productRejectionReason =  modelMapper.map(productRejectionReasonDto, ProductRejectionReason.class);
             log.info("Object Mapper Convert Success");
 
-            //Rejection Reason
+            RootRejectionCategory rootRejectionCategory = this.rootRejectionCategoryRepo.findByRootRejectionCategory(productRejectionReasonDto.getRootRejectionCategory())
+                    .orElseThrow(() -> new RuntimeException("Root Rejection Category Not Found | Please Check..."));
+
+            //Set Root Rejection Category To  Rejection Reason
+            productRejectionReason.setRootRejectionCategories(rootRejectionCategory);
+
+            //Rejection Reason Save
             this.rejectionReasonRepo.save(productRejectionReason);
 
             response.setMessage("Rejection Reason Saved Success");
@@ -131,4 +142,20 @@ public class ProductRejectionReasonServiceImple implements ProductRejectionReaso
             return ResponseGenerator.generateBadRequestResponse("failed" ," Data Update Failed");
         }
     }
+
+    @Override
+    public ResponseEntity<?> findByRootRejectionCategory(long rejectionId) {
+        try {
+            List<ProductRejectionReason> productRejectionReasons = this.rejectionReasonRepo.findByRootRejectionCategoriesId(rejectionId);
+            log.info("findByRootRejectionCategory Data Fetch Success");
+            return ResponseGenerator.generateSuccessResponse(productRejectionReasons , "Success");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error("Could Not fetch Root Rejection Category");
+            return ResponseGenerator.generateBadRequestResponse(e.getMessage() , "Error");
+        }
+    }
+
 }

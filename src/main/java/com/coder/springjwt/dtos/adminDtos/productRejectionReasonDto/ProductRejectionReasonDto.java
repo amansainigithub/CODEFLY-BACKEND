@@ -11,6 +11,8 @@ public class ProductRejectionReasonDto {
 
     private long id;
 
+    private String rootRejectionCategory;
+
     private String code;
 
     private String reason;

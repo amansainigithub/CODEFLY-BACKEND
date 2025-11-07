@@ -8,7 +8,7 @@ public interface ProductApprovalService {
 
     ResponseEntity<?> productApproved(long productId);
 
-    ResponseEntity<?> productDisApproved(long productId ,long reasonId , String description);
+    ResponseEntity<?> productDisApproved(long productId ,long reasonId , String description , String rejectionRootCategory);
 
     ResponseEntity<?> getRejectionReasonsList();
 }

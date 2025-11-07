@@ -214,7 +214,7 @@ public class AdminUrlMappings {
     //PRODUCT APPROVAL CONTROLLER
     public static final String PRODUCT_APPROVAL_CONTROLLER = ADMIN_AUTHORIZE_URL + "/productApprovalController";
     public static final String PRODUCT_APPROVED = "/productApproved/{productId}";
-    public static final String PRODUCT_DIS_APPROVED = "/productDisApproved/{productId}/{reasonId}/{description}";
+    public static final String PRODUCT_DIS_APPROVED = "/productDisApproved/{productId}/{reasonId}/{description}/{rejectionRootCategory}";
     public static final String  GET_REJECTION_REASONS_LIST= "/getRejectionReasonsList";
 
 
@@ -226,6 +226,16 @@ public class AdminUrlMappings {
     public static final String  DELETE_REJECTION_REASON= "/deleteRejectionReason/{rejectionId}";
     public static final String  GET_REJECTION_REASON_BY_ID= "/getRejectionReasonById/{rejectionId}";
     public static final String  UPDATE_REJECTION_REASON= "/updateRejectionReason";
+    public static final String  FIND_BY_ROOT_REJECTION_CATEGORY= "/findByRootRejectionCategory/{rejectionId}";
+
+
+    //ROOT REJECTION REASON CONTROLLER
+    public static final String ROOT_REJECTION_CATEGORY_CONTROLLER = ADMIN_AUTHORIZE_URL +"/rootRejectionCategoryController";
+    public static final String  CREATE_ROOT_REJECTION_CATEGORY= "/createRootRejectionCategory";
+    public static final String  GET_ROOT_REJECTION_CATEGORY= "/getRootRejectionCategory";
+    public static final String  DELETE_ROOT_REJECTION_CATEGORY= "/deleteRootRejectionCategory/{rejectionId}";
+    public static final String  GET_ROOT_REJECTION_CATEGORY_BY_ID= "/getRootRejectionCategoryById/{rejectionId}";
+    public static final String  UPDATE_ROOT_REJECTION_CATEGORY = "/updateRootRejectionCategory";
 
 
     //EMAIL TEMPLATE CONTROLLER

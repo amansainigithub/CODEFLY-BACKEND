@@ -103,6 +103,9 @@ public class ProductDetailsModel extends BaseEntity {
     //Product Dis Approved Description
     private String productDisApprovedCode;
 
+    //Product Root Rejection Category
+    private String productRootRejectionCategory;
+
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="productDetailsModel" , orphanRemoval = true )
     @JsonIgnore

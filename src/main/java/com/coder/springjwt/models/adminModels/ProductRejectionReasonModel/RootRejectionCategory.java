@@ -1,6 +1,5 @@
 package com.coder.springjwt.models.adminModels.ProductRejectionReasonModel;
 
-import com.coder.springjwt.models.entities.baseEntity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,33 +7,30 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "ProductRejectionReason")
+@Table(name = "RootRejectionCategory")
 @Entity
-public class ProductRejectionReason extends BaseEntity {
+public class RootRejectionCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    private String rootRejectionCategory;
-
-//    @Size(min=4, max=100)
-    @NotBlank(message = "code must Not be Blank" )
+    @NotBlank(message = "Root Rejection Category" )
     @Column(unique = true)
-    private String code;
-
-    private String reason;
+    private String rootRejectionCategory;
 
     @Column(length = 500)
     private String description;
 
     private boolean isActive = Boolean.FALSE;
 
-    @ManyToOne
-    @JoinColumn( referencedColumnName = "id" )
+    @OneToMany(mappedBy = "rootRejectionCategories",cascade = CascadeType.ALL)
     @JsonIgnore
-    private RootRejectionCategory rootRejectionCategories;
+    private List<ProductRejectionReason> productRejectionReasons;
+
 }

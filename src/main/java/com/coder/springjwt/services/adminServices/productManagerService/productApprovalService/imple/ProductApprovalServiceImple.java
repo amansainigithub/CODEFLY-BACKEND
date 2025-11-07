@@ -134,9 +134,12 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
 
 
     @Override
-    public ResponseEntity<?> productDisApproved(long productId , long reasonId , String description) {
+    public ResponseEntity<?> productDisApproved(long productId ,
+                                                long reasonId ,
+                                                String description,
+                                                String rejectionRootCategory) {
         try {
-
+            log.info("rejectionRootCategory :::" + rejectionRootCategory);
             ProductRejectionReason productRejectionReason = this.productRejectionReasonRepo.findById(reasonId)
                     .orElseThrow(() -> new DataNotFoundException("Reason Id Not found :: " + reasonId));
 
@@ -163,6 +166,9 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             productData.setProductApprovedReason(productRejectionReason.getReason());
             //Dis-Approved Description
             productData.setProductDisApprovedCode(productRejectionReason.getCode());
+            //Product Root Rejection Category
+            productData.setProductRootRejectionCategory(rejectionRootCategory);
+
             //Approved By
             productData.setApprovedBy( userHelper.getCurrentUser().get("username") );
             this.productDetailsRepo.save(productData);
@@ -177,6 +183,8 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
             productStatusTracker.setReason(productRejectionReason.getReason());
             productStatusTracker.setReasonId(productRejectionReason.getId());
             productStatusTracker.setProductDescription(description);
+            productStatusTracker.setProductRootRejectionCategory(productRejectionReason.getRootRejectionCategories().getRootRejectionCategory());
+            productStatusTracker.setProductRootRejectionCategoryId(String.valueOf(productRejectionReason.getRootRejectionCategories().getId()));
             this.productStatusTrackerRepo.save(productStatusTracker);
             log.info("PRODUCT STATUS TRACKER SAVED SUCCESS");
             //Set DisApproved Reason To Product Status Tracker Ending...

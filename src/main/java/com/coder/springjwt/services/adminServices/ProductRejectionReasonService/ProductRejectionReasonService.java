@@ -16,4 +16,6 @@ public interface ProductRejectionReasonService {
     ResponseEntity<?> getRejectionReasonById(long rejectionId);
 
     ResponseEntity<?> updateRejectionReason(ProductRejectionReasonDto productRejectionReasonDto);
+
+    ResponseEntity<?> findByRootRejectionCategory(long rejectionId);
 }

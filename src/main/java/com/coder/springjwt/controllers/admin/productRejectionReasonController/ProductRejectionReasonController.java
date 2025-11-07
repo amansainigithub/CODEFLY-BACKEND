@@ -47,4 +47,10 @@ public class ProductRejectionReasonController {
     }
 
 
+    @GetMapping(AdminUrlMappings.FIND_BY_ROOT_REJECTION_CATEGORY)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> findByRootRejectionCategory(@PathVariable long rejectionId) {
+        return this.productRejectionReasonService.findByRootRejectionCategory(rejectionId);
+    }
+
 }

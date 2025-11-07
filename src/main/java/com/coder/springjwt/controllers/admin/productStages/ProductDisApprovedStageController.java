@@ -19,7 +19,7 @@ public class ProductDisApprovedStageController {
 
     @GetMapping(AdminUrlMappings.PRODUCT_DIS_APPROVED_STAGE)
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> productApprovedStage(@RequestParam Integer page , @RequestParam  Integer size) {
+    public ResponseEntity<?> productDisApprovedStage(@RequestParam Integer page , @RequestParam  Integer size) {
         return this.productDisApprovedStageService.productDisApprovedStage(page , size);
     }
 }
