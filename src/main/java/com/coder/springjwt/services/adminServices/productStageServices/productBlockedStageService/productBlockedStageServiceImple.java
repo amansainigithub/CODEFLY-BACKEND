@@ -1,6 +1,5 @@
 package com.coder.springjwt.services.adminServices.productStageServices.productBlockedStageService;
 
-import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductApprovedStageDto;
 import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductBlockedStageDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;

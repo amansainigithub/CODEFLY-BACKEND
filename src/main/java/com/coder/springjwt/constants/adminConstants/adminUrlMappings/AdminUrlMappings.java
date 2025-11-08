@@ -251,4 +251,8 @@ public class AdminUrlMappings {
     public static final String GET_EMAIL_TEMPLATE_DATA="/getEmailTemplateData";
 
 
+    public static final String PRODUCT_FILES_MANAGER_CONTROLLER = ADMIN_AUTHORIZE_URL + "/productFilesManagerController";
+    public static final String  GET_PRODUCT_FILES_BY_ID= "/getProductFilesById/{productId}";
+    public static final String  UPLOAD_FILES= "/uploadFiles/{productFileId}/{productId}";
+
 }
