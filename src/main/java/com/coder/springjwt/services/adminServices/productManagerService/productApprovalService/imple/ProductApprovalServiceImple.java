@@ -140,60 +140,76 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
                                                 String rejectionRootCategory) {
         try {
             log.info("rejectionRootCategory :::" + rejectionRootCategory);
-            ProductRejectionReason productRejectionReason = this.productRejectionReasonRepo.findById(reasonId)
-                    .orElseThrow(() -> new DataNotFoundException("Reason Id Not found :: " + reasonId));
 
+            //Check User and Product Details Start
             ProductDetailsModel productData = this.productDetailsRepo.findById(productId)
                     .orElseThrow(() -> new DataNotFoundException("Product Id Not found :: " + productId));
 
             User user = userRepository.findByUsername(productData.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("User Not Found Exception"));
-
-            //Product Root
-            ProductRoot productRoot = productData.getProductRoot();
-            productRoot.setProductStatus(ProductStatus.DIS_APPROVED.toString());
+            //Check User and Product Details Ending...
 
 
-            productData.setProductStatus(ProductStatus.DIS_APPROVED.toString());
+            //Product Rejection Reason
+            ProductRejectionReason productRejectionReason = this.productRejectionReasonRepo.findById(reasonId)
+                    .orElseThrow(() -> new DataNotFoundException("Reason Id Not found :: " + reasonId));
 
-            //Product Approved Date
-            String todayDate = GenerateDateAndTime.getTodayDate();
-            productData.setProductDisApprovedDate(todayDate);
-            //Product Approved Time
-            String currentTime = GenerateDateAndTime.getCurrentTime();
-            productData.setProductDisApprovedTime(currentTime);
-            //Dis-Approved Reason
-            productData.setProductApprovedReason(productRejectionReason.getReason());
-            //Dis-Approved Description
-            productData.setProductDisApprovedCode(productRejectionReason.getCode());
-            //Product Root Rejection Category
-            productData.setProductRootRejectionCategory(rejectionRootCategory);
 
-            //Approved By
-            productData.setApprovedBy( userHelper.getCurrentUser().get("username") );
-            this.productDetailsRepo.save(productData);
-            log.info("Product Approved Successfully");
 
-            //Set DisApproved Reason To Product Status Tracker Starting
-            ProductStatusTracker productStatusTracker = new ProductStatusTracker();
-            productStatusTracker.setProductId(productData.getId());
-            productStatusTracker.setStatusDate(todayDate);
-            productStatusTracker.setStatusTime(currentTime);
-            productStatusTracker.setStatusDateTime(GenerateDateAndTime.getLocalDateTime());
-            productStatusTracker.setReason(productRejectionReason.getReason());
-            productStatusTracker.setReasonId(productRejectionReason.getId());
-            productStatusTracker.setProductDescription(description);
-            productStatusTracker.setProductRootRejectionCategory(productRejectionReason.getRootRejectionCategories().getRootRejectionCategory());
-            productStatusTracker.setProductRootRejectionCategoryId(String.valueOf(productRejectionReason.getRootRejectionCategories().getId()));
-            this.productStatusTrackerRepo.save(productStatusTracker);
-            log.info("PRODUCT STATUS TRACKER SAVED SUCCESS");
-            //Set DisApproved Reason To Product Status Tracker Ending...
+            //Root Rejection Category
+            String rootRejectionCategory = productRejectionReason.getRootRejectionCategories().getRootRejectionCategory();
+            // Validate Rejection Category
+            if (!rootRejectionCategory.equals(ProductStatus.DIS_APPROVED.toString()) &&
+                    !rootRejectionCategory.equals(ProductStatus.BLOCKED.toString())) {
+                return ResponseGenerator.generateBadRequestResponse("Error | Mis-Match Product Status");
+            }
 
-            //Mail Trigger Start....
-            log.info("Mail Trigger Process Starting .. ");
-            this.sendProductDisApprovalMail(productData , productRejectionReason , user.getSellerEmail());
+            if(rootRejectionCategory.equals(ProductStatus.DIS_APPROVED.toString())) {
+                //Product Root
+                ProductRoot productRoot = productData.getProductRoot();
+                    //Set Status To Product Root
+                    productRoot.setProductStatus(ProductStatus.DIS_APPROVED.toString());
 
-            return ResponseGenerator.generateSuccessResponse("SUCCESS");
+                    //Product Details Update Product Status
+                    productData.setProductStatus(ProductStatus.DIS_APPROVED.toString());
+
+                    // Fill Common Product Info
+                    this.fillProductStatusDetails(productData, productRejectionReason, rootRejectionCategory);
+
+                    // Save Tracker
+                    this.saveProductStatusTracker(productData, productRejectionReason, description);
+
+                    //Main Process Starting
+                    log.info("Product Approval Main Trigger ");
+                    this.sendProductDisApprovalMail(productData, productRejectionReason, user.getSellerEmail());
+
+                    return ResponseGenerator.generateSuccessResponse("SUCCESS");
+                }
+            else if(rootRejectionCategory.equals(ProductStatus.BLOCKED.toString())) {
+                //Product Root
+                ProductRoot productRoot = productData.getProductRoot();
+
+                //Set Status To Product Root
+                productRoot.setProductStatus(ProductStatus.BLOCKED.toString());
+
+                //Product Details Update Product Status
+                productData.setProductStatus(ProductStatus.BLOCKED.toString());
+
+                // Fill Common Product Info
+                this.fillProductStatusDetails(productData, productRejectionReason, rootRejectionCategory);
+
+                // Save Tracker
+                this.saveProductStatusTracker(productData, productRejectionReason, description);
+
+                //Main Process Starting
+                log.info("Product Blocked Main Trigger");
+                this.sendProductBlockedMail(productData, productRejectionReason, user.getSellerEmail());
+
+                return ResponseGenerator.generateSuccessResponse("SUCCESS");
+            }
+            else {
+                return ResponseGenerator.generateBadRequestResponse("Product Status Not Found Or Mis-Match");
+            }
         }
         catch (Exception e)
         {
@@ -202,21 +218,48 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
         }
     }
 
-    @Override
-    public ResponseEntity<?> getRejectionReasonsList() {
-        try {
-            List<ProductRejectionReason> rejectionReasonList =  this.rejectionReasonRepo.findAll();
-            List<ProductRejectionReasonDto> rejectionReasonData = rejectionReasonList.stream()
-                    .map(data -> modelMapper.map(data, ProductRejectionReasonDto.class))
-                    .collect(Collectors.toList());
-            return ResponseGenerator.generateSuccessResponse(rejectionReasonData,"SUCCESS");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return ResponseGenerator.generateBadRequestResponse("Failed");
-        }
+    private void fillProductStatusDetails(ProductDetailsModel productData,
+                                               ProductRejectionReason productRejectionReason,
+                                               String rejectionRootCategory) {
+
+        String todayDate = GenerateDateAndTime.getTodayDate();
+        String currentTime = GenerateDateAndTime.getCurrentTime();
+
+        productData.setProductDisApprovedDate(todayDate);
+        productData.setProductDisApprovedTime(currentTime);
+        productData.setProductApprovedReason(productRejectionReason.getReason());
+        productData.setProductDisApprovedCode(productRejectionReason.getCode());
+        productData.setProductRootRejectionCategory(rejectionRootCategory);
+        productData.setApprovedBy(userHelper.getCurrentUser().get("username"));
+        //Save Product Status and Approval Status Update
+        this.productDetailsRepo.save(productData);
+        log.info("Product Approved Successfully");
     }
+
+    /**
+     * Creates and saves a product status tracker record.
+     */
+    private void saveProductStatusTracker(ProductDetailsModel productData,
+                                          ProductRejectionReason productRejectionReason,
+                                          String description) {
+
+        ProductStatusTracker tracker = new ProductStatusTracker();
+        tracker.setProductId(productData.getId());
+        tracker.setStatusDate(GenerateDateAndTime.getTodayDate());
+        tracker.setStatusTime(GenerateDateAndTime.getCurrentTime());
+        tracker.setStatusDateTime(GenerateDateAndTime.getLocalDateTime());
+        tracker.setReason(productRejectionReason.getReason());
+        tracker.setReasonId(productRejectionReason.getId());
+        tracker.setProductDescription(description);
+        tracker.setProductRootRejectionCategory(productRejectionReason.getRootRejectionCategories().getRootRejectionCategory());
+        tracker.setProductRootRejectionCategoryId(
+                String.valueOf(productRejectionReason.getRootRejectionCategories().getId())
+        );
+        productStatusTrackerRepo.save(tracker);
+        log.info("PRODUCT STATUS TRACKER SAVED SUCCESSFULLY");
+    }
+
+
 
     public void sendProductApprovalMail(ProductDetailsModel productData ,
                                         String emailTo)
@@ -246,9 +289,42 @@ public class ProductApprovalServiceImple implements ProductApprovalService {
         this.mailTrigger("PRODUCT_DISAPPROVED" , mailSubject , mailBody ,emailTo);
     }
 
+    public void sendProductBlockedMail(ProductDetailsModel productData,
+                                       ProductRejectionReason productRejectionReason,
+                                       String emailTo)
+    {
+        Map<String,Object> mailSubject = new HashMap<>();
+        mailSubject.put("productId",productData.getProductKey());
+        Map<String,Object> mailBody = new HashMap<>();
+        mailBody.put("productName",productData.getProductName());
+        mailBody.put("productId",productData.getProductKey());
+        mailBody.put("blockReason",productRejectionReason.getReason());
+        mailBody.put("blockDescription",productRejectionReason.getDescription());
+        mailBody.put("supportUrl","http://localhost:61795/admin/dashboard/");
+        mailBody.put("currentYear","2025");
+        this.mailTrigger("PRODUCT_BLOCKED" , mailSubject , mailBody ,emailTo);
+    }
+
 
     public void mailTrigger(String templateKey , Map<String,Object> mailSubject , Map<String,Object> mailBody, String emailTo)
     {
         this.emailSenderService.sendHtmlMail(templateKey ,mailSubject , mailBody , emailTo);
+    }
+
+
+    @Override
+    public ResponseEntity<?> getRejectionReasonsList() {
+        try {
+            List<ProductRejectionReason> rejectionReasonList =  this.rejectionReasonRepo.findAll();
+            List<ProductRejectionReasonDto> rejectionReasonData = rejectionReasonList.stream()
+                    .map(data -> modelMapper.map(data, ProductRejectionReasonDto.class))
+                    .collect(Collectors.toList());
+            return ResponseGenerator.generateSuccessResponse(rejectionReasonData,"SUCCESS");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("Failed");
+        }
     }
 }

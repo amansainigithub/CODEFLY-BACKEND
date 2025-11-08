@@ -1,10 +1,8 @@
 package com.coder.springjwt.services.adminServices.ProductRejectionReasonService.imple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
-import com.coder.springjwt.dtos.adminDtos.productRejectionReasonDto.ProductRejectionReasonDto;
 import com.coder.springjwt.dtos.adminDtos.productRejectionReasonDto.RootRejectionCategoryDto;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
-import com.coder.springjwt.models.adminModels.ProductRejectionReasonModel.ProductRejectionReason;
 import com.coder.springjwt.models.adminModels.ProductRejectionReasonModel.RootRejectionCategory;
 import com.coder.springjwt.repository.productRejectionReasonRepo.RootRejectionCategoryRepo;
 import com.coder.springjwt.services.adminServices.ProductRejectionReasonService.RootRejectionCategoryService;
