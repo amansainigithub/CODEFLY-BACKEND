@@ -197,6 +197,10 @@ public class AdminUrlMappings {
     public static final String PRODUCT_DRAFT_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productDraftStageController";
     public static final String  PRODUCT_DRAFT_STAGE= "/productDraftStage";
 
+    //PRODUCT BLOCKED STAGES CONTROLLER
+    public static final String PRODUCT_BLOCKED_STAGE_CONTROLLER = ADMIN_AUTHORIZE_URL +"/productBlockedStageController";
+    public static final String  PRODUCT_BLOCKED_STAGE= "/productBlockedStage";
+
 
 
 
