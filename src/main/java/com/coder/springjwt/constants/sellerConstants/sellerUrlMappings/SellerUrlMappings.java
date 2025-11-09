@@ -94,4 +94,10 @@ public class SellerUrlMappings {
     public static final String UPDATE_PRODUCT_INVENTORY = "/updateProductInventory";
 
 
+
+    //    =======PRODUCTS FILES CONTROLLER==========
+
+    public static final String PRODUCT_FILES_HANDLER_CONTROLLER = SELLER_AUTH_URL + "/productFilesHandlerController";
+    public static final String GET_PRODUCT_FILES_BY_ID_SELLER = "/getProductFilesByIdSeller/{productId}/{username}";
+    public static final String MODIFIED_PRODUCT_FILES_BY_SELLER = "modifiedProductFilesBySeller/{fileId}/{productId}/{username}";
 }

@@ -1,9 +1,8 @@
-package com.coder.springjwt.services.adminServices.productFilesManagerService.imple;
+package com.coder.springjwt.services.sellerServices.productFilesHandlerService.imple;
 
 import com.coder.springjwt.buckets.filesBucket.bucketModels.BucketModel;
 import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
-import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductFilesRepo;
@@ -17,10 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Arrays;
 import java.util.List;
 
-
-@Slf4j
 @Component
-public class ProductFilesManagerHelper {
+@Slf4j
+public class ProductFilesHandlerHelper {
 
     @Autowired
     private ProductFilesRepo productFilesRepo;
@@ -30,6 +28,7 @@ public class ProductFilesManagerHelper {
 
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
+
 
     public ResponseEntity<?> updateExistingFile(MultipartFile file, String productFileId) {
         log.info("Updating existing product file: {}", productFileId);
@@ -45,9 +44,8 @@ public class ProductFilesManagerHelper {
 
         if (contentType.startsWith("image/")) {
             return updateImageFile(file, productFile);
-        } else if (contentType.startsWith("video/")) {
-            return updateVideoFile(file, productFile);
-        } else {
+        }
+        else {
             return ResponseGenerator.generateBadRequestResponse("Invalid file type. Only image/video allowed.");
         }
     }
@@ -59,6 +57,8 @@ public class ProductFilesManagerHelper {
         if (imageValidation != null) {
             return imageValidation;
         }
+
+        log.info("Validation Complete");
 
         BucketModel bucketModel = bucketService.uploadCloudinaryFile(file, "IMAGE");
 
@@ -75,109 +75,10 @@ public class ProductFilesManagerHelper {
     }
 
 
-    private ResponseEntity<?> updateVideoFile(MultipartFile file, ProductFiles productFile) {
-        log.info("Updating existing video...");
-
-        ResponseEntity<?> videoValidation = checkIsVideoValid(file);
-        if (videoValidation != null) {
-            return videoValidation;
-        }
-
-        BucketModel bucketModel = bucketService.uploadCloudinaryFile(file, "VIDEO");
-
-        productFile.setFileType("VIDEO");
-        productFile.setFileUrl(bucketModel.getBucketUrl());
-        productFile.setFileName(bucketModel.getFileName());
-        productFile.setFileSize(file.getSize());
-        productFile.setContentType(file.getContentType());
-
-        productFilesRepo.save(productFile);
-        log.info("Product VIDEO updated successfully");
-
-        return ResponseGenerator.generateSuccessResponse("Product video updated successfully.");
-    }
 
 
-    public ResponseEntity<?> addNewFile(MultipartFile file, String productId) {
-        log.info("Adding new file for productId: {}", productId);
-
-        ProductDetailsModel productDetails = productDetailsRepo.findById(Long.parseLong(productId))
-                .orElseThrow(() -> new DataNotFoundException("Product not found: " + productId));
-
-        String contentType = file.getContentType();
-
-        if (contentType == null) {
-            return ResponseGenerator.generateBadRequestResponse("Invalid file type.");
-        }
-
-        if (contentType.startsWith("image/")) {
-            return addNewImageFile(file, productDetails);
-        } else if (contentType.startsWith("video/")) {
-            return addNewVideoFile(file, productDetails);
-        } else {
-            return ResponseGenerator.generateBadRequestResponse("Invalid file type. Only image/video allowed.");
-        }
-    }
-
-    private ResponseEntity<?> addNewImageFile(MultipartFile file, ProductDetailsModel productDetails) {
-        log.info("Adding new IMAGE...");
-
-        ResponseEntity<?> imageValidation = checkImageValidation(file);
-        if (imageValidation != null) {
-            return imageValidation;
-        }
-
-        BucketModel bucketModel = bucketService.uploadCloudinaryFile(file, "IMAGE");
-
-        ProductFiles newFile = new ProductFiles();
-        newFile.setFileSize(file.getSize());
-        newFile.setContentType(file.getContentType());
-        newFile.setFileType("IMAGE");
-        newFile.setFileUrl(bucketModel.getBucketUrl());
-        newFile.setFileName(bucketModel.getFileName());
-        newFile.setProductDetailsId(productDetails.getId());
-        newFile.setProductKey(productDetails.getProductKey());
-        newFile.setProductRootId(productDetails.getProductRoot().getId());
-        newFile.setProductDetailsModel(productDetails);
-
-        productFilesRepo.save(newFile);
-        log.info("New product IMAGE added successfully");
-
-        return ResponseGenerator.generateSuccessResponse("New product image added successfully.");
-    }
-
-
-    private ResponseEntity<?> addNewVideoFile(MultipartFile file, ProductDetailsModel productDetails) {
-        log.info("Adding new VIDEO...");
-
-        ResponseEntity<?> videoValidation = checkIsVideoValid(file);
-        if (videoValidation != null) {
-            return videoValidation;
-        }
-
-        BucketModel bucketModel = bucketService.uploadCloudinaryFile(file, "VIDEO");
-
-        ProductFiles newFile = new ProductFiles();
-        newFile.setFileSize(file.getSize());
-        newFile.setContentType(file.getContentType());
-        newFile.setFileType("VIDEO");
-        newFile.setFileUrl(bucketModel.getBucketUrl());
-        newFile.setFileName(bucketModel.getFileName());
-        newFile.setProductDetailsId(productDetails.getId());
-        newFile.setProductKey(productDetails.getProductKey());
-        newFile.setProductRootId(productDetails.getProductRoot().getId());
-        newFile.setProductDetailsModel(productDetails);
-
-        productFilesRepo.save(newFile);
-        log.info("New product VIDEO added successfully");
-
-        return ResponseGenerator.generateSuccessResponse("New product video added successfully.");
-    }
-
-
-
-
-    // ================= IMAGE HANDLING =================
+//==================================================================================================================
+    //IMAGE VALIDATION ------------------------------------------------------------
     public ResponseEntity<?> checkImageValidation(MultipartFile files) {
         List<String> allowedImageExtensions = Arrays.asList("jpg", "jpeg", "png");
         long maxImageSize = 5 * 1024 * 1024; // 5 MB
@@ -200,7 +101,7 @@ public class ProductFilesManagerHelper {
 
 
 
-    //VIDEO VALIDATION
+    //VIDEO VALIDATION ------------------------------------------------------------
     public ResponseEntity<?> checkIsVideoValid(MultipartFile video) {
         if (video == null || video.isEmpty()) {
             log.info("No video uploaded.");

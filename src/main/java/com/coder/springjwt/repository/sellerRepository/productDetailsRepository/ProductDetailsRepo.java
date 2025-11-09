@@ -29,6 +29,8 @@ public interface ProductDetailsRepo extends JpaRepository<ProductDetailsModel, L
 
     Optional<ProductDetailsModel> findByProductKeyAndProductSeries(String productKey , String productSeries);
 
+    Optional<ProductDetailsModel> findByIdAndUsername(Long id , String username);
+
 
 
     @Query("SELECT DISTINCT p FROM ProductDetailsModel p " +
