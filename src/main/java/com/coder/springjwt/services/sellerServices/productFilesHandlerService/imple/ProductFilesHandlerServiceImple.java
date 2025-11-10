@@ -1,6 +1,5 @@
 package com.coder.springjwt.services.sellerServices.productFilesHandlerService.imple;
 
-import com.coder.springjwt.buckets.filesBucket.bucketModels.BucketModel;
 import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.dtos.sellerPayloads.productFilesHandlerDtos.ProductFilesDto;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -110,6 +108,42 @@ public class ProductFilesHandlerServiceImple implements ProductFilesHandlerServi
     }
 
 
+
+
+    public ResponseEntity<?> modifiedProductVideoFilesBySeller(MultipartFile files,
+                                                          String fileId,
+                                                          String productId,
+                                                          String username) {
+        try {
+            log.info("fileId: {}", fileId);
+            log.info("productId: {}", productId);
+            if (files == null || files.isEmpty()) {
+                return ResponseGenerator.generateBadRequestResponse("Empty file provided.");
+            }
+
+            // VALIDATE CURRENT USER---
+            Map<String, String> userData = userHelper.getCurrentUser();
+            String sellerUsername = userData.get("username");
+            if(!userData.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
+
+            //Check Product with Username
+            this.productDetailsRepo.findByIdAndUsername(Long.parseLong(productId) ,sellerUsername)
+                    .orElseThrow(()-> new UsernameNotFoundException("Username Not Found Exception.."));
+
+
+            if (!"null".equalsIgnoreCase(fileId)) {
+                return this.productFilesHandlerHelper.updateExistingFile(files, fileId);
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse();
+        }
+        return ResponseGenerator.generateBadRequestResponse();
+    }
 
 
 

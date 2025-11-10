@@ -37,6 +37,7 @@ public class ProductFilesHandlerHelper {
                 .orElseThrow(() -> new DataNotFoundException("Product File not found."));
 
         String contentType = file.getContentType();
+        log.info("Content Type: {}", contentType);
 
         if (contentType == null) {
             return ResponseGenerator.generateBadRequestResponse("Invalid file type.");
@@ -44,12 +45,15 @@ public class ProductFilesHandlerHelper {
 
         if (contentType.startsWith("image/")) {
             return updateImageFile(file, productFile);
+        }else if(contentType.startsWith("video/")){
+            return updateVideoFile(file, productFile);
         }
         else {
             return ResponseGenerator.generateBadRequestResponse("Invalid file type. Only image/video allowed.");
         }
     }
 
+    //Update Image File
     private ResponseEntity<?> updateImageFile(MultipartFile file, ProductFiles productFile) {
         log.info("Updating existing image...");
 
@@ -76,9 +80,57 @@ public class ProductFilesHandlerHelper {
 
 
 
+    //Update Video File
+    private ResponseEntity<?> updateVideoFile(MultipartFile file, ProductFiles productFile) {
+        log.info("Updating existing video...");
 
-//==================================================================================================================
-    //IMAGE VALIDATION ------------------------------------------------------------
+        ResponseEntity<?> videoValidation = checkIsVideoValid(file);
+        if (videoValidation != null) {
+            return videoValidation;
+        }
+
+        BucketModel bucketModel = bucketService.uploadCloudinaryFile(file, "VIDEO");
+
+        productFile.setFileType("VIDEO");
+        productFile.setFileUrl(bucketModel.getBucketUrl());
+        productFile.setFileName(bucketModel.getFileName());
+        productFile.setFileSize(file.getSize());
+        productFile.setContentType(file.getContentType());
+
+        productFilesRepo.save(productFile);
+        log.info("Product VIDEO updated successfully");
+
+        return ResponseGenerator.generateSuccessResponse("Product video updated successfully.");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//###########################################################################################################################
+//###########################################################################################################################
+//------------------IMAGE VALIDATION ----------------------
     public ResponseEntity<?> checkImageValidation(MultipartFile files) {
         List<String> allowedImageExtensions = Arrays.asList("jpg", "jpeg", "png");
         long maxImageSize = 5 * 1024 * 1024; // 5 MB
@@ -100,8 +152,7 @@ public class ProductFilesHandlerHelper {
     }
 
 
-
-    //VIDEO VALIDATION ------------------------------------------------------------
+//-------------------VIDEO VALIDATION -----------------------
     public ResponseEntity<?> checkIsVideoValid(MultipartFile video) {
         if (video == null || video.isEmpty()) {
             log.info("No video uploaded.");
@@ -136,5 +187,8 @@ public class ProductFilesHandlerHelper {
 
         return null; // null means SUCCESS
     }
+
+//###########################################################################################################################
+//###########################################################################################################################
 
 }

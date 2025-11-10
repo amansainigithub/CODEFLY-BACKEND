@@ -1,9 +1,7 @@
 package com.coder.springjwt.controllers.seller.ProductFilesHandlerController;
 
-import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import com.coder.springjwt.services.sellerServices.productFilesHandlerService.ProductFilesHandlerService;
-import com.coder.springjwt.util.ResponseGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,6 +29,15 @@ public class ProductFilesHandlerController {
                                                            @PathVariable String fileId,
                                                            @PathVariable String productId,
                                                            @PathVariable String username ) {
+        return this.productFilesHandlerService.modifiedProductFilesBySeller(files , fileId ,productId , username);
+    }
+
+    @PostMapping(SellerUrlMappings.MODIFIED_PRODUCT_VIDEO_FILES_BY_SELLER)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> modifiedProductVideoFilesBySeller( @RequestParam("files") MultipartFile files,
+                                                               @PathVariable String fileId,
+                                                               @PathVariable String productId,
+                                                               @PathVariable String username ) {
         return this.productFilesHandlerService.modifiedProductFilesBySeller(files , fileId ,productId , username);
     }
 
