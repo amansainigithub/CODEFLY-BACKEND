@@ -2,6 +2,7 @@ package com.coder.springjwt.controllers.seller.ProductFilesHandlerController;
 
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import com.coder.springjwt.services.sellerServices.productFilesHandlerService.ProductFilesHandlerService;
+import com.coder.springjwt.util.ResponseGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,5 +42,16 @@ public class ProductFilesHandlerController {
         return this.productFilesHandlerService.modifiedProductFilesBySeller(files , fileId ,productId , username);
     }
 
+
+    @PostMapping(SellerUrlMappings.UPLOAD_NEW_FILE_BY_SELLER)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> uploadNewFileBySeller( @RequestParam("files") MultipartFile files,
+                                                                @PathVariable String productId,
+                                                                @PathVariable String username ) {
+        System.out.println("productId :: " + productId);
+        System.out.println("username :: " + username);
+        System.out.println("getOriginalFilename :: " + files.getOriginalFilename());
+        return this.productFilesHandlerService.uploadNewFileBySeller(files ,productId , username);
+    }
 
 }

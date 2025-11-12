@@ -9,4 +9,6 @@ public interface ProductFilesHandlerService {
     ResponseEntity<?> getProductFilesByIdSeller(long productId, String username);
 
     ResponseEntity<?> modifiedProductFilesBySeller(MultipartFile files, String fileId, String productId, String username);
+
+    ResponseEntity<?>  uploadNewFileBySeller(MultipartFile files, String productId, String username);
 }

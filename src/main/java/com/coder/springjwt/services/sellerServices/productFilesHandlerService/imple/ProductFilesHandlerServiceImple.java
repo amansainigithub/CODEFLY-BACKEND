@@ -4,6 +4,7 @@ import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.dtos.sellerPayloads.productFilesHandlerDtos.ProductFilesDto;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
+import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductFilesRepo;
@@ -148,7 +149,38 @@ public class ProductFilesHandlerServiceImple implements ProductFilesHandlerServi
 
 
 
+    @Override
+    public  ResponseEntity<?>  uploadNewFileBySeller(MultipartFile files, String productId, String username) {
+        try {
+            // VALIDATE CURRENT USER---
+            Map<String, String> userData = userHelper.getCurrentUser();
+            String sellerUsername = userData.get("username");
+            if(!userData.get("username").trim().equals(username.trim()))
+            {
+                throw new UsernameNotFoundException("Username not found Exception...");
+            }
 
+            ProductDetailsModel productDetailsData = this.productDetailsRepo.findById(Long.parseLong(productId))
+                    .orElseThrow(() -> new DataNotFoundException("Product Id Not Found for Product Upload New File | Seller"));
+
+            String contentType = files.getContentType();
+            
+            if (contentType.startsWith("image/")){
+                    return productFilesHandlerHelper.addNewImageFile(files, productDetailsData);
+
+            } else if (contentType.startsWith("video/")) {
+                    return productFilesHandlerHelper.addNewVideoFile(files, productDetailsData);
+            }
+            else{
+                return ResponseGenerator.generateBadRequestResponse("Invalid File Format |Error");
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("Error | Something went wrong..!");
+        }
+    }
 
 
 

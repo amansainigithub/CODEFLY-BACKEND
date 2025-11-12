@@ -3,6 +3,7 @@ package com.coder.springjwt.services.sellerServices.productFilesHandlerService.i
 import com.coder.springjwt.buckets.filesBucket.bucketModels.BucketModel;
 import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
+import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductFilesRepo;
@@ -104,8 +105,60 @@ public class ProductFilesHandlerHelper {
     }
 
 
+    public ResponseEntity<?> addNewImageFile(MultipartFile file, ProductDetailsModel productDetails) {
+        log.info("Adding new IMAGE...");
+
+        ResponseEntity<?> imageValidation = checkImageValidation(file);
+        if (imageValidation != null) {
+            return imageValidation;
+        }
+
+        BucketModel bucketModel = bucketService.uploadCloudinaryFile(file, "IMAGE");
+
+        ProductFiles newFile = new ProductFiles();
+        newFile.setFileSize(file.getSize());
+        newFile.setContentType(file.getContentType());
+        newFile.setFileType("IMAGE");
+        newFile.setFileUrl(bucketModel.getBucketUrl());
+        newFile.setFileName(bucketModel.getFileName());
+        newFile.setProductDetailsId(productDetails.getId());
+        newFile.setProductKey(productDetails.getProductKey());
+        newFile.setProductRootId(productDetails.getProductRoot().getId());
+        newFile.setProductDetailsModel(productDetails);
+
+        productFilesRepo.save(newFile);
+        log.info("New product IMAGE added successfully");
+
+        return ResponseGenerator.generateSuccessResponse("New product image added successfully.");
+    }
 
 
+    public ResponseEntity<?> addNewVideoFile(MultipartFile file, ProductDetailsModel productDetails) {
+        log.info("Adding new VIDEO...");
+
+        ResponseEntity<?> videoValidation = checkIsVideoValid(file);
+        if (videoValidation != null) {
+            return videoValidation;
+        }
+
+        BucketModel bucketModel = bucketService.uploadCloudinaryFile(file, "VIDEO");
+
+        ProductFiles newFile = new ProductFiles();
+        newFile.setFileSize(file.getSize());
+        newFile.setContentType(file.getContentType());
+        newFile.setFileType("VIDEO");
+        newFile.setFileUrl(bucketModel.getBucketUrl());
+        newFile.setFileName(bucketModel.getFileName());
+        newFile.setProductDetailsId(productDetails.getId());
+        newFile.setProductKey(productDetails.getProductKey());
+        newFile.setProductRootId(productDetails.getProductRoot().getId());
+        newFile.setProductDetailsModel(productDetails);
+
+        productFilesRepo.save(newFile);
+        log.info("New product VIDEO added successfully");
+
+        return ResponseGenerator.generateSuccessResponse("New product video added successfully.");
+    }
 
 
 

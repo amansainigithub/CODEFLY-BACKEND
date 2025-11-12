@@ -103,4 +103,6 @@ public class SellerUrlMappings {
 
     public static final String MODIFIED_PRODUCT_VIDEO_FILES_BY_SELLER = "modifiedProductVideoFilesBySeller/{fileId}/{productId}/{username}";
 
+    public static final String UPLOAD_NEW_FILE_BY_SELLER = "uploadNewFileBySeller/{productId}/{username}";
+
 }
