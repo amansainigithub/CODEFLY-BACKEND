@@ -164,15 +164,40 @@ public class ProductFilesHandlerServiceImple implements ProductFilesHandlerServi
                     .orElseThrow(() -> new DataNotFoundException("Product Id Not Found for Product Upload New File | Seller"));
 
             String contentType = files.getContentType();
+            if (contentType == null) {
+                log.error("Invalid file: No content type found");
+                return ResponseGenerator.generateBadRequestResponse("Invalid file: No content type found");
+            }
+
+            List<ProductFiles> productFiles = productDetailsData.getProductFiles();
+
+            // Count images and videos
+            long imageCount = productFiles.stream()
+                    .filter(f -> f.getContentType() != null && f.getContentType().startsWith("image/"))
+                    .count();
+
+            long videoCount = productFiles.stream()
+                    .filter(f -> f.getContentType() != null && f.getContentType().startsWith("video/"))
+                    .count();
+
+
             
             if (contentType.startsWith("image/")){
-                    return productFilesHandlerHelper.addNewImageFile(files, productDetailsData);
+                if (imageCount >= 5) {
+                    log.error("You can upload a maximum of 5 images per product.");
+                    return ResponseGenerator.generateBadRequestResponse("You can upload a maximum of 5 images per product.");
+                }
+                return productFilesHandlerHelper.addNewImageFile(files, productDetailsData);
 
             } else if (contentType.startsWith("video/")) {
-                    return productFilesHandlerHelper.addNewVideoFile(files, productDetailsData);
+                if (videoCount >= 1) {
+                    log.error("You can upload only 1 video per product.");
+                    return ResponseGenerator.generateBadRequestResponse("You can upload only 1 video per product.");
+                }
+                return productFilesHandlerHelper.addNewVideoFile(files, productDetailsData);
             }
             else{
-                return ResponseGenerator.generateBadRequestResponse("Invalid File Format |Error");
+                return ResponseGenerator.generateBadRequestResponse("Invalid File Format | Error");
             }
         }
         catch (Exception e)
