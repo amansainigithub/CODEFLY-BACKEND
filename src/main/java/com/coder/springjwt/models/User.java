@@ -97,20 +97,6 @@ public class User extends BaseEntity {
 	@Column(unique = true)
 	private String adminEmail;
 
-	@Column(length = 255)
-	private String browserDetails;
-
-	@Column(length = 255)
-	private String userAgent;
-
-	@Column(length = 255)
-	private String userAgentVersion;
-
-	@Column(length = 255)
-	private String operatingSystem;
-
-	@Column(length = 255)
-	private String browserName;
 
 	private String sellerStoreName;
 
@@ -269,45 +255,6 @@ public class User extends BaseEntity {
 		this.adminEmail = adminEmail;
 	}
 
-	public String getBrowserDetails() {
-		return browserDetails;
-	}
-
-	public void setBrowserDetails(String browserDetails) {
-		this.browserDetails = browserDetails;
-	}
-
-	public String getUserAgent() {
-		return userAgent;
-	}
-
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
-
-	public String getUserAgentVersion() {
-		return userAgentVersion;
-	}
-
-	public void setUserAgentVersion(String userAgentVersion) {
-		this.userAgentVersion = userAgentVersion;
-	}
-
-	public String getOperatingSystem() {
-		return operatingSystem;
-	}
-
-	public void setOperatingSystem(String operatingSystem) {
-		this.operatingSystem = operatingSystem;
-	}
-
-	public String getBrowserName() {
-		return browserName;
-	}
-
-	public void setBrowserName(String browserName) {
-		this.browserName = browserName;
-	}
 
 	public String getCustomerMobileVerify() {
 		return customerMobileVerify;
@@ -383,11 +330,6 @@ public class User extends BaseEntity {
 				", customerEmail='" + customerEmail + '\'' +
 				", sellerEmail='" + sellerEmail + '\'' +
 				", adminEmail='" + adminEmail + '\'' +
-				", browserDetails='" + browserDetails + '\'' +
-				", userAgent='" + userAgent + '\'' +
-				", userAgentVersion='" + userAgentVersion + '\'' +
-				", operatingSystem='" + operatingSystem + '\'' +
-				", browserName='" + browserName + '\'' +
 				", sellerStoreName='" + sellerStoreName + '\'' +
 				'}';
 	}

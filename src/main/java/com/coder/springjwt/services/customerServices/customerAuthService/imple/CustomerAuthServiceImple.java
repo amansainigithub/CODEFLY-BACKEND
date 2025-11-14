@@ -16,8 +16,10 @@ import com.coder.springjwt.helpers.passwordValidation.PasswordValidator;
 import com.coder.springjwt.models.ERole;
 import com.coder.springjwt.models.Role;
 import com.coder.springjwt.models.User;
+import com.coder.springjwt.models.customerModels.UserMetaData;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
+import com.coder.springjwt.repository.userRepository.UserMetaDataRepo;
 import com.coder.springjwt.security.jwt.JwtUtils;
 import com.coder.springjwt.security.services.UserDetailsImpl;
 import com.coder.springjwt.services.customerServices.customerAuthService.CustomerAuthService;
@@ -57,6 +59,9 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Autowired
+    private UserMetaDataRepo userMetaDataRepo;
 
 
     @Override
@@ -177,10 +182,11 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
 
         user.setRoles(roles);
 
-        log.info("=====Writing OS Data====");
-        this.saveOsLeakedData(request , user);
+        //SAVE USER DATA
+        User saveUser = userRepository.save(user);
 
-        userRepository.save(user);
+        //SAVE USER-META DATA
+        this.saveOsLeakedData(request , saveUser);
         log.info(CustMessageResponse.FRESH_USER_CREATED_SUCCESSFULLY);
 
         return ResponseEntity.ok(new MessageResponse
@@ -192,12 +198,17 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
     {
         log.info("Writing os data start");
         Map<String,String> node =OsLeaked.getOsData(request);
-        user.setBrowserDetails(node.get("OsbrowserDetails"));
-        user.setUserAgent(node.get("OsUserAgent"));
-        user.setUserAgentVersion(node.get("osUser"));
-        user.setOperatingSystem(node.get("operatingSystem"));
-        user.setBrowserName(node.get("browserName"));
-        log.info("Writing os data Ending");
+
+        UserMetaData userMetaData = new UserMetaData();
+        userMetaData.setUserId(user.getId());
+        userMetaData.setUsername(user.getUsername());
+        userMetaData.setBrowserDetails(node.get("OsbrowserDetails"));
+        userMetaData.setUserAgent(node.get("OsUserAgent"));
+        userMetaData.setUserAgentVersion(node.get("osUser"));
+        userMetaData.setOperatingSystem(node.get("operatingSystem"));
+        userMetaData.setBrowserName(node.get("browserName"));
+        this.userMetaDataRepo.save(userMetaData);
+        log.info("User Meta Data Saved Success...");
     }
 
     @Override

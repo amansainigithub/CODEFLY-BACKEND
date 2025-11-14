@@ -242,7 +242,7 @@ public class SellerAuthServiceImple implements SellerAuthService {
             user.setProjectRole(ERole.ROLE_SELLER.toString());
 
             //Save OS Data
-            this.saveOsLeakedData(request , user);
+            //this.saveOsLeakedData(request , user);
 
             userRepository.save(user);
             log.info("Data Saved Success :: usr");
@@ -259,16 +259,16 @@ public class SellerAuthServiceImple implements SellerAuthService {
     }
 
 
-    public void saveOsLeakedData(HttpServletRequest request, User user)
-    {
-        log.info("Writing os data start");
-        Map<String,String> node = OsLeaked.getOsData(request);
-        user.setBrowserDetails(node.get("OsbrowserDetails"));
-        user.setUserAgent(node.get("OsUserAgent"));
-        user.setUserAgentVersion(node.get("osUser"));
-        user.setOperatingSystem(node.get("operatingSystem"));
-        user.setBrowserName(node.get("browserName"));
-        log.info("Writing os data Ending");
-    }
+//    public void saveOsLeakedData(HttpServletRequest request, User user)
+//    {
+//        log.info("Writing os data start");
+//        Map<String,String> node = OsLeaked.getOsData(request);
+//        user.setBrowserDetails(node.get("OsbrowserDetails"));
+//        user.setUserAgent(node.get("OsUserAgent"));
+//        user.setUserAgentVersion(node.get("osUser"));
+//        user.setOperatingSystem(node.get("operatingSystem"));
+//        user.setBrowserName(node.get("browserName"));
+//        log.info("Writing os data Ending");
+//    }
 
 }
