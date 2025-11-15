@@ -153,7 +153,7 @@ public class SliderServiceImple implements SliderService {
             bucketService.deleteFile(sliderModel.getFileUrl());
 
             //upload New File
-            BucketModel bucketModel = bucketService.uploadFile(file);
+            BucketModel bucketModel = bucketService.uploadCloudinaryFile(file , file.getContentType());
             if(bucketModel != null)
             {
                 sliderModel.setFileUrl(bucketModel.getBucketUrl());
