@@ -3,7 +3,6 @@ package com.coder.springjwt.services.sellerServices.sellerAuthService.imple;
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerMobilePayload;
-import com.coder.springjwt.helpers.OsLeaked.OsLeaked;
 import com.coder.springjwt.helpers.generateRandomNumbers.GenerateOTP;
 import com.coder.springjwt.models.ERole;
 import com.coder.springjwt.models.Role;
@@ -27,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 

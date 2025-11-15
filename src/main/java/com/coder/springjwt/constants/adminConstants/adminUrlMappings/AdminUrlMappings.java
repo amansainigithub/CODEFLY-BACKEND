@@ -255,4 +255,18 @@ public class AdminUrlMappings {
     public static final String  GET_PRODUCT_FILES_BY_ID= "/getProductFilesById/{productId}";
     public static final String  UPLOAD_FILES= "/uploadFiles/{productFileId}/{productId}";
 
+
+
+
+
+    //SLIDER CONTROLLER
+    public static final String SLIDER_CONTROLLER = ADMIN_AUTHORIZE_URL +"/sliderController";
+    public static final String CREATE_SLIDER= "/createSlider";
+    public static final String GET_SLIDERS_LIST= "/getSlidersList";
+    public static final String  GET_SLIDER_BY_ID= "/getSliderById/{sliderId}";
+    public static final String  UPDATE_SLIDER= "/updateSlider";
+    public static final String  DELETE_SLIDER_BY_ID= "/deleteSliderById/{sliderId}";
+    public static final String UPDATE_SLIDER_FILE="/updateSliderFile/{sliderId}";
+
+
 }

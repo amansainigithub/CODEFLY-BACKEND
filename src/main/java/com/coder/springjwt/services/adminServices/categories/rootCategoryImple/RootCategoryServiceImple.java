@@ -36,6 +36,7 @@ public class RootCategoryServiceImple implements RootCategoryService {
     BucketService bucketService;
     @Autowired
     private ModelMapper modelMapper;
+
     @Autowired
     private ObjectMapper objectMapper;
 
