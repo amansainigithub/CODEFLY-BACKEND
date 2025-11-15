@@ -2,11 +2,9 @@ package com.coder.springjwt.services.adminServices.slidersService.homepageSlider
 
 import com.coder.springjwt.buckets.filesBucket.bucketModels.BucketModel;
 import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
-import com.coder.springjwt.dtos.adminDtos.categoriesDtos.SubCategoryDto;
 import com.coder.springjwt.dtos.adminDtos.slidersDtos.SliderDtos.SliderDto;
 import com.coder.springjwt.exception.adminException.CategoryNotFoundException;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
-import com.coder.springjwt.models.adminModels.categories.SubCategoryModel;
 import com.coder.springjwt.models.adminModels.slidersModels.SliderModel;
 import com.coder.springjwt.repository.sliderRepository.SliderRepository;
 import com.coder.springjwt.services.adminServices.slidersService.homepageSliderService.SliderService;

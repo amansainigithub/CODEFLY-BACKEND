@@ -1,7 +1,6 @@
 package com.coder.springjwt.controllers.admin.slidersController;
 
 import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
-import com.coder.springjwt.dtos.adminDtos.categoriesDtos.SubCategoryDto;
 import com.coder.springjwt.dtos.adminDtos.slidersDtos.SliderDtos.SliderDto;
 import com.coder.springjwt.services.adminServices.slidersService.homepageSliderService.SliderService;
 import org.springframework.beans.factory.annotation.Autowired;

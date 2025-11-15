@@ -23,5 +23,10 @@ public class CustomerUrlMappings {
     public static final String CUSTOMER_FORGOT_PASSWORD_FINAL= "/customerForgotPasswordFinal";
 
 
+    //HOME PAGE CONTROLLER
+    public static final String HOME_PAGE_CONTROLLER= CUSTOMER_BASE_URL + "/homePageController";
+    public static final String FETCH_HOME_PAGE= "/fetchHomePage";
+
+
 
 }
