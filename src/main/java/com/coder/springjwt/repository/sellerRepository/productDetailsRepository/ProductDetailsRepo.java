@@ -45,4 +45,7 @@ public interface ProductDetailsRepo extends JpaRepository<ProductDetailsModel, L
             "AND p.username = :username")
     Page<ProductDetailsModel> findLowInventoryProductsByUsername(@Param("username") String username, Pageable pageable);
 
+
+    List<ProductDetailsModel> findTop100ByProductStatus(String productStatus, Sort sort);
+
 }
