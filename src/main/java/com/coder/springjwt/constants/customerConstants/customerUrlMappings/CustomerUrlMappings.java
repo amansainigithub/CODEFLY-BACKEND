@@ -29,4 +29,8 @@ public class CustomerUrlMappings {
 
 
 
+    //HOME DETAILS CONTROLLER
+    public static final String PRODUCT_DETAILS_CUSTOMER_CONTROLLER= CUSTOMER_BASE_URL + "/productDetailsCustomerController";
+    public static final String GET_PRODUCT_DETAILS= "/getProductDetails/{productId}/{productName}";
+
 }

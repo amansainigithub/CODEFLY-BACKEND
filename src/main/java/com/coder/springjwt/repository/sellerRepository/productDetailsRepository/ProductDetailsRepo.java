@@ -48,4 +48,7 @@ public interface ProductDetailsRepo extends JpaRepository<ProductDetailsModel, L
 
     List<ProductDetailsModel> findTop100ByProductStatus(String productStatus, Sort sort);
 
+
+    Optional<ProductDetailsModel> findByIdAndProductStatus(Long id , String productStatus);
+
 }
