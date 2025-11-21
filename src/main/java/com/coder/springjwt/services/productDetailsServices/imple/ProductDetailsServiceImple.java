@@ -1,13 +1,10 @@
 package com.coder.springjwt.services.productDetailsServices.imple;
 
-import com.coder.springjwt.dtos.customerPayloads.homepageDtos.ProductDetailsDataDto;
-import com.coder.springjwt.dtos.customerPayloads.homepageDtos.SliderDto;
 import com.coder.springjwt.dtos.customerPayloads.productDetailsCustomerDtos.ProductDetailsCustomerDto;
 import com.coder.springjwt.dtos.customerPayloads.productDetailsCustomerDtos.ProductFilesDtos;
 import com.coder.springjwt.dtos.customerPayloads.productDetailsCustomerDtos.ProductSizesDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
-import com.coder.springjwt.models.adminModels.slidersModels.SliderModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.models.sellerModels.productModels.ProductSizeRows;
@@ -17,7 +14,6 @@ import com.coder.springjwt.services.productDetailsServices.ProductDetailsService
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;

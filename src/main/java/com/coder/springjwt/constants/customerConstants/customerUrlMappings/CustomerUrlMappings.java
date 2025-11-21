@@ -33,4 +33,15 @@ public class CustomerUrlMappings {
     public static final String PRODUCT_DETAILS_CUSTOMER_CONTROLLER= CUSTOMER_BASE_URL + "/productDetailsCustomerController";
     public static final String GET_PRODUCT_DETAILS= "/getProductDetails/{productId}/{productName}";
 
+
+
+    //    #######################SAVE CUSTOMER ADDRESS CONTROLLER#######################
+    public static final String ADDRESS_CONTROLLER= "/shopping/api/customer/auth" + "/addressController";
+    public static final String SAVE_ADDRESS= "/saveAddress";
+    public static final String GET_ADDRESS= "/getAddress";
+    public static final String DELETE_ADDRESS= "/deleteAddress/{id}";
+    public static final String SET_DEFAULT_ADDRESS= "/setDefaultAddress/{id}";
+    public static final String GET_ADDRESS_BY_ID= "/getAddressById/{id}";
+    public static final String UPDATE_ADDRESS= "/updateAddress";
+
 }

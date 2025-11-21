@@ -90,7 +90,7 @@ public class WebSecurityConfig  { //extends WebSecurityConfigurerAdapter
 							auth.requestMatchers("/api/auth/**").permitAll()
 									.requestMatchers("/api/test/**").permitAll()
 
-									.requestMatchers("/shopping/api/admin/auth/**").permitAll()
+									.requestMatchers("/shopping/api/customer/auth/**").permitAll()
 									.requestMatchers("/customer/api/v1/**").permitAll()
 
 									//Admin Authorize API URI START

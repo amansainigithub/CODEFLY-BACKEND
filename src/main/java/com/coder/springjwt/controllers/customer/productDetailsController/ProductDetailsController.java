@@ -1,7 +1,6 @@
 package com.coder.springjwt.controllers.customer.productDetailsController;
 
 import com.coder.springjwt.constants.customerConstants.customerUrlMappings.CustomerUrlMappings;
-import com.coder.springjwt.services.homePageService.HomePageService;
 import com.coder.springjwt.services.productDetailsServices.ProductDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
