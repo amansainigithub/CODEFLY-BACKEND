@@ -30,13 +30,13 @@ public class CustMessageResponse {
     public static final String PASSWORD_REGEX_ERROR  =  "Error :: Password Regex Problem";
     public static final String OTP_VERIFIED_SUCCESS = "OTP Verified Success";
     public static final String ADDRESS_NOT_FOUND = "Address not Found";
-
-
     public static final String PAYMENT_PAID_SUCCESS="Payment Paid Success";
-    public static final String SUCCESS = "SUCCESS";
 
+    public static final String SUCCESS = "SUCCESS";
     public static final String ORDER_ID_NOT_FOUND= "ORDER ID NOT FOUND";
 
+    public static final String PRICE_SIZE_AND_INVENTORY_NOT_MATCHED = "Price ,Size and Inventory Could Not Matched";
+    public static final String ORDER_TOTAL_AND_CART_TOTAL_NOT_MATCHED =  "Cart Total Price and Product Variant Total Price Could Not matched";
 
 
 
