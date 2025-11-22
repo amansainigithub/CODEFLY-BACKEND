@@ -29,6 +29,8 @@ public class ProductDetailsCustomerDto {
 
     private String productDiscount;
 
+    private String productColor;
+
     private List<ProductFilesDtos> ProductFilesDtos;
 
     private List<ProductSizesDto> productSizesDtos;
