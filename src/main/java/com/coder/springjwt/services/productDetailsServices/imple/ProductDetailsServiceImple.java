@@ -27,14 +27,11 @@ import java.util.Map;
 @Slf4j
 public class ProductDetailsServiceImple implements ProductDetailsService {
 
-
-
     @Autowired
     private SliderRepository sliderRepository;
 
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
-
 
     @Override
     public ResponseEntity<?> getProductDetails(Long productId , @PathVariable String productName) {
@@ -56,7 +53,6 @@ public class ProductDetailsServiceImple implements ProductDetailsService {
             productDetailsCustomerDto.setManufacturerName(productDetails.getManufacturerName());
             productDetailsCustomerDto.setProductMrp(productDetails.getProductMrp());
             productDetailsCustomerDto.setProductPrice(productDetails.getProductPrice());
-//            productDetailsCustomerDto.setProductDiscount(productDetails.getProductDiscount());
             productDetailsCustomerDto.setProductColor(productDetails.getColor());
 
             List<ProductFilesDtos> productFilesDtoList = new ArrayList<>();
@@ -73,19 +69,25 @@ public class ProductDetailsServiceImple implements ProductDetailsService {
             //MAIN IMAGE FILE
             productDetailsCustomerDto.setProductMainImage(productFiles.get(0).getFileUrl());
 
-
             List<ProductSizesDto> productSizesDtoList = new ArrayList<>();
-            List<ProductSizeRows> productSizeRows = productDetails.getProductSizeRows();
-            for(ProductSizeRows psr : productSizeRows)
+            String productDiscount = null;
+            for(ProductSizeRows psr : productDetails.getProductSizeRows())
             {
+                if (productDiscount == null) {
+                    productDiscount = psr.getProductDiscount(); // bas first iteration me set hoga
+                }
+
                 ProductSizesDto productSizesDto = new ProductSizesDto();
                 productSizesDto.setProductPrice(psr.getPrice());
                 productSizesDto.setProductMrp(psr.getMrp());
                 productSizesDto.setProductInventory(psr.getInventory());
                 productSizesDto.setProductSize(psr.get__msVal());
+                productSizesDto.setProductDiscount(psr.getProductDiscount());
                 productSizesDtoList.add(productSizesDto);
             }
 
+            //Set productDetailsCustomerDto to DISCOUNT
+            productDetailsCustomerDto.setProductDiscount(productDiscount);
 
             //PRODUCT DETAILS DATA END
             //######################################################################################################

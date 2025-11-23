@@ -13,4 +13,5 @@ public class ProductSizesDto {
     private String productMrp;
     private String productInventory;
     private String productSize;
+    private String productDiscount;
 }
