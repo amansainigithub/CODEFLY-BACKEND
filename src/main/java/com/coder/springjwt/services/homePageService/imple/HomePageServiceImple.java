@@ -79,7 +79,6 @@ public class HomePageServiceImple implements HomePageService {
                 productDetailsDataDto.setPattern(pdm.getPattern());
                 productDetailsDataDto.setMrp(pdm.getProductMrp());
                 productDetailsDataDto.setPrice(pdm.getProductPrice());
-                productDetailsDataDto.setProductDiscount(pdm.getProductDiscount());
 
                 //Product Size Rows
                 ProductSizeRows productSizeRows = pdm.getProductSizeRows().get(0);

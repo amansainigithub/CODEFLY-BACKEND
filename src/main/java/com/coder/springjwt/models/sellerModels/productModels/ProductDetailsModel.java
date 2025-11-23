@@ -70,23 +70,9 @@ public class ProductDetailsModel extends BaseEntity {
     //Product UID
     private String productUid;
 
-
-    //Service TAX GST , TDS , TCS , SHIPPING CHARGES , FINAL PRODUCT PRICE
-    private String productGst;
-    private String productTcs;
-    private String productTds;
+    //Price AND MRP
     private String productPrice;
     private String productMrp;
-    private String bankSettlementAmount;
-    private String bankSettlementWithShipping;
-
-    //Shipping Charges
-    private String shippingCharges;
-    private String shippingFee;
-    private String shippingTotal;
-
-    //Product Discount
-    private String productDiscount;
 
     //Product Approved and Dis-Approved DateTime and ProductDis-Approved
     private String productApprovedDate;

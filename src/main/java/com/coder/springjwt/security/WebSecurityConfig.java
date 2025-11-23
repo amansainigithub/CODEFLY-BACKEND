@@ -94,7 +94,7 @@ public class WebSecurityConfig  { //extends WebSecurityConfigurerAdapter
 									.requestMatchers("/customer/api/v1/**").permitAll()
 
 									//Admin Authorize API URI START
-									.requestMatchers("/shopping/api/flying/v1/**").permitAll()
+									.requestMatchers("/shopping/api/admin/auth/**").permitAll()
 									.requestMatchers("/shopping/api/admin/flying/v1/**").permitAll()
 									//Admin Authorize API URI ENDING
 

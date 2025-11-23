@@ -134,53 +134,8 @@ public class ProductManageServiceImple implements ProductManageService {
                 log.info("productPrice :: " + productPrice);
                 log.info("productMrp :: " + productMrp);
 
-                //Calculate TAX Information Starting...
-                //GST
-                BigDecimal productGst = productServiceHelper.calculateGST(new BigDecimal(productPrice),
-                        new BigDecimal(productData.getGst()));
-                log.info("PRODUCT GST :: " + productGst);
-
-                //TCS
-                BigDecimal productTcs = productServiceHelper.calculateTCS(new BigDecimal(productPrice),
-                        new BigDecimal(productData.getGst()) , chargeConfig.getTcsCharge());
-                log.info("PRODUCT TCS :: " + productTcs);
-
-                //TDS
-                BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(productPrice) ,chargeConfig.getTdsCharge());
-                log.info("PRODUCT TDS :: " + productTds);
-
-                BigDecimal bankSettlementAmount = productServiceHelper
-                        .bankSettlement(new BigDecimal(productPrice), productGst, productTcs, productTds);
-                //Calculate TAX Information Ending....
-
-
-                //Save Product Tax-Service Data
                 productData.setProductPrice(productPrice);
                 productData.setProductMrp(productMrp);
-                productData.setProductGst(String.valueOf(productGst));
-                productData.setProductTds(String.valueOf(productTds));
-                productData.setProductTcs(String.valueOf(productTcs));
-                productData.setBankSettlementAmount(String.valueOf(bankSettlementAmount));
-                //Save Product Tax-Service Data
-
-
-                //Shipping Charges STARTING....
-                //GET SHIPPING CHARGES
-                float shippingCharges = Float.parseFloat(chargeConfig.getShippingCharge());
-                float shippingFee = Float.parseFloat(chargeConfig.getShippingChargeFee());;
-                float shippingTotal = shippingCharges + shippingFee;
-                productData.setShippingCharges(String.valueOf(shippingCharges));
-                productData.setShippingFee(String.valueOf(shippingFee));
-                productData.setShippingTotal(String.valueOf(shippingTotal));
-                productData.setBankSettlementWithShipping(String.valueOf(bankSettlementAmount
-                                                            .add(BigDecimal.valueOf(shippingTotal))));
-                //Shipping Charges ENDING...
-
-                //Calculate  Discount of Product
-                float productDiscount = productServiceHelper.calculateDiscountPercent(Float.parseFloat(productMrp),
-                        Float.parseFloat(productPrice));
-                productData.setProductDiscount(String.valueOf(productDiscount));
-
 
 
                 // Handle child list safely
@@ -188,6 +143,29 @@ public class ProductManageServiceImple implements ProductManageService {
                     productData.getProductSizeRows().clear();
                     for (ProductSizeRowsDto sizeDto : productDetailsDto.getProductSizeRows()) {
                         ProductSizeRows sizeRow = new ProductSizeRows();
+
+
+                        //Calculate TAX Information Starting...
+                        //GST
+                        BigDecimal productGst = productServiceHelper.calculateGST(new BigDecimal(sizeDto.getPrice()),
+                                new BigDecimal(productData.getGst()));
+                        log.info("PRODUCT GST :: " + productGst);
+
+                        //TCS
+                        BigDecimal productTcs = productServiceHelper.calculateTCS(new BigDecimal(sizeDto.getPrice()),
+                                new BigDecimal(productData.getGst()) , chargeConfig.getTcsCharge());
+                        log.info("PRODUCT TCS :: " + productTcs);
+
+                        //TDS
+                        BigDecimal productTds = productServiceHelper.calculateTDS(new BigDecimal(sizeDto.getPrice())
+                                ,chargeConfig.getTdsCharge());
+                        log.info("PRODUCT TDS :: " + productTds);
+
+                        BigDecimal bankSettlementAmount = productServiceHelper
+                                .bankSettlement(new BigDecimal(sizeDto.getPrice()), productGst, productTcs, productTds);
+                        //Calculate TAX Information Ending....
+
+
                         sizeRow.setPrice(sizeDto.getPrice());
                         sizeRow.setMrp(sizeDto.getMrp());
                         sizeRow.setInventory(sizeDto.getInventory());
@@ -203,7 +181,33 @@ public class ProductManageServiceImple implements ProductManageService {
                         sizeRow.setProductRootId(productData.getProductRootId());
                         sizeRow.setProductUid(productData.getProductUid());
                         sizeRow.setProductKey(productData.getProductKey());
+
+                        //GST , TDS , TCS CHARGES
+                        sizeRow.setProductGst(String.valueOf(productGst));
+                        sizeRow.setProductTcs(String.valueOf(productTcs));
+                        sizeRow.setProductTds(String.valueOf(productTds));
+                        sizeRow.setBankSettlementAmount(String.valueOf(bankSettlementAmount));
+                        sizeRow.setBankSettlementWithShipping(String.valueOf(bankSettlementAmount));
+
+                        //SHIPPING CHARGES
+                        float shippingCharges = Float.parseFloat(chargeConfig.getShippingCharge());
+                        float shippingFee = Float.parseFloat(chargeConfig.getShippingChargeFee());
+                        float shippingTotal = shippingCharges + shippingFee;
+                        sizeRow.setShippingCharges(String.valueOf(shippingCharges));
+                        sizeRow.setShippingFee(String.valueOf(shippingFee));
+                        sizeRow.setShippingTotal(String.valueOf(shippingTotal));
+                        sizeRow.setBankSettlementWithShipping(String.valueOf(bankSettlementAmount.add(BigDecimal.valueOf(shippingTotal))));
+                        //SHIPPING CHARGES ENDING...
+
+                        //PRODUCT DISCOUNT %
+                        float productDiscount = productServiceHelper.calculateDiscountPercent(Float.parseFloat(sizeDto.getMrp()),
+                                Float.parseFloat(sizeDto.getPrice()));
+                        sizeRow.setProductDiscount(String.valueOf(productDiscount));
+
+
                         productData.getProductSizeRows().add(sizeRow);
+
+
                     }
                 }
 

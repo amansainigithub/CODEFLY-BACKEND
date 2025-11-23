@@ -56,7 +56,7 @@ public class ProductDetailsServiceImple implements ProductDetailsService {
             productDetailsCustomerDto.setManufacturerName(productDetails.getManufacturerName());
             productDetailsCustomerDto.setProductMrp(productDetails.getProductMrp());
             productDetailsCustomerDto.setProductPrice(productDetails.getProductPrice());
-            productDetailsCustomerDto.setProductDiscount(productDetails.getProductDiscount());
+//            productDetailsCustomerDto.setProductDiscount(productDetails.getProductDiscount());
             productDetailsCustomerDto.setProductColor(productDetails.getColor());
 
             List<ProductFilesDtos> productFilesDtoList = new ArrayList<>();

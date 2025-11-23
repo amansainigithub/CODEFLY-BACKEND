@@ -42,6 +42,21 @@ public class ProductSizeRows extends BaseEntity {
     //Product UID
     private String productUid;
 
+    //Service TAX GST , TDS , TCS , SHIPPING CHARGES , FINAL PRODUCT PRICE
+    private String productGst;
+    private String productTcs;
+    private String productTds;
+    private String bankSettlementAmount;
+    private String bankSettlementWithShipping;
+
+    //Shipping Charges
+    private String shippingCharges;
+    private String shippingFee;
+    private String shippingTotal;
+
+    //Product Discount
+    private String productDiscount;
+
     @ManyToOne
     @JoinColumn( referencedColumnName = "id" , name = "product_details_joiner")
     @JsonIgnore
