@@ -1,11 +1,12 @@
 package com.coder.springjwt.models.customerModels.paymentsModels;
 
+import com.coder.springjwt.models.customerModels.orders.OrderItems;
 import com.coder.springjwt.models.entities.baseEntity.BaseEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -30,9 +31,13 @@ public class PaymentOrders extends BaseEntity {
     private String paymentMode;
     private String paymentCreatedJson;
     private String paymentCompleteJson;
-
-    private String customOrderNumber;
-
+    private String orderReferenceNo;
     private String userId;
     private String userName;
+
+    private Long  addressId;
+
+    @OneToMany(cascade = CascadeType.ALL ,mappedBy ="paymentOrders" )
+    @JsonIgnore
+    private List<OrderItems> orderItems;
 }

@@ -1,15 +1,19 @@
 package com.coder.springjwt.services.customerServices.orderPaymentService.imple;
 
+import com.coder.springjwt.buckets.razorpayBucket.razorpayServices.RazorpayService;
 import com.coder.springjwt.constants.customerConstants.messageConstants.test.CustMessageResponse;
 import com.coder.springjwt.dtos.customerPayloads.cartItemDtos.CartItemsDto;
 import com.coder.springjwt.dtos.customerPayloads.orderPaymentDto.OrderPaymentDto;
 import com.coder.springjwt.emuns.customer.PaymentModeStatus;
+import com.coder.springjwt.emuns.paymentModes.PaymentMode;
+import com.coder.springjwt.emuns.paymentState.PaymentState;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.customerModels.customerAddressModel.CustomerAddress;
+import com.coder.springjwt.models.customerModels.orders.OrderItems;
+import com.coder.springjwt.models.customerModels.orders.OrderShippingAddress;
 import com.coder.springjwt.models.customerModels.paymentsModels.PaymentOrders;
-import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductSizeRows;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.customerAddressRepository.CustomerAddressRepo;
@@ -20,16 +24,17 @@ import com.coder.springjwt.services.customerServices.orderPaymentService.OrderPa
 import com.coder.springjwt.util.ResponseGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.razorpay.Order;
-import com.razorpay.RazorpayClient;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -37,8 +42,10 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
 
     @Autowired
     private CustomerAddressRepo customerAddressRepo;
+
     @Autowired
     private UserHelper userHelper;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -51,49 +58,49 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
     @Autowired
     private ProductSizeRowsRepo productSizeRowsRepo;
 
+    @Autowired
+    private RazorpayService razorpayService;
+
+    @Autowired
+    private OrderPaymentServiceHelper orderPaymentServiceHelper;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public ResponseEntity<?> createOrder(Double amount, long addressId, List<CartItemsDto> cartItems) {
         log.info("<--- createOrder  Flying -->");
         try {
-            log.info("AMOUNT :: " + amount);
-            log.info("ADDRESS ID :: " + addressId);
-            log.info("Total Items :: " +cartItems.size());
 
+            //USER DATA
             Map<String, String> currentUser = userHelper.getCurrentUser();
             String username = currentUser.get("username");
             User user = this.userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User Not Fount"));
-
 
             //validate Address
             CustomerAddress customerAddress = this.addressWhereAreYou(addressId , user);
             log.info("Customer Address : " + customerAddress);
 
+            //CART VALIDATION
             boolean isValidCart = this.validateCartItems(cartItems);
             log.info("Shopping Cart Validate Success");
 
             if(isValidCart) {
+                //CREATE ORDER BY RAZORPAY
+                Order razorpayOrder = this.razorpayService.createRazorpayOrder(amount);
 
-                //Create Razorpay Order
-                RazorpayClient client = new RazorpayClient("rzp_test_cFBctGmM8MII0E", "VgYZ2olzRXQfv87xzvakT9Va");
-                JSONObject orderRequest = new JSONObject();
-                orderRequest.put("amount", amount * 100);
-                orderRequest.put("currency", "INR");
-
-                //Create Order
-                Order order = client.Orders.create(orderRequest);
-                log.info("***** Razorpay order created Success *******");
 
                 //Save Data to database
-                JSONObject orderData = new JSONObject(order.toString());
-                log.info("Order Created Data :: " + orderData);
+                JSONObject orderData = new JSONObject(razorpayOrder.toString());
                 PaymentOrders paymentOrders = new PaymentOrders();
                 paymentOrders.setCurrency("INR");
-                paymentOrders.setStatus("CREATED");
+                paymentOrders.setStatus(PaymentState.CREATED.toString());
                 paymentOrders.setAmount(String.valueOf(amount));
                 paymentOrders.setOrderId(orderData.getString("id"));
                 paymentOrders.setCreated_at(String.valueOf(orderData.get("created_at")));
                 paymentOrders.setAttempts(String.valueOf(orderData.getInt("attempts")));
-                paymentOrders.setPaymentCreatedJson(order.toString());
+                paymentOrders.setPaymentCreatedJson(razorpayOrder.toString());
+                paymentOrders.setAddressId(addressId);
 
                 //SET PAYMENT MODE STATUS
                 paymentOrders.setPaymentMode(PaymentModeStatus.ONLINE.toString());
@@ -102,17 +109,14 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
                 paymentOrders.setUserName(user.getUsername());
                 paymentOrders.setUserId(String.valueOf(user.getId()));
 
-                //Generate OrderId
-                String customOrderId = OrderPaymentServiceHelper.generateCustomOrderID();
-                paymentOrders.setCustomOrderNumber(customOrderId);
+                //ORDER REF NUMBER
+                String orderReferenceNumber = OrderPaymentServiceHelper.generateOrderReferenceNumber();
+                paymentOrders.setOrderReferenceNo(orderReferenceNumber);
 
                 //save Data to DB....
                 this.paymentOrderRepo.save(paymentOrders);
-
                 log.info("ORDER-ID Saved | Payment Pending");
-
                 return ResponseGenerator.generateSuccessResponse(orderData.toString(), "SUCCESS");
-
             }else{
                 return ResponseGenerator.generateBadRequestResponse(CustMessageResponse.SOMETHING_WENT_WRONG);
             }
@@ -121,52 +125,6 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
         {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse(CustMessageResponse.SOMETHING_WENT_WRONG);
-        }
-    }
-
-    @Override
-    public ResponseEntity<?> orderUpdate(OrderPaymentDto orderPaymentDto) {
-        log.info("***** Order Update Flying *****");
-        try {
-            PaymentOrders paymentOrders = this.paymentOrderRepo.findByOrderId(orderPaymentDto.getRazorpay_order_id());
-
-            if(paymentOrders != null)
-            {
-//                IMPORTANT LOGIC************************
-                //save Cart Items To Database Final Added
-//                this.saveCustomerOrderItems(paymentTransactionPayload.getRazorpay_order_id()
-//                        ,paymentTransactionPayload.getCartItems()
-//                        ,paymentsTransactions.getCustomOrderNumber());
- //                IMPORTANT LOGIC************************
-
-
-                orderPaymentDto.setCartItems(null); //cart Items Null Because of Object mapper can't Convert Items
-
-                //Payment Transaction Updated
-                paymentOrders.setPaymentId(orderPaymentDto.getRazorpay_payment_id());
-                paymentOrders.setSignature(orderPaymentDto.getRazorpay_signature());
-                paymentOrders.setStatus("PAID");
-                ObjectMapper objectMapper = new ObjectMapper();
-                String jsonPayload = objectMapper.writeValueAsString(orderPaymentDto);
-                paymentOrders.setPaymentCompleteJson(jsonPayload);
-                this.paymentOrderRepo.save(paymentOrders);
-
-                log.info("PAYMENT COMPLETE SUCCESS");
-                log.info("ORDER-ID -> " + orderPaymentDto.getRazorpay_order_id());
-                log.info("Order Payment Complete Update Success");
-
-                //Update Customer Order
-                //this.updateCustomerOrderStatus(paymentTransactionPayload);
-                return ResponseGenerator.generateSuccessResponse(CustMessageResponse.PAYMENT_PAID_SUCCESS ,
-                        CustMessageResponse.SUCCESS);
-            }else{
-                throw new RuntimeException(CustMessageResponse.ORDER_ID_NOT_FOUND);
-            }
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            return ResponseGenerator.generateBadRequestResponse( CustMessageResponse.SOMETHING_WENT_WRONG);
         }
     }
 
@@ -180,6 +138,147 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
             throw new RuntimeException(CustMessageResponse.ADDRESS_NOT_FOUND + user.getId());
         }
     }
+
+    @Override
+    public ResponseEntity<?> orderUpdate(OrderPaymentDto orderPaymentDto) {
+        log.info("***** Order Update Flying *****");
+        try {
+
+            //USER
+            Map<String, String> currentUser = userHelper.getCurrentUser();
+            String username = currentUser.get("username");
+            User user = this.userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User Not Fount"));
+
+            //Validate Cart Items
+            if(!validateCartItems(orderPaymentDto.getCartItems())){
+                throw new RuntimeException("CART_ITEMS_SOMETHING_WRONG");
+            }
+
+            //GET PAYMENT ORDER
+            PaymentOrders paymentOrders = this.paymentOrderRepo.findByOrderId(orderPaymentDto.getRazorpay_order_id());
+
+            if (paymentOrders == null) {
+                throw new RuntimeException(CustMessageResponse.ORDER_ID_NOT_FOUND);
+            }
+
+            if( paymentOrders != null || paymentOrders.getOrderId() != "" )
+            {
+                //CART ITEMS SAVED TO DATABASE...
+                this.saveCustomerCartItems(orderPaymentDto.getRazorpay_order_id()
+                                                            ,orderPaymentDto.getCartItems()
+                                                            ,paymentOrders,
+                                                            user);
+
+                // REMOVE CART ITEMS – ObjectMapper Issue
+                orderPaymentDto.setCartItems(null);
+
+                //Payment Transaction Updated
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonPayload = objectMapper.writeValueAsString(orderPaymentDto);
+                paymentOrders.setPaymentId(orderPaymentDto.getRazorpay_payment_id());
+                paymentOrders.setSignature(orderPaymentDto.getRazorpay_signature());
+                paymentOrders.setStatus(PaymentState.PAID.toString());
+                paymentOrders.setPaymentCompleteJson(jsonPayload);
+                this.paymentOrderRepo.save(paymentOrders);
+
+                log.info("ORDER-ID -> " + orderPaymentDto.getRazorpay_order_id());
+                log.info("PAYMENT COMPLETE SUCCESS");
+                return ResponseGenerator.generateSuccessResponse(CustMessageResponse.PAYMENT_PAID_SUCCESS ,
+                        CustMessageResponse.SUCCESS);
+            }else{
+                throw new RuntimeException(CustMessageResponse.ORDER_ID_NOT_FOUND);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse( CustMessageResponse.SOMETHING_WENT_WRONG);
+        }
+    }
+
+
+
+    public  void saveCustomerCartItems(String razorpayOrderId ,
+                                    List<CartItemsDto> cartItemsList,
+                                    PaymentOrders paymentOrders,
+                                    User user){
+
+        try {
+
+            CustomerAddress customerAddress = this.addressWhereAreYou(paymentOrders.getAddressId(), user);
+
+            List<OrderItems> orderItemsList = new ArrayList<>();
+            for(CartItemsDto orderDto :  cartItemsList)
+            {
+                String orderNoPerItems = orderPaymentServiceHelper.generateOrderIdPerItem();
+
+                OrderItems orderItems = new OrderItems();
+                orderItems.setProductId(orderDto.getPId());
+                orderItems.setProductName(orderDto.getPName());
+                orderItems.setProductPrice(orderDto.getPPrice());
+                orderItems.setProductBrand(orderDto.getPBrand());
+                orderItems.setProductSize(orderDto.getPSize());
+                orderItems.setQuantity(String.valueOf(orderDto.getQuantity()));
+                orderItems.setTotalPrice(String.valueOf(orderDto.getTotalPrice()));
+                orderItems.setFileUrl(orderDto.getPFileUrl());
+                orderItems.setProductColor(orderDto.getPColor());
+                orderItems.setProductMrp(String.valueOf(orderDto.getPMrp()));
+                orderItems.setProductDiscount(orderDto.getPCalculatedDiscount());
+                orderItems.setRazorpayOrderId(razorpayOrderId);
+
+                orderItems.setUserId(String.valueOf(user.getId()));
+                orderItems.setUsername(String.valueOf(user.getUsername()));
+                orderItems.setPaymentState(PaymentState.PAID.toString());
+                orderItems.setPaymentMode(PaymentMode.ONLINE.toString());
+                orderItems.setOrderReferenceNo(paymentOrders.getOrderReferenceNo());
+
+                //GENERATE ORDER ID PER-ITEMS
+                orderItems.setOrderNoPerItem(orderNoPerItems);
+
+                //ORDER SHIPPING ADDRESS DETAILS
+                orderItems.setAddressId(customerAddress.getId());
+                orderItems.setCountry(customerAddress.getCountry());
+                orderItems.setCustomerName(customerAddress.getCustomerName());
+                orderItems.setMobileNumber(customerAddress.getMobileNumber());
+                orderItems.setArea(customerAddress.getArea());
+                orderItems.setPostalCode(customerAddress.getPostalCode());
+                orderItems.setAddressLine1(customerAddress.getAddressLine1());
+                orderItems.setAddressLine2(customerAddress.getAddressLine2());
+                orderItems.setDefaultAddress(customerAddress.isDefaultAddress());
+                orderItems.setUsername(customerAddress.getUsername());
+                orderItems.setCity(customerAddress.getCity());
+                orderItems.setState(customerAddress.getState());
+
+                //ORDER SHIPPING ADDRESS
+                OrderShippingAddress sa = this.buildShippingAddress(customerAddress,
+                                                                    orderNoPerItems ,
+                                                                    razorpayOrderId ,
+                                                                    paymentOrders.getOrderReferenceNo());
+                //SHIPPING ADDRESS
+                orderItems.setOrderShippingAddresses(sa);
+
+                //PAYMENT ORDERS
+                orderItems.setPaymentOrders(paymentOrders);
+
+                //ADD ORDER ITEM TO LIST
+                orderItemsList.add(orderItems);
+            }
+
+            //SET ORDER ITEM LIST TO PAYMENT ORDERS
+            paymentOrders.setOrderItems(orderItemsList);
+
+            this.paymentOrderRepo.save(paymentOrders);
+            log.info("Order Item Saved Success...");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error("Failed Saving Order Items: ", e);
+            throw new RuntimeException("FAILED_TO_SAVE_CART_ITEMS");
+        }
+    }
+
+
 
 
     public boolean validateCartItems(@NotNull List<CartItemsDto> cartItems) {
@@ -222,6 +321,40 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
         }
         return Boolean.TRUE;
     }
+
+
+
+    public OrderShippingAddress buildShippingAddress(CustomerAddress customerAddress,
+                                                     String orderNoPerItems,
+                                                     String razorpayOrderId,
+                                                     String orderReferenceNo) {
+
+        OrderShippingAddress sa = new OrderShippingAddress();
+
+        sa.setAddressId(customerAddress.getId());
+        sa.setCountry(customerAddress.getCountry());
+        sa.setCustomerName(customerAddress.getCustomerName());
+        sa.setMobileNumber(customerAddress.getMobileNumber());
+        sa.setArea(customerAddress.getArea());
+        sa.setPostalCode(customerAddress.getPostalCode());
+        sa.setAddressLine1(customerAddress.getAddressLine1());
+        sa.setAddressLine2(customerAddress.getAddressLine2());
+        sa.setCity(customerAddress.getCity());
+        sa.setState(customerAddress.getState());
+        sa.setUsername(customerAddress.getUsername());
+        sa.setUserId(customerAddress.getUserId());
+
+        // Generate Order ID per item
+        sa.setOrderNoPerItem(orderNoPerItems);
+        //Razorpay OrderId
+        sa.setRazorpayOrderId(razorpayOrderId);
+        //reference Number
+        sa.setOrderReferenceNo(orderReferenceNo);
+
+        return sa;
+    }
+
+
 
 
 

@@ -1,19 +1,22 @@
-package com.coder.springjwt.models.customerModels.customerAddressModel;
+package com.coder.springjwt.models.customerModels.orders;
 
-import com.coder.springjwt.models.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@Table(name = "CustomerAddress")
-public class CustomerAddress {
+@Table(name = "OrderShippingAddress")
+public class OrderShippingAddress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long addressId;
     private String country;
     private String customerName;
     private String mobileNumber;
@@ -22,17 +25,12 @@ public class CustomerAddress {
     private String addressLine1;
     private String addressLine2;
     private boolean defaultAddress;
-
-    private String username;
-    private Long userId;
-
     private String city;
     private String state;
+    private String username;
+    private long userId;
 
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "customerId")
-    private User user;
-
+    private String orderNoPerItem;
+    private String razorpayOrderId;
+    private String orderReferenceNo;
 }
