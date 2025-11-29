@@ -53,4 +53,8 @@ public class CustomerUrlMappings {
     public static final String ORDER_UPDATE= "/orderUpdate";
 
 
+    //ORDER PAYMENT CONTROLLER
+    public static final String CUSTOMER_ORDERS_CONTROLLER= PUBLIC_AUTH_URL + "/customerOrderController";
+    public static final String FETCH_CUSTOMER_ORDERS= "/fetchCustomerOrders";
+
 }

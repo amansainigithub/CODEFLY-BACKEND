@@ -47,21 +47,5 @@ public class UserHelper {
         return currentUser;
     }
 
-//    public boolean validateByUsername(String username) {
-//        try {
-//            Map<String, String> currentUser = getCurrentUser();
-//            String currentUsername = currentUser.get("username");
-//
-//            if (username != null && currentUsername != null && username.equals(currentUsername)) {
-//                return Boolean.TRUE;
-//            } else {
-//                return Boolean.FALSE;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Boolean.FALSE;
-//        }
-//    }
-
 
 }

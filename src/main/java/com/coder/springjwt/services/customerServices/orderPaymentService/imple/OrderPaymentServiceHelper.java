@@ -5,6 +5,7 @@ import com.coder.springjwt.repository.customerRepository.paymentOrderRepo.Paymen
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
@@ -24,7 +25,7 @@ public class OrderPaymentServiceHelper {
         String timestamp = sdf.format(new Date());
         Random random = new Random();
         int randomNum = 1000 + random.nextInt(90000); // 5-digit random number
-        return "ORD-" + timestamp + randomNum; // Example: ORD202503311230451234
+        return "REF-" + timestamp + randomNum; // Example: ORD202503311230451234
     }
 
     public static String generateOrderIdPerItem() {

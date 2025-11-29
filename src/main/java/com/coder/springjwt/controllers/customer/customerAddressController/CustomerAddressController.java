@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(CustomerUrlMappings.ADDRESS_CONTROLLER)
 public class CustomerAddressController {
 
-
     @Autowired
     private CustomerAddressService customerAddressService;
 
