@@ -1,8 +1,8 @@
-package com.coder.springjwt.controllers.seller.sellarTax;
+package com.coder.springjwt.controllers.seller.sellerAuthController;
 
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerTaxPayload;
-import com.coder.springjwt.services.sellerServices.sellerTaxService.SellerTaxService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerTaxService.SellerTaxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

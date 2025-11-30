@@ -7,7 +7,7 @@ import com.coder.springjwt.models.adminModels.catalog.catalogLength.ProductLengt
 import com.coder.springjwt.repository.adminRepository.catalogRepos.ProductLengthRepo;
 import com.coder.springjwt.services.adminServices.catalogLengthService.ProductLengthService;
 import com.coder.springjwt.services.adminServices.catalogMaterialService.imple.ProductMaterialServiceImple;
-import com.coder.springjwt.services.sellerServices.sellerStoreService.userService.userServiceImple.UserServiceImple;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService.userServiceImple.UserServiceImple;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;

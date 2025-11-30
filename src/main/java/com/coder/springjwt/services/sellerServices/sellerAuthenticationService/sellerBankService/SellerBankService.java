@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerBankService;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerBankService;
 
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerBankPayload;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.coder.springjwt.controllers.admin.userController;
 
 import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
-import com.coder.springjwt.services.sellerServices.sellerStoreService.userService.UserService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

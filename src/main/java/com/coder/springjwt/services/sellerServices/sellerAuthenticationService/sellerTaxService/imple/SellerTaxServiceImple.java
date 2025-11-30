@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerTaxService.imple;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerTaxService.imple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerTaxPayload;
@@ -9,7 +9,7 @@ import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.sellerModels.sellerTax.SellerTax;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.sellerRepository.sellerGstRepository.SellerTaxRepository;
-import com.coder.springjwt.services.sellerServices.sellerTaxService.SellerTaxService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerTaxService.SellerTaxService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;

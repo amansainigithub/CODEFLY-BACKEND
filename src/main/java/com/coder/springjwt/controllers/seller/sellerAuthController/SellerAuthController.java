@@ -13,7 +13,7 @@ import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.security.jwt.JwtUtils;
 import com.coder.springjwt.security.services.UserDetailsImpl;
-import com.coder.springjwt.services.sellerServices.sellerAuthService.SellerAuthService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerAuthService.SellerAuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

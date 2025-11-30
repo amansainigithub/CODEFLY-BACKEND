@@ -1,8 +1,8 @@
-package com.coder.springjwt.controllers.seller.sellerBank;
+package com.coder.springjwt.controllers.seller.sellerAuthController;
 
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerBankPayload;
-import com.coder.springjwt.services.sellerServices.sellerBankService.SellerBankService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerBankService.SellerBankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

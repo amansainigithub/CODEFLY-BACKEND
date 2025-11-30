@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerAuthService.imple;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerAuthService.imple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
@@ -12,7 +12,7 @@ import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.sellerRepository.sellerMobileRepository.SellerMobileRepository;
-import com.coder.springjwt.services.sellerServices.sellerAuthService.SellerAuthService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerAuthService.SellerAuthService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerAuthService;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerAuthService;
 
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerMobilePayload;

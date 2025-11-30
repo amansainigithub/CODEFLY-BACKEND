@@ -6,7 +6,7 @@ import com.coder.springjwt.dtos.adminDtos.catalogDtos.ProductBreathDto;
 import com.coder.springjwt.models.adminModels.catalog.catalogBreath.BreathModel;
 import com.coder.springjwt.repository.adminRepository.catalogRepos.ProductBreathRepo;
 import com.coder.springjwt.services.adminServices.catalogBreathService.ProductBreathService;
-import com.coder.springjwt.services.sellerServices.sellerStoreService.userService.userServiceImple.UserServiceImple;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService.userServiceImple.UserServiceImple;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;

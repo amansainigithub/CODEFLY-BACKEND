@@ -1,14 +1,14 @@
-package com.coder.springjwt.services.sellerServices.sellerBankService.imple;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.imple;
 
 import com.coder.springjwt.constants.sellerConstants.sellerMessageConstants.SellerMessageResponse;
-import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerBankPayload;
+import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerStorePayload;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.ERole;
 import com.coder.springjwt.models.User;
-import com.coder.springjwt.models.sellerModels.sellerBank.SellerBank;
+import com.coder.springjwt.models.sellerModels.sellerStore.SellerStore;
 import com.coder.springjwt.repository.UserRepository;
-import com.coder.springjwt.repository.sellerRepository.sellerBankRepository.SellerBankRepository;
-import com.coder.springjwt.services.sellerServices.sellerBankService.SellerBankService;
+import com.coder.springjwt.repository.sellerRepository.sellerStoreRepository.SellerStoreRepository;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.SellerStoreService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;
@@ -24,18 +24,21 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.Optional;
 
+
 @Service
 @Slf4j
-public class SellerBankServiceImple implements SellerBankService {
+public class SellerStoreServiceImple implements SellerStoreService {
+
 
     @Autowired
     private UserRepository userRepository;
+
 
     @Autowired
     private ModelMapper modelMapper;
 
     @Autowired
-    private SellerBankRepository sellerBankRepository;
+    private SellerStoreRepository sellerStoreRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -45,17 +48,17 @@ public class SellerBankServiceImple implements SellerBankService {
 
 
     @Override
-    public ResponseEntity<?> sellerBank(SellerBankPayload sellerBankPayload) {
+    public ResponseEntity<?> sellerStore(SellerStorePayload sellerStorePayload) {
         MessageResponse response = new MessageResponse();
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(sellerBankPayload.getUsername() + SellerMessageResponse.SLR, sellerBankPayload.getPassword()));
+                    new UsernamePasswordAuthenticationToken(sellerStorePayload.getUsername() + SellerMessageResponse.SLR, sellerStorePayload.getPassword()));
 
             if(authentication.isAuthenticated()) {
 
                 //second Validate User username and Registration Completed Flag (Y) AND ROLE-SELLER
                 Optional<User> sellerData = this.userRepository.findByUsernameAndSellerRegisterCompleteAndProjectRole
-                        (sellerBankPayload.getUsername()+ SellerMessageResponse.SLR, "Y",
+                        (sellerStorePayload.getUsername()+ SellerMessageResponse.SLR, "Y",
                                 ERole.ROLE_SELLER.toString());
 
                 //Seller is Present in the Database or seller is Valid
@@ -63,16 +66,25 @@ public class SellerBankServiceImple implements SellerBankService {
                 if(sellerData.isPresent())
                 {
 
-                    //Save Pick Up data
-                    User user = sellerData.get();
+                    //get UserName By UserHelper
                     Map<String, String> currentUser = userHelper.getCurrentUser();
+                    User user = sellerData.get();
 
-                    SellerBank sellerBank = modelMapper.map(sellerBankPayload, SellerBank.class);
-                    sellerBank.setUsername(currentUser.get("username") + " OR " + user.getUsername() );
+                    SellerStore sellerStore = modelMapper.map(sellerStorePayload, SellerStore.class);
+                    sellerStore.setUsername(user.getUsername());
 
-                    this.sellerBankRepository.save(sellerBank);
+                    //Set First Time UserName
+                    sellerStore.setFt_username(currentUser.get("username") + " OR " + user.getUsername() );
 
-                    response.setMessage("Bank Details Saved Success");
+                    //save Seller Store
+                    this.sellerStoreRepository.save(sellerStore);
+
+                    //Set Store Name to User Table
+                    user.setSellerStoreName(sellerStore.getStoreName());
+                    //save User
+                    this.userRepository.save(user);
+
+                    response.setMessage("Seller Store Saved Success");
                     response.setStatus(HttpStatus.OK);
                     return ResponseGenerator.generateSuccessResponse(response,SellerMessageResponse.SUCCESS);
 
@@ -84,7 +96,7 @@ public class SellerBankServiceImple implements SellerBankService {
         catch (Exception e)
         {
             e.printStackTrace();
-            response.setMessage("Bank Details Not Failed");
+            response.setMessage("Seller Store Not Saved");
             response.setStatus(HttpStatus.BAD_REQUEST);
             return ResponseGenerator.generateBadRequestResponse(response,SellerMessageResponse.SOMETHING_WENT_WRONG);
         }

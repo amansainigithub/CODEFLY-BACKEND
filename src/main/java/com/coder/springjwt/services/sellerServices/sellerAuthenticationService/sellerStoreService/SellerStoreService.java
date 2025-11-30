@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerStoreService;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService;
 
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerStorePayload;
 import org.springframework.http.ResponseEntity;

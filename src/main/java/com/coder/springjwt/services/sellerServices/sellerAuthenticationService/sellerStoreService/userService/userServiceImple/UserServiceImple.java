@@ -1,9 +1,9 @@
-package com.coder.springjwt.services.sellerServices.sellerStoreService.userService.userServiceImple;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService.userServiceImple;
 
 import com.coder.springjwt.buckets.filesBucket.bucketService.BucketService;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.repository.UserRepository;
-import com.coder.springjwt.services.sellerServices.sellerStoreService.userService.UserService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService.UserService;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;

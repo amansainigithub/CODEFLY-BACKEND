@@ -1,8 +1,8 @@
-package com.coder.springjwt.controllers.seller.sellerPickup;
+package com.coder.springjwt.controllers.seller.sellerAuthController;
 
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerPickUpPayload;
-import com.coder.springjwt.services.sellerServices.sellerPickupService.SellerPickUpService;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerPickupService.SellerPickUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

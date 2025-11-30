@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerTaxService;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerTaxService;
 
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerTaxPayload;
 import org.springframework.http.ResponseEntity;

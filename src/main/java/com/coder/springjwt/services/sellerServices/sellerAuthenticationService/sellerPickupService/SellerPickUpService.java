@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerPickupService;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerPickupService;
 
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerPickUpPayload;
 import org.springframework.http.ResponseEntity;

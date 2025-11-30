@@ -6,7 +6,7 @@ import com.coder.springjwt.dtos.adminDtos.catalogDtos.ProductHeightDto;
 import com.coder.springjwt.models.adminModels.catalog.catalogHeight.ProductHeightModel;
 import com.coder.springjwt.repository.adminRepository.catalogRepos.ProductHeightRepo;
 import com.coder.springjwt.services.adminServices.catalogHeightService.CatalogHeightService;
-import com.coder.springjwt.services.sellerServices.sellerStoreService.userService.userServiceImple.UserServiceImple;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService.userServiceImple.UserServiceImple;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;

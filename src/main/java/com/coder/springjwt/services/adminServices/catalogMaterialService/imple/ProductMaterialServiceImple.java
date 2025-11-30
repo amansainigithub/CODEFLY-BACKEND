@@ -8,7 +8,7 @@ import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.models.adminModels.catalog.catalogMaterial.ProductMaterial;
 import com.coder.springjwt.repository.adminRepository.catalogRepos.ProductMaterialRepo;
 import com.coder.springjwt.services.adminServices.catalogMaterialService.ProductMaterialService;
-import com.coder.springjwt.services.sellerServices.sellerStoreService.userService.userServiceImple.UserServiceImple;
+import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService.userServiceImple.UserServiceImple;
 import com.coder.springjwt.util.MessageResponse;
 import com.coder.springjwt.util.ResponseGenerator;
 import lombok.extern.slf4j.Slf4j;

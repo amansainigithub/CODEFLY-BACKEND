@@ -1,4 +1,4 @@
-package com.coder.springjwt.services.sellerServices.sellerStoreService.userService;
+package com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerStoreService.userService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
