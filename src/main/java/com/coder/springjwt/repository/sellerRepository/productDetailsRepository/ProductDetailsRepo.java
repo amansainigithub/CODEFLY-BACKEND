@@ -29,6 +29,9 @@ public interface ProductDetailsRepo extends JpaRepository<ProductDetailsModel, L
 
     Optional<ProductDetailsModel> findByProductKeyAndProductSeries(String productKey , String productSeries);
 
+//    List<ProductDetailsModel> findAllByProductKeyAndProductSeries(String productKey, String productSeries);
+List<ProductDetailsModel> findAllByProductKey(String productKey);
+
     Optional<ProductDetailsModel> findByIdAndUsername(Long id , String username);
 
 

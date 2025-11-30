@@ -3,6 +3,7 @@ package com.coder.springjwt.services.productDetailsServices.imple;
 import com.coder.springjwt.dtos.customerPayloads.productDetailsCustomerDtos.ProductDetailsCustomerDto;
 import com.coder.springjwt.dtos.customerPayloads.productDetailsCustomerDtos.ProductFilesDtos;
 import com.coder.springjwt.dtos.customerPayloads.productDetailsCustomerDtos.ProductSizesDto;
+import com.coder.springjwt.dtos.customerPayloads.productDetailsCustomerDtos.ProductVariantDto;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
@@ -18,10 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -96,7 +94,11 @@ public class ProductDetailsServiceImple implements ProductDetailsService {
             productDetailsCustomerDto.setProductSizesDtos(productSizesDtoList);
 
 
+            //GET VARIANT DATA
+            List<ProductVariantDto> productVariant = this.findProductVariant(productDetails);
+
             mapNode.put("pw",productDetailsCustomerDto);
+            mapNode.put("pv",productVariant);
             return ResponseGenerator.generateSuccessResponse(mapNode,"SUCCESS");
         }
         catch (Exception e)
@@ -105,4 +107,41 @@ public class ProductDetailsServiceImple implements ProductDetailsService {
             return ResponseGenerator.generateBadRequestResponse();
         }
     }
+
+
+
+    public  List<ProductVariantDto>  findProductVariant(ProductDetailsModel productDetails)
+    {
+        try {
+            List<ProductDetailsModel> variants = this.productDetailsRepo.
+                                                findAllByProductKey(productDetails.getProductKey());
+
+            List<ProductVariantDto> productVariantDtos = new ArrayList<>();
+            for(ProductDetailsModel pdm : variants)
+            {
+//                if(productDetails.getId() != pdm.getId()) {
+                    ProductVariantDto productVariantDto = new ProductVariantDto();
+                    productVariantDto.setProductName(pdm.getProductName());
+                    productVariantDto.setProductId(pdm.getId());
+                    productVariantDto.setProductMrp(pdm.getProductMrp());
+                    productVariantDto.setProductPrice(pdm.getProductPrice());
+                    productVariantDto.setProductMainImage(pdm.getProductFiles().get(0).getFileUrl());
+                    productVariantDto.setBrand(pdm.getBrand());
+                    productVariantDtos.add(productVariantDto);
+//                }
+            }
+            return productVariantDtos;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            log.error(e.getMessage());
+            throw new RuntimeException("Exception in Product Variant ! Error");
+        }
+    }
+
+
+
+
+
 }
