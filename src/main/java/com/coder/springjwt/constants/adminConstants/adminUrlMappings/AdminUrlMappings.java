@@ -273,8 +273,20 @@ public class AdminUrlMappings {
     public static final String RAZORPAY_CONTROLLER = ADMIN_AUTHORIZE_URL +"/razorpayController";
     public static final String CREATE_RAZORPAY_ORDER = "/createRazorpayOrder/{amount}";
     public static final String FETCH_RAZORPAY_ORDER_DETAILS = "/fetchRazorpayOrderDetails" + "/{orderId}";
-
     public static final String FETCH_RAZORPAY_PAYMENT_DETAILS = "/fetchRazorpayPaymentDetails" + "/{paymentId}";
     public static final String VERIFY_RAZORPAY_SIGNATURE = "/verifyRazorpaySignature";
+
+
+
+//    BANK ACCOUNT VERIFICATION CONTROLLER
+    public static final String RAZORPAY_BANK_VERIFY_CONTROLLER = ADMIN_AUTHORIZE_URL +"/razorpayBankVerifyController";
+
+    public static final String RAZORPAY_BANK_VERIFIER = "/razorpayBankVerifier";
+
+
+
+
+
+
 
 }

@@ -105,4 +105,13 @@ public class SellerUrlMappings {
 
     public static final String UPLOAD_NEW_FILE_BY_SELLER = "uploadNewFileBySeller/{productId}/{username}";
 
+
+
+
+
+
+
+    public static final String CASH_FREE_CONTROLLER = SELLER_AUTH_URL +"/cashFreeController";
+    public static final String CREATE_CASHFREE_ORDER = "/createCashFreeOrder";
+
 }
