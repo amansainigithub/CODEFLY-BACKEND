@@ -41,7 +41,7 @@ public class OrderItems extends BaseEntity {
 
     private String productDiscount;
 
-    private String razorpayOrderId;
+    private String orderId;
 
     private String paymentState;
 

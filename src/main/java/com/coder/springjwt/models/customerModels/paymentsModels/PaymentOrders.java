@@ -37,6 +37,8 @@ public class PaymentOrders extends BaseEntity {
 
     private Long  addressId;
 
+    private String paymentProvider;
+
     @OneToMany(cascade = CascadeType.ALL ,mappedBy ="paymentOrders" )
     @JsonIgnore
     private List<OrderItems> orderItems;

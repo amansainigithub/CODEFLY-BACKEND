@@ -103,6 +103,9 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
                 paymentOrders.setPaymentCreatedJson(razorpayOrder.toString());
                 paymentOrders.setAddressId(addressId);
 
+                //Payment Provider
+                paymentOrders.setPaymentProvider("RAZORPAY");
+
                 //SET PAYMENT MODE STATUS
                 paymentOrders.setPaymentMode(PaymentModeStatus.ONLINE.toString());
 
@@ -225,7 +228,7 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
                 orderItems.setProductColor(orderDto.getPColor());
                 orderItems.setProductMrp(String.valueOf(orderDto.getPMrp()));
                 orderItems.setProductDiscount(orderDto.getPCalculatedDiscount());
-                orderItems.setRazorpayOrderId(razorpayOrderId);
+                orderItems.setOrderId(razorpayOrderId);
 
                 orderItems.setUserId(String.valueOf(user.getId()));
                 orderItems.setUsername(String.valueOf(user.getUsername()));
@@ -347,8 +350,10 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
 
         // Generate Order ID per item
         sa.setOrderNoPerItem(orderNoPerItems);
-        //Razorpay OrderId
-        sa.setRazorpayOrderId(razorpayOrderId);
+
+        //Razorpay Order-Id
+        sa.setOrderId(razorpayOrderId);
+
         //reference Number
         sa.setOrderReferenceNo(orderReferenceNo);
 

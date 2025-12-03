@@ -1,5 +1,6 @@
 package com.coder.springjwt.models.customerModels.orders;
 
+import com.coder.springjwt.models.entities.baseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "OrderShippingAddress")
-public class OrderShippingAddress {
+public class OrderShippingAddress extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +32,6 @@ public class OrderShippingAddress {
     private long userId;
 
     private String orderNoPerItem;
-    private String razorpayOrderId;
+    private String orderId;
     private String orderReferenceNo;
 }
