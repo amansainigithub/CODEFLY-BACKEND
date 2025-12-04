@@ -14,6 +14,7 @@ import com.coder.springjwt.models.customerModels.customerAddressModel.CustomerAd
 import com.coder.springjwt.models.customerModels.orders.OrderItems;
 import com.coder.springjwt.models.customerModels.orders.OrderShippingAddress;
 import com.coder.springjwt.models.customerModels.paymentsModels.PaymentOrders;
+import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductSizeRows;
 import com.coder.springjwt.repository.UserRepository;
 import com.coder.springjwt.repository.customerAddressRepository.CustomerAddressRepo;
@@ -33,6 +34,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -214,6 +216,8 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
             List<OrderItems> orderItemsList = new ArrayList<>();
             for(CartItemsDto orderDto :  cartItemsList)
             {
+                Map<String, String> sellerInfo = this.getSellerInfo(orderDto.getPId());
+
                 String orderNoPerItems = orderPaymentServiceHelper.generateOrderIdPerItem();
 
                 OrderItems orderItems = new OrderItems();
@@ -238,6 +242,10 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
 
                 //GENERATE ORDER ID PER-ITEMS
                 orderItems.setOrderNoPerItem(orderNoPerItems);
+
+                //SELLER USER-ID AND USERNAME
+                orderItems.setSellerId(sellerInfo.get("seller_id"));
+                orderItems.setSellerUsername(sellerInfo.get("seller_username"));
 
                 //ORDER SHIPPING ADDRESS DETAILS
                 orderItems.setAddressId(customerAddress.getId());
@@ -282,6 +290,24 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
         }
     }
 
+
+
+    public Map<String,String> getSellerInfo(String productId)
+    {
+        try {
+            Map<String,String> map = new HashMap<>();
+            ProductDetailsModel productDetails = this.productDetailsRepo.findById(Long.parseLong(productId))
+                    .orElseThrow(() -> new DataNotFoundException("Seller Not Found"));
+            map.put("seller_username" , productDetails.getUsername());
+            map.put("seller_id" , productDetails.getUserId());
+            return map;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
 

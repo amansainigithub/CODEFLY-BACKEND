@@ -111,6 +111,12 @@ public class SellerUrlMappings {
 
 
 
+
+    public static final String ORDERS_CONTROLLER = SELLER_AUTH_URL +"/ordersController";
+    public static final String GET_ACTIVE_ORDERS = "/getActiveOrders";
+
+
+//    CASH FREE CONTROLLER
     public static final String CASH_FREE_CONTROLLER = SELLER_AUTH_URL +"/cashFreeController";
     public static final String CREATE_CASHFREE_ORDER = "/createCashFreeOrder";
 

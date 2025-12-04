@@ -1,20 +1,16 @@
 package com.coder.springjwt.buckets.cashFreeBucket;
 
-import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
-import com.razorpay.Order;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping(SellerUrlMappings.CASH_FREE_CONTROLLER)

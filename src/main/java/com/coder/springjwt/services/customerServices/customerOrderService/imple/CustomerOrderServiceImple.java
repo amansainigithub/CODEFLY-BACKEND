@@ -1,7 +1,6 @@
 package com.coder.springjwt.services.customerServices.customerOrderService.imple;
 
 import com.coder.springjwt.dtos.customerPayloads.orderItemsDto.OrderItemsDto;
-import com.coder.springjwt.dtos.customerPayloads.orderItemsDto.OrderShippingAddressDto;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.customerModels.orders.OrderItems;
