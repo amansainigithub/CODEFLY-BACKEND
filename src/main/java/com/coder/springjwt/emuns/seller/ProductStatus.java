@@ -5,7 +5,6 @@ public enum ProductStatus {
     APPROVED,
     DIS_APPROVED,
     DRAFT,
-
     BLOCKED
 
 }

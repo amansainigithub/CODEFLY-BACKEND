@@ -12,7 +12,10 @@ public interface OrderItemsRepository extends JpaRepository<OrderItems, Long> {
 
     Page<OrderItems> findByUserIdAndUsername(String userid , String username , Pageable pageable);
 
-    Page<OrderItems> findBySellerIdAndSellerUsername(String sellerId , String sellerUsername , Pageable pageable);
+    Page<OrderItems> findBySellerIdAndSellerUsernameAndOrderStatus(String sellerId ,
+                                                                   String sellerUsername ,
+                                                                   String orderStatus ,
+                                                                   Pageable pageable);
 
 
 }

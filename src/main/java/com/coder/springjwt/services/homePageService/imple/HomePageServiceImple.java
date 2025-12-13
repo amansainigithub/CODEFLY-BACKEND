@@ -2,12 +2,19 @@ package com.coder.springjwt.services.homePageService.imple;
 
 import com.coder.springjwt.dtos.customerPayloads.homepageDtos.ProductDetailsDataDto;
 import com.coder.springjwt.dtos.customerPayloads.homepageDtos.SliderDto;
+import com.coder.springjwt.dtos.customerPayloads.homepageDtos.productCategoryDto.HomePageSubCategoryDTO;
+import com.coder.springjwt.dtos.customerPayloads.homepageDtos.productCategoryDto.HomePageTypeCategoryDTO;
+import com.coder.springjwt.dtos.customerPayloads.homepageDtos.productCategoryDto.HomePageVariantCategoryDTO;
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
+import com.coder.springjwt.models.adminModels.categories.SubCategoryModel;
+import com.coder.springjwt.models.adminModels.categories.TypeCategoryModel;
+import com.coder.springjwt.models.adminModels.categories.VariantCategoryModel;
 import com.coder.springjwt.models.adminModels.slidersModels.SliderModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
 import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.models.sellerModels.productModels.ProductSizeRows;
+import com.coder.springjwt.repository.adminRepository.categories.SubCategoryRepo;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.repository.sliderRepository.SliderRepository;
 import com.coder.springjwt.services.homePageService.HomePageService;
@@ -33,11 +40,17 @@ public class HomePageServiceImple implements HomePageService {
     @Autowired
     private ProductDetailsRepo productDetailsRepo;
 
+    @Autowired
+    private SubCategoryRepo subCategoryRepo;
+
 
     @Override
     public ResponseEntity<?> fetchHomePage() {
         Map<Object,Object> mapNode = new HashMap<>();
         try {
+
+            //CATEGORY DATA
+            Map<String, Object> categoryData = this.getCategoryData();
 
             //SLIDER DATA
             List<SliderDto> sliderDtoList = new ArrayList<>();
@@ -103,6 +116,7 @@ public class HomePageServiceImple implements HomePageService {
 
             mapNode.put("sliderDtoList",sliderDtoList);
             mapNode.put("productDetailsList",productDetailsList);
+            mapNode.put("categoryDataNode",categoryData);
 
             return ResponseGenerator.generateSuccessResponse(mapNode,"SUCCESS");
         }
@@ -112,4 +126,64 @@ public class HomePageServiceImple implements HomePageService {
             return ResponseGenerator.generateBadRequestResponse();
         }
     }
+
+
+
+    public Map<String, Object> getCategoryData() {
+        try {
+            Map<String, Object> response = new HashMap<>();
+
+            List<SubCategoryModel> subcategoryData =
+                    subCategoryRepo.findByCategoryNameIn(
+                            List.of("Mobiles & Tablets", "Laptops & Computers" , "Men's Clothing" , "Footwear")
+                    );
+
+            List<HomePageSubCategoryDTO> subCategoryDTOList = new ArrayList<>();
+
+            for (SubCategoryModel scm : subcategoryData) {
+
+                HomePageSubCategoryDTO subDTO = new HomePageSubCategoryDTO();
+                subDTO.setSubCategoryName(scm.getCategoryName());
+
+                List<HomePageTypeCategoryDTO> typeDTOList = new ArrayList<>();
+
+                for (TypeCategoryModel tcm : scm.getTypeCategoryModels()) {
+
+                    HomePageTypeCategoryDTO typeDTO = new HomePageTypeCategoryDTO();
+                    typeDTO.setTypeCategoryName(tcm.getCategoryName());
+
+                    List<HomePageVariantCategoryDTO> variantDTOList = new ArrayList<>();
+
+                    for (VariantCategoryModel vcm : tcm.getVariantCategoryModels()) {
+
+                        HomePageVariantCategoryDTO variantDTO = new HomePageVariantCategoryDTO();
+                        variantDTO.setVariantCategoryName(vcm.getCategoryName());
+
+                        variantDTOList.add(variantDTO);
+                    }
+
+                    typeDTO.setVariants(variantDTOList);
+                    typeDTOList.add(typeDTO);
+                }
+
+                subDTO.setTypes(typeDTOList);
+                subCategoryDTOList.add(subDTO);
+            }
+
+            response.put("categoryData", subCategoryDTOList);
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+
+
+
+
+
 }

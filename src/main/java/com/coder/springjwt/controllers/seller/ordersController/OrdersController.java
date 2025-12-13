@@ -17,13 +17,50 @@ public class OrdersController {
     @Autowired
     private OrdersService ordersService;
 
-    @PostMapping(SellerUrlMappings.GET_ACTIVE_ORDERS)
+    @PostMapping(SellerUrlMappings.GET_PENDING_ORDERS)
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<?> getActiveOrders( @RequestParam Integer page ,
-                                        @RequestParam  Integer size ,
-                                        @RequestParam String username ) {
+    public ResponseEntity<?> getPendingOrders( @RequestParam Integer page ,
+                                               @RequestParam  Integer size ,
+                                               @RequestParam String username ) {
 
-        return this.ordersService.getActiveOrders(page , size , username);
+        return this.ordersService.getPendingOrders(page , size , username);
+    }
+
+    @PostMapping(SellerUrlMappings.GET_CONFIRMED_ORDERS)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getConfirmedOrders( @RequestParam Integer page ,
+                                                 @RequestParam  Integer size ,
+                                                 @RequestParam String username ) {
+
+        return this.ordersService.getConfirmedOrders(page , size , username);
+    }
+
+    @PostMapping(SellerUrlMappings.GET_SHIPPED_ORDERS)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getShippedOrders( @RequestParam Integer page ,
+                                                 @RequestParam  Integer size ,
+                                                 @RequestParam String username ) {
+
+        return this.ordersService.getShippedOrders(page , size , username);
+    }
+
+    @PostMapping(SellerUrlMappings.GET_DELIVERED_ORDERS)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getDeliveredOrders( @RequestParam Integer page ,
+                                               @RequestParam  Integer size ,
+                                               @RequestParam String username ) {
+
+        return this.ordersService.getDeliveredOrders(page , size , username);
+    }
+
+
+    @PostMapping(SellerUrlMappings.GET_CALCELLED_ORDERS)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> getCancelledOrders( @RequestParam Integer page ,
+                                                 @RequestParam  Integer size ,
+                                                 @RequestParam String username ) {
+
+        return this.ordersService.getCancelledOrders(page , size , username);
     }
 
 }

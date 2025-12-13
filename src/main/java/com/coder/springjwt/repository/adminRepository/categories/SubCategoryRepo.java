@@ -20,4 +20,9 @@ public interface SubCategoryRepo extends JpaRepository<SubCategoryModel,Long> {
 
     List<SubCategoryModel> findByRootCategoryId(Long id);
 
+    List<SubCategoryModel> findTop5ByOrderByCreationDate();
+
+    List<SubCategoryModel> findByCategoryNameIn(List<String> categoryNames);
+
+
 }

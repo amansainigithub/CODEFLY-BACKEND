@@ -7,6 +7,7 @@ import com.coder.springjwt.dtos.customerPayloads.orderPaymentDto.OrderPaymentDto
 import com.coder.springjwt.emuns.customer.PaymentModeStatus;
 import com.coder.springjwt.emuns.paymentModes.PaymentMode;
 import com.coder.springjwt.emuns.paymentState.PaymentState;
+import com.coder.springjwt.emuns.seller.OrderStatus;
 import com.coder.springjwt.exception.adminException.DataNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.User;
@@ -33,10 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -218,6 +219,7 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
             {
                 Map<String, String> sellerInfo = this.getSellerInfo(orderDto.getPId());
 
+                // Order No Per Items
                 String orderNoPerItems = orderPaymentServiceHelper.generateOrderIdPerItem();
 
                 OrderItems orderItems = new OrderItems();
@@ -260,6 +262,15 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
                 orderItems.setUsername(customerAddress.getUsername());
                 orderItems.setCity(customerAddress.getCity());
                 orderItems.setState(customerAddress.getState());
+
+                //SET ORDER STATUS
+                orderItems.setOrderStatus(OrderStatus.PENDING.toString());
+
+                //Current Date
+                orderItems.setOrderDate(OrderPaymentServiceImple.getCurrentDate());
+
+                //Current Time
+                orderItems.setOrderTime(OrderPaymentServiceImple.getCurrentTime());
 
                 //ORDER SHIPPING ADDRESS
                 OrderShippingAddress sa = this.buildShippingAddress(customerAddress,
@@ -387,6 +398,18 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
     }
 
 
+
+    public static String getCurrentDate() {
+        DateTimeFormatter formatter =DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+        return LocalDate.now().format(formatter).toUpperCase();
+    }
+
+
+    public static String getCurrentTime() {
+        DateTimeFormatter formatter =DateTimeFormatter.ofPattern("hh:mm a");
+
+        return LocalTime.now().format(formatter);
+    }
 
 
 

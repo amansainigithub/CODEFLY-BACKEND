@@ -14,17 +14,11 @@ public class SellerUrlMappings {
 
 
     //=======================================CONTROLLER=========================================================
-
     public static final String SELLER_AUTH_CONTROLLER = SELLER_PUBLIC_URL + "/sellerAuthController";
-
     public static final String STATE_CITY_PINCODE_CONTROLLER = SELLER_PUBLIC_URL + "/stateCityPincodeController";
-
     public static final String SELLER_TAX_CONTROLLER = SELLER_PUBLIC_URL + "/sellerTaxController";
-
     public static final String SELLER_PICKUP_CONTROLLER = SELLER_PUBLIC_URL + "/sellerPickupController";
-
     public static final String SELLER_BANK_CONTROLLER = SELLER_PUBLIC_URL + "/sellerBankController";
-
     public static final String SELLER_STORE_CONTROLLER = SELLER_PUBLIC_URL + "/sellerStoreController";
 
 
@@ -56,7 +50,6 @@ public class SellerUrlMappings {
     //    =============================================================/
     public static final String ENGINE_X_BUILDER_CONTROLLER = SELLER_AUTH_URL + "/engineXBuilderController";
     public static final String GET_ENGINE_X = "/getEngineX/{engineXId}";
-
     public static final String GET_CHARGES_BY_SELLER = "/getChargesBySeller/{id}";
 
 
@@ -96,13 +89,10 @@ public class SellerUrlMappings {
 
 
     //    =======PRODUCTS FILES CONTROLLER==========
-
     public static final String PRODUCT_FILES_HANDLER_CONTROLLER = SELLER_AUTH_URL + "/productFilesHandlerController";
     public static final String GET_PRODUCT_FILES_BY_ID_SELLER = "/getProductFilesByIdSeller/{productId}/{username}";
     public static final String MODIFIED_PRODUCT_FILES_BY_SELLER = "modifiedProductFilesBySeller/{fileId}/{productId}/{username}";
-
     public static final String MODIFIED_PRODUCT_VIDEO_FILES_BY_SELLER = "modifiedProductVideoFilesBySeller/{fileId}/{productId}/{username}";
-
     public static final String UPLOAD_NEW_FILE_BY_SELLER = "uploadNewFileBySeller/{productId}/{username}";
 
 
@@ -110,14 +100,25 @@ public class SellerUrlMappings {
 
 
 
-
-
+    //ORDER CONTROLLER
     public static final String ORDERS_CONTROLLER = SELLER_AUTH_URL +"/ordersController";
-    public static final String GET_ACTIVE_ORDERS = "/getActiveOrders";
+    public static final String GET_PENDING_ORDERS = "/getPendingOrders";
+    public static final String GET_CONFIRMED_ORDERS = "/getConfirmedOrders";
+    public static final String GET_SHIPPED_ORDERS = "/getShippedOrders";
+
+    public static final String GET_DELIVERED_ORDERS = "/getDeliveredOrders";
+    public static final String GET_CALCELLED_ORDERS = "/getCancelledOrders";
+
+
+
+
+
+
 
 
 //    CASH FREE CONTROLLER
     public static final String CASH_FREE_CONTROLLER = SELLER_AUTH_URL +"/cashFreeController";
     public static final String CREATE_CASHFREE_ORDER = "/createCashFreeOrder";
+
 
 }

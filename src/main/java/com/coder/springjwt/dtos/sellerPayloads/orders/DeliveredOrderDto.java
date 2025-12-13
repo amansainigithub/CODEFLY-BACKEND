@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderRequestDto {
-
+public class DeliveredOrderDto {
 
     private Long id;
     private String productId;
@@ -42,4 +41,10 @@ public class OrderRequestDto {
     private Boolean defaultAddress;
     private String city;
     private String state;
+
+    private String orderStatus;
+
+    private String orderDate;
+
+    private String orderTime;
 }
