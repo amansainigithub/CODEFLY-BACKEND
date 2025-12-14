@@ -278,13 +278,21 @@ public class AdminUrlMappings {
 
 
 
-//    BANK ACCOUNT VERIFICATION CONTROLLER
+    // ANK ACCOUNT VERIFICATION CONTROLLER
     public static final String RAZORPAY_BANK_VERIFY_CONTROLLER = ADMIN_AUTHORIZE_URL +"/razorpayBankVerifyController";
 
     public static final String RAZORPAY_BANK_VERIFIER = "/razorpayBankVerifier";
 
 
 
+
+    //SHIP-ROCKET CONTROLLER
+    public static final String SHIP_ROCKET_CONTROLLER = ADMIN_AUTHORIZE_URL +"/shipRocketController";
+    public static final String GENERATE_TOKEN_SHIP_ROCKET = "/generateTokenShipRocket";
+
+    public static final String ADD_PICKUP_LOCATION_SHIP_ROCKET = "/addPickupLocationShipRocket";
+    public static final String CREATE_ORDER_SHIP_ROCKET = "/createOrderShipRocket";
+    public static final String ORDER_CANCEL_SHIP_ROCKET = "/orderCancelShipRocket";
 
 
 
