@@ -295,6 +295,12 @@ public class AdminUrlMappings {
     public static final String ORDER_CANCEL_SHIP_ROCKET = "/orderCancelShipRocket";
 
 
+    //USER OVERVIEW CONTROLLER
+    public static final String USER_OVERVIEW_CONTROLLER = ADMIN_AUTHORIZE_URL + "/userOverViewController";
+    public static final String GET_CUSTOMER_USERS_OVERVIEW = "/getCustomerUsersOverview";
+    public static final String GET_ADMIN_USERS_OVERVIEW = "/getAdminUsersOverview";
+    public static final String GET_SELLER_USERS_OVERVIEW = "/getSellerUsersOverview";
+
 
 
 }

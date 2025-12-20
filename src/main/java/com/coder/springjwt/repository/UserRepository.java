@@ -4,8 +4,11 @@ import com.coder.springjwt.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,6 +30,23 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByUsernameAndSellerRegisterComplete(String mobile , String sellerRegisterComplete );
 
 	Optional<User> findByUsernameAndSellerRegisterCompleteAndProjectRole(String mobile , String sellerRegisterComplete ,String projectRole);
+
+
+	@Query("""
+    SELECT u FROM User u
+    WHERE
+    (
+        :queryValue IS NULL
+        OR CAST(u.id AS string) = :queryValue
+        OR u.username = :queryValue
+        OR u.mobile = :queryValue
+    )
+    AND u.projectRole = :projectRole
+""")
+	List<User> searchByIdOrUsernameOrMobileAndProjectRole(
+			@Param("queryValue") String queryValue,
+			@Param("projectRole") String projectRole
+	);
 
 
 

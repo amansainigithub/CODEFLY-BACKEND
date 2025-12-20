@@ -276,7 +276,7 @@ public class CustomerAuthServiceImple implements CustomerAuthService {
             user.setProjectRole(ERole.ROLE_CUSTOMER.toString());
 
             userRepository.save(user);
-            log.info("Registration Completed Fully");
+            log.info("Customer Registration Successfully");
 
             return ResponseEntity.ok(new MessageResponse(CustMessageResponse.REGISTER_COMPLETED_FULLY,HttpStatus.OK));
         }else{
