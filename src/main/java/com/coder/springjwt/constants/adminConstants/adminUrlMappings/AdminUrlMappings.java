@@ -289,7 +289,6 @@ public class AdminUrlMappings {
     //SHIP-ROCKET CONTROLLER
     public static final String SHIP_ROCKET_CONTROLLER = ADMIN_AUTHORIZE_URL +"/shipRocketController";
     public static final String GENERATE_TOKEN_SHIP_ROCKET = "/generateTokenShipRocket";
-
     public static final String ADD_PICKUP_LOCATION_SHIP_ROCKET = "/addPickupLocationShipRocket";
     public static final String CREATE_ORDER_SHIP_ROCKET = "/createOrderShipRocket";
     public static final String ORDER_CANCEL_SHIP_ROCKET = "/orderCancelShipRocket";
@@ -302,5 +301,15 @@ public class AdminUrlMappings {
     public static final String GET_SELLER_USERS_OVERVIEW = "/getSellerUsersOverview";
 
 
+
+
+//    NIMBUS-POST SHIPPING APIS
+public static final String NIMBUS_POST_CONTROLLER = ADMIN_AUTHORIZE_URL +"/nimbusPostController";
+
+    public static final String GENERATE_TOKEN_NIMBUS_POST = "/generateTokenNimbusPost";
+    public static final String CREATE_SHIPMENT_NIMBUS_POST = "/createShipmentNimbusPost";
+    public static final String CANCEL_SHIPMENT_NIMBUS_POST = "/cancelShipmentNimbusPost";
+    public static final String TRACK_SHIPMENT_NIMBUS_POST = "/trackShipmentNimbusPost/{awb}";
+    public static final String SERVICE_ABILITY_NIMBUS_POST = "/serviceAbilityNimbusPost";
 
 }

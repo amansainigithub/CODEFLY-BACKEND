@@ -1,8 +1,6 @@
 package com.coder.springjwt.controllers.admin.usersOverviewControllers;
 
 import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
-import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
-import com.coder.springjwt.services.sellerServices.productCategoryService.ProductCategoryService;
 import com.coder.springjwt.services.userOverviewService.UserOverViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
