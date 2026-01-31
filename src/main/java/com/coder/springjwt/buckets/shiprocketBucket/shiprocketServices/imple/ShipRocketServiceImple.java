@@ -45,17 +45,11 @@ public class ShipRocketServiceImple implements ShipRocketService {
     @Autowired
     private RestTemplate restTemplate;
 
+    private static final String SHIP_ROCKET_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjg4MjExMDEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzY2NTU0ODUxLCJqdGkiOiIzRkFwTUJaaTBWRzFJYU1VIiwiaWF0IjoxNzY1NjkwODUxLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc2NTY5MDg1MSwiY2lkIjo1MzY5NDM2LCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.w9I7IecZeKk05j9KoGCLFz2EuzbsZWvMSQW6XqMQN2o";
     private static final String SHIP_ROCKET_LOGIN_URL = "https://apiv2.shiprocket.in/v1/external/auth/login";
     private static final String NEW_PICKUP_LOCATION_URL = "https://apiv2.shiprocket.in/v1/external/settings/company/addpickup";
-
     private static final String CREATE_ORDER_URL = "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc";
-
     private static final String CANCEL_ORDER_URL = "https://apiv2.shiprocket.in/v1/external/orders/cancel";
-
-
-    private static final String SHIP_ROCKET_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjg4MjExMDEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzY2NTU0ODUxLCJqdGkiOiIzRkFwTUJaaTBWRzFJYU1VIiwiaWF0IjoxNzY1NjkwODUxLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc2NTY5MDg1MSwiY2lkIjo1MzY5NDM2LCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.w9I7IecZeKk05j9KoGCLFz2EuzbsZWvMSQW6XqMQN2o";
-
-
 
 
     @Override
