@@ -79,7 +79,7 @@ public class AdminAuthServiceImple implements AdminAuthService {
             throw new RuntimeException("PassKey Error " + AdminAuthController.class.getName());
         }
 
-        System.out.println("PASS KEY :: " + passKey );
+        log.info("PASS KEY :: " + passKey );
         User user =  this.userRepository.findByUsername(userDetails.getUsername()).get();
         user.setPassKey(passKey);
         userRepository.save(user);
@@ -117,7 +117,7 @@ public class AdminAuthServiceImple implements AdminAuthService {
         User user = this.userRepository.findByUsername(userDetails.getUsername()).get();
         //Check Passkey is Authenticated or Not
         if(passkey.getPassKey().trim().equals(user.getPassKey())){
-            System.out.println("Passkey matched success");
+            log.info("Passkey matched success");
         }else{
             return ResponseEntity
                     .badRequest()

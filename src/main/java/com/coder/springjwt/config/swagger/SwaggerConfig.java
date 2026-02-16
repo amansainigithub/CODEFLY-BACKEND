@@ -20,7 +20,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info().title("Authentication Service")
                         .description("This is auth service use for validate the user.")
-                        .version("v0.0.1")
+                        .version("v0.0.2")
                         .license(new License().name("Apache 2.0").url("http://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
                         .description("SpringBoot Wiki Documentation")
