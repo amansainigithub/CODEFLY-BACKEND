@@ -42,4 +42,8 @@ public class CartItemsDto {
 
     @JsonProperty("pCalculatedDiscount")
     private String pCalculatedDiscount;
+
+    @JsonProperty("productRowId")
+    private String productRowId;
+
 }

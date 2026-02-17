@@ -87,6 +87,27 @@ public class OrderItems extends BaseEntity {
     private PaymentOrders paymentOrders;
 
 
+
+    //Product GST How Much Taken
+    private String productSizeRowId;
+    private String productGst;
+    private String productTds;
+    private String productTcs;
+    private String productSkuCode;
+
+
+
+
+    //ShipRocket Updated Data if Order is confirmed
+    private String shipRocketOrderId;
+    private String shipRocketChannelOrderId;
+    private String shipRocketShipmentId;
+    private String shipRocketStatus;
+    private String shipRocketAwbCode;
+    private String courierName;
+    private String courierCompanyId;
+
+
     @OneToOne(cascade = CascadeType.ALL )
     @JsonIgnore
     private OrderShippingAddress orderShippingAddresses;

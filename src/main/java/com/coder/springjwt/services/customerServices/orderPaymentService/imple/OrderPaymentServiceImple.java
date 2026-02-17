@@ -220,6 +220,11 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
             List<OrderItems> orderItemsList = new ArrayList<>();
             for(CartItemsDto orderDto :  cartItemsList)
             {
+                System.out.println("PRODUCT SIZE ROW ID :: " + orderDto.getProductRowId());
+
+                ProductSizeRows productSizeData = this.productSizeRowsRepo.findById(Long.parseLong(orderDto.getProductRowId()))
+                        .orElseThrow(() -> new RuntimeException("Product Id not Found"));
+
                 Map<String, String> sellerInfo = this.getSellerInfo(orderDto.getPId());
 
                 // Order No Per Items
@@ -274,6 +279,13 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
 
                 //Current Time
                 orderItems.setOrderTime(OrderPaymentServiceImple.getCurrentTime());
+
+                //Row Id saved and GST,TDS, TCS and SKU Code Saved
+                orderItems.setProductSizeRowId(orderDto.getProductRowId());
+                orderItems.setProductGst(productSizeData.getProductGst());
+                orderItems.setProductTds(productSizeData.getProductTds());
+                orderItems.setProductTcs(productSizeData.getProductTcs());
+                orderItems.setProductSkuCode(productSizeData.getSkuCode());
 
                 //ORDER SHIPPING ADDRESS
                 OrderShippingAddress sa = this.buildShippingAddress(customerAddress,

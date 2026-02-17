@@ -105,14 +105,15 @@ public class SellerUrlMappings {
     public static final String GET_PENDING_ORDERS = "/getPendingOrders";
     public static final String GET_CONFIRMED_ORDERS = "/getConfirmedOrders";
     public static final String GET_SHIPPED_ORDERS = "/getShippedOrders";
-
     public static final String GET_DELIVERED_ORDERS = "/getDeliveredOrders";
     public static final String GET_CALCELLED_ORDERS = "/getCancelledOrders";
 
 
 
+    //ORDER ACTION CONTROLLER
+    public static final String ORDERS_ACTION_CONTROLLER = SELLER_AUTH_URL +"/ordersActionController";
 
-
+    public static final String ORDER_ACCEPT = "/orderAccept";
 
 
 

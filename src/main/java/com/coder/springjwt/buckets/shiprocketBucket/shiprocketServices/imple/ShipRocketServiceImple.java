@@ -48,7 +48,7 @@ public class ShipRocketServiceImple implements ShipRocketService {
     @Autowired
     private ShipRocketTokenRepository shipRocketTokenRepository;
 
-    private static final String SHIP_ROCKET_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjg4MjExMDEsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzY2NTU0ODUxLCJqdGkiOiIzRkFwTUJaaTBWRzFJYU1VIiwiaWF0IjoxNzY1NjkwODUxLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc2NTY5MDg1MSwiY2lkIjo1MzY5NDM2LCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.w9I7IecZeKk05j9KoGCLFz2EuzbsZWvMSQW6XqMQN2o";
+    private static final String SHIP_ROCKET_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjY1MTI5NTMsInNvdXJjZSI6InNyLWF1dGgtaW50IiwiZXhwIjoxNzcyMTQzNDUzLCJqdGkiOiJGS2xib2Q4ck9lMlExZG9QIiwiaWF0IjoxNzcxMjc5NDUzLCJpc3MiOiJodHRwczovL3NyLWF1dGguc2hpcHJvY2tldC5pbi9hdXRob3JpemUvdXNlciIsIm5iZiI6MTc3MTI3OTQ1MywiY2lkIjo2Mjg3NDQ5LCJ0YyI6MzYwLCJ2ZXJib3NlIjpmYWxzZSwidmVuZG9yX2lkIjowLCJ2ZW5kb3JfY29kZSI6IiJ9.tiBc-ciB-p-wnU_y7QMUmHfCwc8N9uowZDdP9qpbPxY";
     private static final String SHIP_ROCKET_LOGIN_URL = "https://apiv2.shiprocket.in/v1/external/auth/login";
     private static final String NEW_PICKUP_LOCATION_URL = "https://apiv2.shiprocket.in/v1/external/settings/company/addpickup";
     private static final String CREATE_ORDER_URL = "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc";
@@ -256,56 +256,6 @@ public class ShipRocketServiceImple implements ShipRocketService {
         }
     }
 
-    @Override
-    public ResponseEntity<?> addPickupLocationShipRocket(PickUpLocationDtoShipRocket pickUpLocationDtoShipRocket) {
-        Map<String, Object> messageResponse = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        PickUpAddress_SR pickUpAddress_sr = new PickUpAddress_SR();
-
-        try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            // 🔥 HARD-CODED TOKEN
-            headers.setBearerAuth(SHIP_ROCKET_TOKEN);
-
-            HttpEntity<PickUpLocationDtoShipRocket> plsrEntity = new HttpEntity<>(pickUpLocationDtoShipRocket, headers);
-            String requestJson = mapper.writeValueAsString(plsrEntity);
-
-            //save Packet
-            pickUpAddress_sr.setRequestPacket(requestJson);
-            PickUpAddress_SR savePickUp = this.pickUpAddressShipRocketRepo.save(pickUpAddress_sr);
-
-            ResponseEntity<String> response = restTemplate.exchange(NEW_PICKUP_LOCATION_URL,
-                    HttpMethod.POST, plsrEntity,
-                    String.class);
-
-            log.info("Add Pickup Location Raw Response :: " + response.getBody());
-            JsonNode jsonNode = mapper.readTree(response.getBody());
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                messageResponse.put("raw", jsonNode);
-
-                //Update Data
-                savePickUp.setResponsePacket(String.valueOf(jsonNode));
-                savePickUp.setStatus("SUCCESS");
-                this.pickUpAddressShipRocketRepo.save(savePickUp);
-                return ResponseGenerator.generateSuccessResponse(messageResponse, "SUCCESS");
-
-            } else {
-
-                savePickUp.setStatus("FAILED");
-                this.pickUpAddressShipRocketRepo.save(savePickUp);
-                return ResponseGenerator.generateBadRequestResponse(messageResponse, "FAILED");
-            }
-        } catch (Exception e) {
-            pickUpAddress_sr.setResponsePacket(e.getMessage());
-            pickUpAddress_sr.setStatus("FAILED");
-            this.pickUpAddressShipRocketRepo.save(pickUpAddress_sr);
-
-            e.printStackTrace();
-            return ResponseGenerator.generateBadRequestResponse("FAILED");
-        }
-    }
 
 
     @Override
@@ -359,6 +309,114 @@ public class ShipRocketServiceImple implements ShipRocketService {
         }
     }
 
+
+    @Override
+    public ResponseEntity<?> addPickupLocationShipRocket(PickUpLocationDtoShipRocket pickUpLocationDtoShipRocket) {
+        Map<String, Object> messageResponse = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        PickUpAddress_SR pickUpAddress_sr = new PickUpAddress_SR();
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            // 🔥 HARD-CODED TOKEN
+            headers.setBearerAuth(SHIP_ROCKET_TOKEN);
+
+            HttpEntity<PickUpLocationDtoShipRocket> plsrEntity = new HttpEntity<>(pickUpLocationDtoShipRocket, headers);
+            String requestJson = mapper.writeValueAsString(plsrEntity);
+
+            //save Packet
+            pickUpAddress_sr.setRequestPacket(requestJson);
+            PickUpAddress_SR savePickUp = this.pickUpAddressShipRocketRepo.save(pickUpAddress_sr);
+
+            ResponseEntity<String> response = restTemplate.exchange(NEW_PICKUP_LOCATION_URL,
+                    HttpMethod.POST, plsrEntity,
+                    String.class);
+
+            log.info("Add Pickup Location Raw Response :: " + response.getBody());
+            JsonNode jsonNode = mapper.readTree(response.getBody());
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                messageResponse.put("raw", jsonNode);
+
+                //Update Data
+                savePickUp.setResponsePacket(String.valueOf(jsonNode));
+                savePickUp.setStatus("SUCCESS");
+                this.pickUpAddressShipRocketRepo.save(savePickUp);
+                return ResponseGenerator.generateSuccessResponse(messageResponse, "SUCCESS");
+
+            } else {
+
+                savePickUp.setStatus("FAILED");
+                this.pickUpAddressShipRocketRepo.save(savePickUp);
+                return ResponseGenerator.generateBadRequestResponse(messageResponse, "FAILED");
+            }
+        } catch (Exception e) {
+            pickUpAddress_sr.setResponsePacket(e.getMessage());
+            pickUpAddress_sr.setStatus("FAILED");
+            this.pickUpAddressShipRocketRepo.save(pickUpAddress_sr);
+
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse("FAILED");
+        }
+    }
+
+
+
+
+
+    public JsonNode createOrderShipRocketAndValidToken(CreateOrderDtoShipRocket createOrderDtoShipRocket) {
+        Map<String, Object> messageResponse = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        CreateOrderRequestResponse_SR createOrderReqRes = new CreateOrderRequestResponse_SR();
+        try {
+
+            //ShipRocket Token if expiry to generate new token and expiry set before -5 min....
+            String validToken = this.getValidToken();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(validToken);
+
+            HttpEntity<Object> httpEntity = new HttpEntity<>(createOrderDtoShipRocket, headers);
+            String requestPacket = objectMapper.writeValueAsString(httpEntity);
+
+            //save Data
+            createOrderReqRes.setRequestPacket(requestPacket);
+            CreateOrderRequestResponse_SR orderData = this.createOrderShipRocketRepo.save(createOrderReqRes);
+
+            //CALLING API
+            ResponseEntity<String> response = restTemplate.exchange(CREATE_ORDER_URL, HttpMethod.POST, httpEntity, String.class);
+            log.info("Create Ship Rocket Order Response :: " + response.getBody());
+
+            JsonNode jsonNode = objectMapper.readTree(response.getBody());
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                messageResponse.put("raw", jsonNode);
+                //Update Data to DB
+                orderData.setResponsePacket(String.valueOf(jsonNode));
+                orderData.setStatus("SUCCESS");
+                this.createOrderShipRocketRepo.save(orderData);
+
+                return jsonNode;
+            } else {
+                messageResponse.put("raw", jsonNode);
+                //Update Data to DB
+                orderData.setResponsePacket(String.valueOf(jsonNode));
+                orderData.setStatus("FAILED");
+                this.createOrderShipRocketRepo.save(orderData);
+
+                return jsonNode;
+            }
+        } catch (Exception e) {
+            createOrderReqRes.setStatus("FAILED");
+            createOrderReqRes.setResponsePacket(e.getMessage());
+            this.createOrderShipRocketRepo.save(createOrderReqRes);
+
+            e.printStackTrace();
+            throw new RuntimeException("Error while creating ShipRocket order", e);
+        }
+    }
     @Override
     public ResponseEntity<?> orderCancelShipRocket(CancelOrderDtoShipRocket cancelOrderDtoShipRocket) {
         Map<String, Object> messageResponse = new HashMap<>();

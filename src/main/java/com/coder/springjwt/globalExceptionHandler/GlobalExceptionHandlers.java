@@ -32,4 +32,6 @@ public class GlobalExceptionHandlers {
         ResponseEntity<Object> responseEntity = new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
         return responseEntity;
     }
+
+
 }

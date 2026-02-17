@@ -79,6 +79,7 @@ public class ProductDetailsServiceImple implements ProductDetailsService {
                 }
 
                 ProductSizesDto productSizesDto = new ProductSizesDto();
+                productSizesDto.setId(psr.getId());
                 productSizesDto.setProductPrice(psr.getPrice());
                 productSizesDto.setProductMrp(psr.getMrp());
                 productSizesDto.setProductInventory(psr.getInventory());
