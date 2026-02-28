@@ -64,11 +64,12 @@ public class ProductDetailsModel extends BaseEntity {
 
     //Product Root ID
     private long productRootId;
+
     //Product key
     private String productKey;
 
     //Product UID
-    private String productUid;
+    private String productFileId;
 
     //Price AND MRP
     private String productPrice;

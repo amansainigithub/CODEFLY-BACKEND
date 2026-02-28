@@ -179,7 +179,6 @@ public class ProductManageServiceImple implements ProductManageService {
                         sizeRow.setUsername(username.getUsername());
                         sizeRow.setProductDetailsModel(productData);
                         sizeRow.setProductRootId(productData.getProductRootId());
-                        sizeRow.setProductUid(productData.getProductUid());
                         sizeRow.setProductKey(productData.getProductKey());
 
                         //GST , TDS , TCS CHARGES

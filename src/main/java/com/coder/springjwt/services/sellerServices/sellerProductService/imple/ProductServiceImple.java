@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -74,6 +75,11 @@ public class ProductServiceImple implements ProductService {
             ChargeConfig chargeConfig = this.chargeConfigRepo.findByVariantId(String.valueOf(variantId))
                     .orElseThrow(() -> new DataNotFoundException("Variant Id Not Found ID :: " + variantId));
 
+
+            //GENERATE PRODUCT FILE-ID
+            String productFileId = ProductServiceHelper.generateKeysUnique("PRO-","-DET");
+
+
             if (variantCategoryModel != null) {
 
                 //GET CURRENT USER DETAILS
@@ -96,13 +102,16 @@ public class ProductServiceImple implements ProductService {
                 productDetailsModel.setVariantName(variantCategoryModel.getCategoryName());
                 productDetailsModel.setProductSeries("MAIN");
 
+                //SET PRODUCT UNIQUE FILE ID
+                productDetailsModel.setProductFileId(productFileId);
+
                 //USERID AND USERNAME
                 productDetailsModel.setUserId(userId);
                 productDetailsModel.setUsername(userName);
 
                 //PRODUCT DATE AND TIME
-                productDetailsModel.setProductDate(this.getFormatDate());
-                productDetailsModel.setProductTime(this.getFormatTime());
+                productDetailsModel.setProductDate(ProductServiceHelper.getFormatDate());
+                productDetailsModel.setProductTime(ProductServiceHelper.getFormatTime());
 
                 //PRODUCT STATUS
                 productDetailsModel.setProductStatus(ProductStatus.UNDER_REVIEW.toString());
@@ -175,6 +184,11 @@ public class ProductServiceImple implements ProductService {
                         productFiles.setFileUrl(bucketModel.getBucketUrl());
                         productFiles.setFileName(bucketModel.getFileName());
                         productFiles.setProductDetailsModel(productDetails);
+
+                        //PRODUCT FILES UNIQUE KEY
+                        String productFileUniqueKey = ProductServiceHelper.generateKeysUnique("FILE-", "-IMG");
+                        productFiles.setProductFileUniqueKey(productFileUniqueKey);
+
                         productFilesList.add(productFiles);
                     }
                     productDetails.getProductFiles().clear();
@@ -202,6 +216,10 @@ public class ProductServiceImple implements ProductService {
                     productVideo.setFileUrl(bucketModel.getBucketUrl());
                     productVideo.setFileName(bucketModel.getFileName());
                     productVideo.setProductDetailsModel(productDetails);
+
+                    //PRODUCT FILES UNIQUE KEY
+                    String productFileUniqueKey = ProductServiceHelper.generateKeysUnique("FILE-", "-VID");
+                    productVideo.setProductFileUniqueKey(productFileUniqueKey);
 
                     // Add video without removing images
                     productDetails.getProductFiles().add(productVideo);
@@ -236,7 +254,6 @@ public class ProductServiceImple implements ProductService {
                                                ProductDetailsModel productDetailsModel ,
                                                ChargeConfig chargeConfig)
     {
-
         String productPrice = null;
         String productMrp = null;
         int count = 0;
@@ -246,6 +263,12 @@ public class ProductServiceImple implements ProductService {
                 productPrice = sizeRows.getPrice();
                 productMrp = sizeRows.getMrp();
             }
+
+            //GENERATE PRODUCT-KEY FOR EACH PRODUCT SIZE ROW
+            String sizeUniqueKey = ProductServiceHelper.generateKeysUnique("ROW-", "-MAIN");
+            sizeRows.setProductSizeUniqueKey(sizeUniqueKey);
+
+
             sizeRows.setProductDetailsModel(productDetailsModel);
             //Set UserId and UserName
             sizeRows.setUserId(String.valueOf(userId));
@@ -340,6 +363,49 @@ public class ProductServiceImple implements ProductService {
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+//    ========================================================================================================
+
+
+    public String generateUniqueProductFileId() {
+
+        String productFileId;
+        boolean exists;
+
+        do {
+            // Date + Time
+            String dateTime = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+
+            // Random UUID part
+            String randomPart = UUID.randomUUID()
+                    .toString()
+                    .replace("-", "")
+                    .substring(0,6)
+                    .toUpperCase();
+
+            productFileId = "PF-" + dateTime + "-" + randomPart;
+
+            exists = productDetailsRepo.existsByProductFileId(productFileId);
+
+        } while (exists);
+
+        return productFileId;
+    }
+
+
+
+
+    //GET USER DETAILS
     private User getUserDetails(String username) {
         try {
             return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found.."));
@@ -349,44 +415,39 @@ public class ProductServiceImple implements ProductService {
         return null;
     }
 
-    public String getFormatDate() {
-        // Current Date
-        LocalDate today = LocalDate.now();
-        // Formatter
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH);
-        // Convert
-        String formattedDate = today.format(formatter);
-        return formattedDate;
-    }
-
-    public String getFormatTime() {
-        // Current Time
-        LocalTime now = LocalTime.now();
-        // Formatter -> h:mm a  (12-hour with AM/PM)
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
-        // Format time
-        String formattedTime = now.format(formatter);
-        return formattedTime;
-    }
 
 
+
+
+//    PRODUCT UPLOAD SUCCESS MAIL TRIGGER
     public void sendProductUploadSuccessMail(ProductDetailsModel productData, String emailTo)
     {
-        Map<String,Object> mailSubject = new HashMap<>();
-        mailSubject.put("productId",productData.getProductKey());
+        try {
+            Map<String,Object> mailSubject = new HashMap<>();
+            mailSubject.put("productId",productData.getProductKey());
 
-        Map<String,Object> mailBody = new HashMap<>();
-        mailBody.put("productName",productData.getProductName());
-        mailBody.put("productId",productData.getProductKey());
-        mailBody.put("dashboardLink","http://localhost:61795/admin/dashboard");
-        mailBody.put("year","2025");
+            Map<String,Object> mailBody = new HashMap<>();
+            mailBody.put("productName",productData.getProductName());
+            mailBody.put("productId",productData.getProductKey());
+            mailBody.put("dashboardLink","http://localhost:61795/admin/dashboard");
+            mailBody.put("year","2025");
 
-        this.mailTrigger("PRODUCT_UPLOAD_SUCCESSFULLY",mailSubject , mailBody , emailTo);
+            this.mailTrigger("PRODUCT_UPLOAD_SUCCESSFULLY",mailSubject , mailBody , emailTo);
+        }
+        catch (Exception e)
+        {
+            e.getMessage();
+            e.printStackTrace();
+        }
     }
 
+    //    PRODUCT UPLOAD SUCCESS MAIL TRIGGER FINAL
     public void mailTrigger(String templateKey , Map<String,Object> mailSubject , Map<String,Object> mailBody ,  String emailTo)
     {
         this.emailSenderService.sendHtmlMail(templateKey ,mailSubject , mailBody , emailTo);
     }
+
+
+
 
 }

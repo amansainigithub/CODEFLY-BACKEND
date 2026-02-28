@@ -4,6 +4,7 @@ import com.coder.springjwt.dtos.adminDtos.productStageDtos.ProductUnderReviewSta
 import com.coder.springjwt.emuns.seller.ProductStatus;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.sellerModels.productModels.ProductDetailsModel;
+import com.coder.springjwt.models.sellerModels.productModels.ProductFiles;
 import com.coder.springjwt.repository.sellerRepository.productDetailsRepository.ProductDetailsRepo;
 import com.coder.springjwt.services.adminServices.productStageServices.productUnderReviewStageService.ProductUnderReviewStageService;
 import com.coder.springjwt.util.ResponseGenerator;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,23 +44,36 @@ public class ProductUnderReviewStageServiceImple implements ProductUnderReviewSt
                     PageRequest.of(page, size, Sort.by("productKey").descending())
             );
 
-            // DTO list
-            List<ProductUnderReviewStageDto> dtoList = productDetails.getContent()
-                    .stream()
-                    .map(p -> new ProductUnderReviewStageDto(
-                            p.getId(),
-                            p.getUserId(),
-                            p.getProductName(),
-                            p.getProductStatus(),
-                            p.getProductKey(),
-                            p.getProductDate(),
-                            p.getProductTime(),
-                            String.valueOf(p.getVariantId()),
-                            (p.getProductFiles().get(0).getFileUrl() != null )?
-                                    p.getProductFiles().get(0).getFileUrl() : "BLANK",
-                            p.getProductSeries()
-                    ))
-                    .collect(Collectors.toList());
+            List<ProductUnderReviewStageDto> dtoList = new ArrayList<>();
+
+            for (ProductDetailsModel p : productDetails.getContent()) {
+
+                String fileUrl = "BLANK";
+
+                List<ProductFiles> productFiles = p.getProductFiles();
+
+                if (productFiles != null && !productFiles.isEmpty()) {
+                    ProductFiles pf = productFiles.get(0);
+                    if (pf.getFileUrl() != null) {
+                        fileUrl = pf.getFileUrl();
+                    }
+                }
+
+                ProductUnderReviewStageDto dto = new ProductUnderReviewStageDto(
+                        p.getId(),
+                        p.getUserId(),
+                        p.getProductName(),
+                        p.getProductStatus(),
+                        p.getProductKey(),
+                        p.getProductDate(),
+                        p.getProductTime(),
+                        String.valueOf(p.getVariantId()),
+                        fileUrl,
+                        p.getProductSeries()
+                );
+
+                dtoList.add(dto);
+            }
 
             // Response body with pagination info
             Map<String, Object> response = new HashMap<>();

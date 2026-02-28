@@ -345,6 +345,10 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
         for (CartItemsDto ci : cartItems) {
             boolean isValid =Boolean.FALSE;
 
+
+            System.out.println("PRODUCT ID:: " + Long.parseLong(ci.getPId()));
+            System.out.println("getPSize ID:: " +  ci.getPSize());
+
             ProductSizeRows productSize = this.productSizeRowsRepo.
                     findByProductDetailsIdAndMsValNative(Long.parseLong(ci.getPId()) , ci.getPSize())
                     .orElseThrow(()-> new DataNotFoundException("ProductSize Not Found Exception"));

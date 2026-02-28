@@ -39,15 +39,14 @@ public class ProductSizeRows extends BaseEntity {
     private String productKey;
     private long productDetailsId;
 
-    //Product UID
-    private String productUid;
-
     //Service TAX GST , TDS , TCS , SHIPPING CHARGES , FINAL PRODUCT PRICE
     private String productGst;
     private String productTcs;
     private String productTds;
     private String bankSettlementAmount;
     private String bankSettlementWithShipping;
+
+    private String productSizeUniqueKey;
 
     //Shipping Charges
     private String shippingCharges;

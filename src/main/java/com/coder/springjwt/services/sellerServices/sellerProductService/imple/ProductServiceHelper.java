@@ -10,9 +10,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -176,6 +178,44 @@ public class ProductServiceHelper {
         return null; // null means SUCCESS
     }
 
+
+    public static String getFormatDate() {
+        // Current Date
+        LocalDate today = LocalDate.now();
+        // Formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Locale.ENGLISH);
+        // Convert
+        String formattedDate = today.format(formatter);
+        return formattedDate;
+    }
+
+    public static String getFormatTime() {
+        // Current Time
+        LocalTime now = LocalTime.now();
+        // Formatter -> h:mm a  (12-hour with AM/PM)
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
+        // Format time
+        String formattedTime = now.format(formatter);
+        return formattedTime;
+    }
+
+
+
+
+    public static String generateKeysUnique(String prefix, String suffix) {
+
+        // Readable Date + Time
+        String dateTime = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        // Milliseconds
+        long millis = System.currentTimeMillis();
+        // Thread-safe counter
+        int count = COUNTER.getAndUpdate(i -> (i + 1) % 100000);
+        // Random 6 digit
+        int randomPart = RANDOM.nextInt(1000000);
+        // Simple concatenation
+        return prefix + dateTime + "-" + millis+ count + randomPart + suffix;
+    }
 
 
 

@@ -87,6 +87,11 @@ public class ProductVariantServiceImple implements ProductVariantService {
             ChargeConfig chargeConfig = this.chargeConfigRepo.findByVariantId(String.valueOf(variantId))
                     .orElseThrow(() -> new DataNotFoundException("Variant Id Not Found ID :: " + variantId));
 
+
+            //GENERATE PRODUCT FILE-ID
+            String productFileId = ProductServiceHelper.generateKeysUnique("PRO-","-VAR");
+
+
             if (variantCategoryModel != null) {
                 //USER DETAILS
                 Map<String, String> node = userHelper.getCurrentUser();
@@ -107,6 +112,11 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 productDetailsModel.setVariantId(variantCategoryModel.getId());
                 productDetailsModel.setVariantName(variantCategoryModel.getCategoryName());
                 productDetailsModel.setProductSeries("VARIANT");
+
+                //SET PRODUCT UNIQUE FILE ID
+                productDetailsModel.setProductFileId(productFileId);
+
+
                 //USERID AND USERNAME
                 productDetailsModel.setUserId(String.valueOf(userId));
                 productDetailsModel.setUsername(String.valueOf(userName));
@@ -187,6 +197,11 @@ public class ProductVariantServiceImple implements ProductVariantService {
                         productFiles.setFileUrl(bucketModel.getBucketUrl());
                         productFiles.setFileName(bucketModel.getFileName());
                         productFiles.setProductDetailsModel(productDetails);
+
+                        //PRODUCT FILES UNIQUE KEY
+                        String productFileUniqueKey = ProductServiceHelper.generateKeysUnique("FILE-", "-IMG");
+                        productFiles.setProductFileUniqueKey(productFileUniqueKey);
+
                         productFilesList.add(productFiles);
                     }
 
@@ -217,6 +232,10 @@ public class ProductVariantServiceImple implements ProductVariantService {
                     productVideo.setFileUrl(bucketModel.getBucketUrl());
                     productVideo.setFileName(bucketModel.getFileName());
                     productVideo.setProductDetailsModel(productDetails);
+
+                    //PRODUCT FILES UNIQUE KEY
+                    String productFileUniqueKey = ProductServiceHelper.generateKeysUnique("FILE-", "-VID");
+                    productVideo.setProductFileUniqueKey(productFileUniqueKey);
 
                     // Add video without removing images
                     productDetails.getProductFiles().add(productVideo);
@@ -326,6 +345,12 @@ public class ProductVariantServiceImple implements ProductVariantService {
                 productPrice = sizeRows.getPrice();
                 productMrp = sizeRows.getMrp();
             }
+
+            //GENERATE PRODUCT-KEY FOR EACH PRODUCT SIZE ROW
+            String sizeUniqueKey = ProductServiceHelper.generateKeysUnique("ROW-", "-VAR");
+            sizeRows.setProductSizeUniqueKey(sizeUniqueKey);
+
+
             sizeRows.setProductDetailsModel(productDetailsModel);
             //Set UserId and UserName
             sizeRows.setUserId(String.valueOf(userId));

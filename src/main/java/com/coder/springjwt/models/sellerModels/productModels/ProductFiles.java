@@ -37,6 +37,8 @@ public class ProductFiles extends BaseEntity {
     private String productKey;
     private long productDetailsId;
 
+    private String productFileUniqueKey;
+
 
     @ManyToOne
     @JoinColumn( referencedColumnName = "id" , name = "product_files_joiner")
