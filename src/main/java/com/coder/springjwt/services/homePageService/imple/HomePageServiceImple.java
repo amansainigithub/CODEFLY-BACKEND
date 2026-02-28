@@ -25,6 +25,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,12 +93,23 @@ public class HomePageServiceImple implements HomePageService {
                 productDetailsDataDto.setProductStatus(pdm.getProductStatus());
                 productDetailsDataDto.setPattern(pdm.getPattern());
                 productDetailsDataDto.setMrp(pdm.getProductMrp());
-                productDetailsDataDto.setPrice(pdm.getProductPrice());
+
 
                 //Product Size Rows
                 ProductSizeRows productSizeRows = pdm.getProductSizeRows().get(0);
                 productDetailsDataDto.setInventory(productSizeRows.getInventory());
                 productDetailsDataDto.setProductDiscount(productSizeRows.getProductDiscount());
+
+
+
+                //Product Price With Shipping Charges
+                BigDecimal productPrice = new BigDecimal(pdm.getProductPrice());
+                BigDecimal shippingCharge = new BigDecimal(productSizeRows.getShippingCharges());
+                BigDecimal finalPriceWithShipping = productPrice.add(shippingCharge);
+                BigDecimal finalWithoutDecimal = finalPriceWithShipping.setScale(0, RoundingMode.HALF_UP);
+                productDetailsDataDto.setPrice(finalWithoutDecimal.toString());
+
+
 
                 //Product Files
                 ProductFiles productFiles = pdm.getProductFiles().get(0);

@@ -52,17 +52,12 @@ public class SellerAuthController {
 
     @PostMapping(SellerUrlMappings.SELLER_SIGN_IN)
     public ResponseEntity<?> sellerAuthenticateUser(@Validated @RequestBody LoginRequest loginRequest) {
-
             Authentication authentication = authenticationManager.authenticate(
                                             new UsernamePasswordAuthenticationToken(
                                                     loginRequest.getUsername()+ SellerMessageResponse.SLR,
                                                     loginRequest.getPassword()));
 
-        Optional<User> userData  = this.userRepository.findBySellerMobileAndSellerRegisterComplete
-                                     ("9818644140", "Y");
 
-        if(userData.isPresent())
-        {
             SecurityContextHolder.getContext().setAuthentication(authentication);
                 String jwt = jwtUtils.generateJwtToken(authentication);
 
@@ -79,11 +74,9 @@ public class SellerAuthController {
                                 userDetails.getUsername(),
                                 userDetails.getEmail(),
                                 roles));
-
                     }
                 }
 
-        }
         return ResponseEntity.badRequest().body("Error: Unauthorized");
     }
 

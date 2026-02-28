@@ -117,10 +117,4 @@ public class SellerUrlMappings {
 
 
 
-
-    //    CASH FREE CONTROLLER
-    public static final String CASH_FREE_CONTROLLER = SELLER_AUTH_URL +"/cashFreeController";
-    public static final String CREATE_CASHFREE_ORDER = "/createCashFreeOrder";
-
-
 }
