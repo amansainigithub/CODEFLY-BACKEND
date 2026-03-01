@@ -231,6 +231,14 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
                 String orderNoPerItems = orderPaymentServiceHelper.generateOrderIdPerItem();
 
                 OrderItems orderItems = new OrderItems();
+
+                //Variant-ID
+                orderItems.setVariantId(productSizeData.getProductDetailsModel().getVariantId());
+
+                //SELLER USER-ID AND USERNAME
+                orderItems.setSellerId(sellerInfo.get("seller_id"));
+                orderItems.setSellerUsername(sellerInfo.get("seller_username"));
+
                 orderItems.setProductId(orderDto.getPId());
                 orderItems.setProductName(orderDto.getPName());
                 orderItems.setProductPrice(orderDto.getPPrice());
@@ -252,10 +260,6 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
 
                 //GENERATE ORDER ID PER-ITEMS
                 orderItems.setOrderNoPerItem(orderNoPerItems);
-
-                //SELLER USER-ID AND USERNAME
-                orderItems.setSellerId(sellerInfo.get("seller_id"));
-                orderItems.setSellerUsername(sellerInfo.get("seller_username"));
 
                 //ORDER SHIPPING ADDRESS DETAILS
                 orderItems.setAddressId(customerAddress.getId());
@@ -280,11 +284,12 @@ public class OrderPaymentServiceImple implements OrderPaymentService {
                 //Current Time
                 orderItems.setOrderTime(OrderPaymentServiceImple.getCurrentTime());
 
-                //Row Id saved and GST,TDS, TCS and SKU Code Saved
+                //Row-Id saved and GST,TDS, TCS and SKU Code Saved
                 orderItems.setProductSizeRowId(orderDto.getProductRowId());
                 orderItems.setProductGst(productSizeData.getProductGst());
                 orderItems.setProductTds(productSizeData.getProductTds());
                 orderItems.setProductTcs(productSizeData.getProductTcs());
+                orderItems.setProductSkuCode(productSizeData.getSkuCode());
                 orderItems.setProductSkuCode(productSizeData.getSkuCode());
 
                 //ORDER SHIPPING ADDRESS

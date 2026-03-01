@@ -82,6 +82,8 @@ public class OrderItems extends BaseEntity {
     //Order Time
     private String orderTime;
 
+    private Long variantId;
+
     @ManyToOne
     @JsonIgnore
     private PaymentOrders paymentOrders;
