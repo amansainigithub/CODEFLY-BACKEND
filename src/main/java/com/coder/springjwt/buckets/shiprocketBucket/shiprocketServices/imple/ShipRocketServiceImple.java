@@ -3,13 +3,16 @@ package com.coder.springjwt.buckets.shiprocketBucket.shiprocketServices.imple;
 import com.coder.springjwt.buckets.shiprocketBucket.shipRocketRepo.*;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.GenerateTokenDtoShipRocket;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.PickUpLocationDtoShipRocket;
-import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.CancelOrderDtoShipRocket;
-import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.CreateOrderDtoShipRocket;
+import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.*;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketModels.*;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketServices.ShipRocketService;
 import com.coder.springjwt.util.ResponseGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -18,10 +21,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,8 +58,10 @@ public class ShipRocketServiceImple implements ShipRocketService {
     private static final String NEW_PICKUP_LOCATION_URL = "https://apiv2.shiprocket.in/v1/external/settings/company/addpickup";
     private static final String CREATE_ORDER_URL = "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc";
     private static final String CANCEL_ORDER_URL = "https://apiv2.shiprocket.in/v1/external/orders/cancel";
+    private static final String CHECK_SERVICE_AVAILABILITY = "https://apiv2.shiprocket.in/v1/external/courier/serviceability/";
+    private static final String DISPATCH_COURIER = "https://apiv2.shiprocket.in/v1/external/courier/assign/awb";
 
-
+    private static final String PICK_UP = "https://apiv2.shiprocket.in/v1/external/courier/generate/pickup";
     @Override
     public ResponseEntity<?> generateTokenShipRocket(GenerateTokenDtoShipRocket generateTokenDtoShipRocket) {
         Map<String,Object> messageResponse = new HashMap<>();
@@ -116,11 +123,9 @@ public class ShipRocketServiceImple implements ShipRocketService {
                 .findFirst()
                 .orElse(null);
 
-        log.info("1 step ");
 
         // 1️⃣ Token DB me nahi hai
         if (tokenEntity == null || tokenEntity.getToken() == null) {
-            log.info("2 step ");
             return generateAndSave();
         }
 
@@ -129,13 +134,10 @@ public class ShipRocketServiceImple implements ShipRocketService {
                 tokenEntity.getExpiryTime()
                         .minusMinutes(5)
                         .isBefore(LocalDateTime.now())) {
-
-            log.info("3 step - token expired ");
             return generateAndSave();
         }
 
         // 3️⃣ Token valid hai
-        log.info("4 step final");
         return tokenEntity.getToken();
     }
 
@@ -466,6 +468,220 @@ public class ShipRocketServiceImple implements ShipRocketService {
             e.printStackTrace();
             return ResponseGenerator.generateBadRequestResponse(e.getMessage(), "FAILED");
         }
+    }
+
+    @Override
+    public ResponseEntity<?> checkCourierAvailabilityShipRocket(CheckServiceAvailability checkServiceAvailability) {
+        try {
+
+            String url = CHECK_SERVICE_AVAILABILITY
+                    + "?order_id=" + checkServiceAvailability.getOrder_id()
+                    + "&cod=" + checkServiceAvailability.getCod();
+
+            //ShipRocket Token if expiry to generate new token and expiry set before -5 min....
+            String validToken = this.getValidToken();
+
+            log.info("Ship Rocket token :: " + validToken);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + validToken);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> response =
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.GET,
+                            entity,
+                            String.class
+                    );
+
+            String responseBody = response.getBody();
+
+            // Convert String to JSON Object
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object jsonResponse = objectMapper.readValue(responseBody, Object.class);
+
+            // 🔥 Console me full response print
+            System.out.println("========== FULL COURIER LIST ==========");
+            System.out.println(responseBody);
+            System.out.println("=======================================");
+
+            return ResponseGenerator.generateSuccessResponse(jsonResponse,"SUCCESS");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse();
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> dispatchCourierShipRocket(DispatchCourierShipRocket dispatchCourierShipRocket) {
+        try {
+
+            // 1️⃣ Get Valid Token
+            String validToken = this.getValidToken();
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + validToken);
+
+            Long shipmentId = dispatchCourierShipRocket.getShipmentId();
+            Integer courierId = dispatchCourierShipRocket.getCourierId();
+
+            // =========================
+            // ✅ STEP 1: ASSIGN AWB
+            // =========================
+            Map<String, Object> awbBody = new HashMap<>();
+            awbBody.put("shipment_id", shipmentId);
+            awbBody.put("courier_id", courierId);
+
+            HttpEntity<Map<String, Object>> awbRequest =
+                    new HttpEntity<>(awbBody, headers);
+
+            ResponseEntity<String> awbResponse = restTemplate.postForEntity(
+                    DISPATCH_COURIER,
+                    awbRequest,
+                    String.class
+            );
+
+            if (!awbResponse.getStatusCode().is2xxSuccessful()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("AWB Generation Failed: " + awbResponse.getBody());
+            }
+
+            // =========================
+            // ✅ STEP 2: GENERATE PICKUP
+            // =========================
+//            Map<String, Object> pickupBody = new HashMap<>();
+//            pickupBody.put("shipment_id", Collections.singletonList(shipmentId));
+//
+//            HttpEntity<Map<String, Object>> pickupRequest =
+//                    new HttpEntity<>(pickupBody, headers);
+//
+//            ResponseEntity<String> pickupResponse = restTemplate.postForEntity(
+//                    PICK_UP,
+//                    pickupRequest,
+//                    String.class
+//            );
+//
+//            if (!pickupResponse.getStatusCode().is2xxSuccessful()) {
+//                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+//                        .body("Pickup Generation Failed: " + pickupResponse.getBody());
+//            }
+
+            // =========================
+            // ✅ FINAL RESPONSE
+            // =========================
+            Map<String, Object> finalResponse = new HashMap<>();
+            finalResponse.put("awbResponse", awbResponse.getBody());
+           // finalResponse.put("pickupResponse", pickupResponse.getBody());
+
+            return ResponseGenerator.generateSuccessResponse(finalResponse,"SUCCESS");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body("Dispatch Failed: " + e.getMessage());
+            return ResponseGenerator.generateBadRequestResponse("Dispatch Failed: " +e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> checkEstimateDeliveryTimeShipRocket(CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket) {
+        try {
+
+            String url = CHECK_SERVICE_AVAILABILITY
+                    + "?pickup_postcode=" + checkEstimateDeliveryTimeShipRocket.getPickup_postcode()
+                    + "&delivery_postcode=" + checkEstimateDeliveryTimeShipRocket.getDelivery_postcode()
+                    + "&cod=" + 0
+                    + "&weight=" + checkEstimateDeliveryTimeShipRocket.getWeight()
+                    + "&qc_check=" + checkEstimateDeliveryTimeShipRocket.getQc_check();
+
+            //ShipRocket Token if expiry to generate new token and expiry set before -5 min....
+            String validToken = this.getValidToken();
+
+            log.info("Ship Rocket token :: " + validToken);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", "Bearer " + validToken);
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<?> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> response =restTemplate.exchange( url,HttpMethod.GET,entity,String.class );
+
+            String responseBody = response.getBody();
+
+            // 🔥 Console me full response print
+            System.out.println("========== FULL COURIER LIST ==========");
+            System.out.println(responseBody);
+            System.out.println("=======================================");
+
+            JsonObject bestCourier = getBestCourier(responseBody);
+
+            System.out.println("Courier Name: " + bestCourier.get("courier_name").getAsString());
+            System.out.println("Courier ID: " + bestCourier.get("courier_company_id").getAsInt());
+            System.out.println("Rate: " + bestCourier.get("rate").getAsDouble());
+            System.out.println("Delivery Days: " + bestCourier.get("estimated_delivery_days").getAsString());
+            System.out.println("etd: " + bestCourier.get("etd").getAsString());
+
+
+
+            return ResponseGenerator.generateSuccessResponse(
+                            Map.of("Courier Name", bestCourier.get("courier_name").getAsString(),
+                        "Courier ID", bestCourier.get("courier_company_id").getAsInt(),
+                        "Rate", bestCourier.get("rate").getAsDouble(),
+                        "Delivery Days: ", bestCourier.get("estimated_delivery_days").getAsString(),
+                        "etd: ", bestCourier.get("estimated_delivery_days").getAsString()) ,"SUCCESS");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return ResponseGenerator.generateBadRequestResponse();
+        }
+    }
+
+
+    public JsonObject getBestCourier(String responseBody) {
+
+        JsonObject bestCourier = null;
+
+        try {
+
+            JsonParser parser = new JsonParser();
+            JsonObject json = parser.parse(responseBody).getAsJsonObject();
+
+            JsonArray couriers = json
+                    .getAsJsonObject("data")
+                    .getAsJsonArray("available_courier_companies");
+
+            double lowestRate = Double.MAX_VALUE;
+
+            for (JsonElement element : couriers) {
+
+                JsonObject courier = element.getAsJsonObject();
+
+                double rate = courier.get("rate").getAsDouble();
+
+                if (rate < lowestRate && courier.get("cod").getAsInt() == 1) {
+                    lowestRate = rate;
+                    bestCourier = courier;
+                }
+            }
+
+            System.out.println("===== BEST COURIER =====");
+            System.out.println(bestCourier);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return bestCourier;
     }
 
 

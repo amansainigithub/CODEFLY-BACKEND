@@ -2,17 +2,14 @@ package com.coder.springjwt.buckets.shiprocketBucket.shiprocketController;
 
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.GenerateTokenDtoShipRocket;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.PickUpLocationDtoShipRocket;
-import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.CancelOrderDtoShipRocket;
-import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.CreateOrderDtoShipRocket;
+import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.*;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketServices.ShipRocketService;
 import com.coder.springjwt.constants.adminConstants.adminUrlMappings.AdminUrlMappings;
+import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(AdminUrlMappings.SHIP_ROCKET_CONTROLLER)
@@ -45,4 +42,24 @@ public class ShipRocketController {
     public ResponseEntity<?> orderCancelShipRocket(@RequestBody CancelOrderDtoShipRocket cancelOrderDtoShipRocket) {
         return shipRocketService.orderCancelShipRocket(cancelOrderDtoShipRocket);
     }
+
+
+    @PostMapping(SellerUrlMappings.CHECK_COURIER_AVAILABILITY_SHIP_ROCKET)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> checkCourierAvailabilityShipRocket(@RequestBody CheckServiceAvailability checkServiceAvailability) {
+        return this.shipRocketService.checkCourierAvailabilityShipRocket(checkServiceAvailability);
+    }
+
+    @PostMapping(SellerUrlMappings.CHECK_ESTIMATE_DELIVERY_TIME_SHIP_ROCKET)
+    @PreAuthorize("hasRole('SELLER') or hasRole('CUSTOMER')")
+    public ResponseEntity<?> checkEstimateDeliveryTimeShipRocket(@RequestBody CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket) {
+        return this.shipRocketService.checkEstimateDeliveryTimeShipRocket(checkEstimateDeliveryTimeShipRocket);
+    }
+
+    @PostMapping(SellerUrlMappings.DISPATCH_COURIER_SHIP_ROCKET)
+    @PreAuthorize("hasRole('SELLER')")
+    public ResponseEntity<?> dispatchCourierShipRocket(@RequestBody DispatchCourierShipRocket dispatchCourierShipRocket) {
+        return this.shipRocketService.dispatchCourierShipRocket(dispatchCourierShipRocket);
+    }
+
 }

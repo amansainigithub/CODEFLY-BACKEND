@@ -108,6 +108,11 @@ public class SellerUrlMappings {
     public static final String GET_DELIVERED_ORDERS = "/getDeliveredOrders";
     public static final String GET_CALCELLED_ORDERS = "/getCancelledOrders";
 
+    public static final String CHECK_COURIER_AVAILABILITY_SHIP_ROCKET = "/checkCourierAvailabilityShipRocket";
+
+    public static final String CHECK_ESTIMATE_DELIVERY_TIME_SHIP_ROCKET = "/checkEstimateDeliveryTimeShipRocket";
+
+    public static final String DISPATCH_COURIER_SHIP_ROCKET = "/dispatchCourierShipRocket";
 
 
     //ORDER ACTION CONTROLLER
