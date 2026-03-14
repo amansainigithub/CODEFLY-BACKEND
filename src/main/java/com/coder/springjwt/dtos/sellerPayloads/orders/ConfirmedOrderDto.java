@@ -47,4 +47,9 @@ public class ConfirmedOrderDto {
     private String orderDate;
 
     private String orderTime;
+
+    //SHIP-ROCKET DATA
+    private String shipRocketPickupDate;
+    private String shipRocketCourierName;
+    private String shipRocketStatus;
 }

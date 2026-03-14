@@ -204,6 +204,9 @@ public class OrdersServiceImple implements OrdersService {
         ord.setOrderStatus(entity.getOrderStatus());
         ord.setOrderDate(entity.getOrderDate());
         ord.setOrderTime(entity.getOrderTime());
+        ord.setShipRocketPickupDate(entity.getShipRocketPickupDate());
+        ord.setShipRocketCourierName(entity.getShipRocketCourierName());
+        ord.setShipRocketStatus(entity.getShipRocketStatus());
 
         return ord;
     }

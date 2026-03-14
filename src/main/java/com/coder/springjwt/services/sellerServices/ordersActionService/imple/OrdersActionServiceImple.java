@@ -6,6 +6,7 @@ import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.O
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketServices.imple.ShipRocketServiceImple;
 import com.coder.springjwt.dtos.sellerPayloads.orders.OrderAcceptDto;
 import com.coder.springjwt.emuns.seller.OrderStatus;
+import com.coder.springjwt.emuns.seller.OrderStatus_SR;
 import com.coder.springjwt.globalExceptionHandler.OrderIdNotFoundException;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.customerModels.orders.OrderItems;
@@ -117,6 +118,7 @@ public class OrdersActionServiceImple implements OrdersActionService {
             orderItems.setShipRocketPickupStatus(pickupStatus);
             orderItems.setShipRocketPickupDate(pickupDate);
             orderItems.setShipRocketPickupToken(pickupToken);
+            orderItems.setShipRocketStatus(OrderStatus_SR.OUT_FOR_PICKUP.toString());
 
             orderItemsRepository.save(orderItems);
             System.out.println("DATA UPDATE SUCCESS");
