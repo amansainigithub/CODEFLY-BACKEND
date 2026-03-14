@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public interface ShipRocketService {
-    ResponseEntity<?> generateTokenShipRocket(GenerateTokenDtoShipRocket generateTokenDtoShipRocket);
+//    ResponseEntity<?> generateTokenShipRocket(GenerateTokenDtoShipRocket generateTokenDtoShipRocket);
 
     ResponseEntity<?> addPickupLocationShipRocket(PickUpLocationDtoShipRocket pickUpLocationDtoShipRocket);
 
@@ -18,7 +18,9 @@ public interface ShipRocketService {
 
     ResponseEntity<?> checkCourierAvailabilityShipRocket(CheckServiceAvailability checkServiceAvailability);
 
-    ResponseEntity<?> dispatchCourierShipRocket(DispatchCourierShipRocket dispatchCourierShipRocket);
+    ResponseEntity<?> assignAwbNumberShipRocket(GenerateAwbNumberShipRocket generateAwbNumberShipRocket);
 
-    ResponseEntity<?> checkEstimateDeliveryTimeShipRocket(CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket);
+    ResponseEntity<?> checkEstimateDeliveryTimeShipRocket1(CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket);
+
+
 }

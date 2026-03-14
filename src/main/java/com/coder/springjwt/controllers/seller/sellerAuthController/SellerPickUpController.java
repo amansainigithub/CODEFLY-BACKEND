@@ -1,12 +1,8 @@
 package com.coder.springjwt.controllers.seller.sellerAuthController;
 
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
-import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerPickUpPayload;
-import com.coder.springjwt.services.sellerServices.sellerAuthenticationService.sellerPickupService.SellerPickUpService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;

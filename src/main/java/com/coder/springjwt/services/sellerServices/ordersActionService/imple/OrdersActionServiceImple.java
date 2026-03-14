@@ -1,5 +1,6 @@
 package com.coder.springjwt.services.sellerServices.ordersActionService.imple;
 
+import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.CheckServiceAvailability;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.CreateOrderDtoShipRocket;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.OrderItemDtoShipRocket;
 import com.coder.springjwt.buckets.shiprocketBucket.shiprocketServices.imple.ShipRocketServiceImple;
@@ -53,8 +54,6 @@ public class OrdersActionServiceImple implements OrdersActionService {
             }
 
             log.info("orderAcceptDto :: {} " + orderAcceptDto);
-
-
             if(orderAcceptDto.getId() == null || orderAcceptDto.getOrderNoPerItem() == null)
             {
                 throw new RuntimeException("Id or Order Item Id not Found | please check...");
@@ -68,8 +67,62 @@ public class OrdersActionServiceImple implements OrdersActionService {
             log.info("OrderId :: " + orderItems.getId());
             log.info("Product Name :: " + orderItems.getProductName());
 
-            readyOrderToShipRocket(orderItems);
-            return ResponseGenerator.generateSuccessResponse("Success");
+
+            //CREATE ORDER TO SHIP-ROCKET
+            System.out.println("==============CREATE ORDER TO SHIP-ROCKET================");
+            Map<String, Long> shipRocketData = readyOrderToShipRocket(orderItems);
+            Long shipmentId = shipRocketData.get("SHIPMENT_ID");
+            Long orderId = shipRocketData.get("ORDER_ID");
+            log.info("ORDER CREATED SUCCESS IN SHIP-ROCKET PORTAL");
+
+            System.out.println("SHIPMENT_ID::: " + shipRocketData.get("SHIPMENT_ID"));
+            System.out.println("ORDER_ID::: " + shipRocketData.get("ORDER_ID"));
+
+            CheckServiceAvailability csa = new CheckServiceAvailability();
+            csa.setShipment_id(String.valueOf(shipmentId));
+            csa.setOrder_id(String.valueOf(orderId));
+            csa.setCod("0");
+
+            Map<String, String> shipRocketResponse = shipRocketServiceImple.checkCourierAvailabilityShipRocketFunction(csa);
+            String courierName = shipRocketResponse.get("COURIER_NAME");
+            String courierId = shipRocketResponse.get("COURIER_ID");
+            String etd = shipRocketResponse.get("ETD");
+            String rate = shipRocketResponse.get("RATE");
+            String awb = shipRocketResponse.get("AWB");
+            String deliveryDays = shipRocketResponse.get("DELIVERY_DAYS");
+            String pickupStatus = shipRocketResponse.get("PICKUP_STATUS");
+            String pickupDate = shipRocketResponse.get("PICKUP_DATE");
+            String pickupToken = shipRocketResponse.get("PICKUP_TOKEN");
+            String pickupData = shipRocketResponse.get("PICKUP_DATA");
+
+            System.out.println("==============ORDER ACTION STARTING================");
+            System.out.println("Courier Name : " + courierName);
+            System.out.println("Courier ID : " + courierId);
+            System.out.println("ETD : " + etd);
+            System.out.println("Rate : " + rate);
+            System.out.println("AWB : " + awb);
+            System.out.println("Delivery Days : " + deliveryDays);
+            System.out.println("pickup Status : " + pickupStatus);
+            System.out.println("pickup Date : " + pickupDate);
+            System.out.println("pickup Token : " + pickupToken);
+            System.out.println("pickup Data : " + pickupData);
+
+            System.out.println("CHECK AVAILABILITY SUCCESS || AWB ASSIGN SUCCESS || PICKUP SUCCESS || ");
+            orderItems.setShipRocketCourierId(String.valueOf(courierId));
+            orderItems.setShipRocketCourierName(courierName);
+            orderItems.setShipRocketEtd(etd);
+            orderItems.setShipRocketCourierPrice(Double.parseDouble(rate));
+            orderItems.setShipRocketAwbCode(awb);
+            orderItems.setShipRocketDeliveryDays(deliveryDays);
+            orderItems.setShipRocketPickupStatus(pickupStatus);
+            orderItems.setShipRocketPickupDate(pickupDate);
+            orderItems.setShipRocketPickupToken(pickupToken);
+
+            orderItemsRepository.save(orderItems);
+            System.out.println("DATA UPDATE SUCCESS");
+            System.out.println("==============ORDER ACTION ENDING....================");
+
+            return ResponseGenerator.generateSuccessResponse("SUCCESS");
         }
         catch (Exception e)
         {
@@ -81,7 +134,7 @@ public class OrdersActionServiceImple implements OrdersActionService {
 
 
 
-    public void readyOrderToShipRocket(OrderItems orderItems )
+    public Map<String,Long> readyOrderToShipRocket(OrderItems orderItems )
     {
         try {
             LocalDateTime now = LocalDateTime.now();
@@ -160,8 +213,8 @@ public class OrdersActionServiceImple implements OrdersActionService {
             orderItems.setShipRocketShipmentId(String.valueOf(shipRocketShipmentId));
             orderItems.setShipRocketStatus(shipRocketStatus);
             orderItems.setShipRocketAwbCode(shipRocketAwbCode);
-            orderItems.setCourierCompanyId(shipRocketCourierCompanyId);
-            orderItems.setCourierName(shipRocketCourierName);
+            orderItems.setShipRocketCourierId(shipRocketCourierCompanyId);
+            orderItems.setShipRocketCourierName(shipRocketCourierName);
             log.info("Data Extract with ShipRocket JsonNodeData");
 
             //Change ShipRocket Status
@@ -171,10 +224,13 @@ public class OrdersActionServiceImple implements OrdersActionService {
             //save Order Items with shipRocket Status
             this.orderItemsRepository.save(orderItems);
             log.info(" ======= Order Item Update Success ========= ");
+
+            return Map.of("SHIPMENT_ID" , shipRocketShipmentId,"ORDER_ID",shipRocketOrderId);
         }
         catch (Exception e)
         {
             e.printStackTrace();
+            return null;
         }
 
     }

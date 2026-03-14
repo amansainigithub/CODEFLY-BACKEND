@@ -9,7 +9,10 @@ import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrl
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(AdminUrlMappings.SHIP_ROCKET_CONTROLLER)
@@ -18,11 +21,11 @@ public class ShipRocketController {
     @Autowired
     private ShipRocketService shipRocketService;
 
-    @PostMapping(AdminUrlMappings.GENERATE_TOKEN_SHIP_ROCKET)
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> generateTokenShipRocket(@RequestBody GenerateTokenDtoShipRocket generateTokenDtoShipRocket) {
-        return shipRocketService.generateTokenShipRocket(generateTokenDtoShipRocket);
-    }
+//    @PostMapping(AdminUrlMappings.GENERATE_TOKEN_SHIP_ROCKET)
+//    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity<?> generateTokenShipRocket(@RequestBody GenerateTokenDtoShipRocket generateTokenDtoShipRocket) {
+//        return shipRocketService.generateTokenShipRocket(generateTokenDtoShipRocket);
+//    }
 
     @PostMapping(AdminUrlMappings.ADD_PICKUP_LOCATION_SHIP_ROCKET)
     @PreAuthorize("hasRole('ADMIN')")
@@ -45,21 +48,22 @@ public class ShipRocketController {
 
 
     @PostMapping(SellerUrlMappings.CHECK_COURIER_AVAILABILITY_SHIP_ROCKET)
-    @PreAuthorize("hasRole('SELLER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> checkCourierAvailabilityShipRocket(@RequestBody CheckServiceAvailability checkServiceAvailability) {
         return this.shipRocketService.checkCourierAvailabilityShipRocket(checkServiceAvailability);
     }
 
-    @PostMapping(SellerUrlMappings.CHECK_ESTIMATE_DELIVERY_TIME_SHIP_ROCKET)
-    @PreAuthorize("hasRole('SELLER') or hasRole('CUSTOMER')")
-    public ResponseEntity<?> checkEstimateDeliveryTimeShipRocket(@RequestBody CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket) {
-        return this.shipRocketService.checkEstimateDeliveryTimeShipRocket(checkEstimateDeliveryTimeShipRocket);
+    @PostMapping(SellerUrlMappings.ASSIGN_AWB_NUMBER_SHIP_ROCKET)
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> assignAwbNumberShipRocket(@RequestBody GenerateAwbNumberShipRocket generateAwbNumberShipRocket) {
+        return this.shipRocketService.assignAwbNumberShipRocket(generateAwbNumberShipRocket);
     }
 
-    @PostMapping(SellerUrlMappings.DISPATCH_COURIER_SHIP_ROCKET)
-    @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<?> dispatchCourierShipRocket(@RequestBody DispatchCourierShipRocket dispatchCourierShipRocket) {
-        return this.shipRocketService.dispatchCourierShipRocket(dispatchCourierShipRocket);
+    @PostMapping(SellerUrlMappings.CHECK_ESTIMATE_DELIVERY_TIME_SHIP_ROCKET)
+    @PreAuthorize("hasRole('SELLER') or hasRole('CUSTOMER') or hasRole('ADMIN')")
+    public ResponseEntity<?> checkEstimateDeliveryTimeShipRocket(@RequestBody CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket) {
+        return this.shipRocketService.checkEstimateDeliveryTimeShipRocket1(checkEstimateDeliveryTimeShipRocket);
     }
+
 
 }

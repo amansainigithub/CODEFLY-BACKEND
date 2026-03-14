@@ -7,5 +7,7 @@ public class CheckServiceAvailability {
 
     private String order_id;
 
+    private String shipment_id;
+
     private String cod;
 }

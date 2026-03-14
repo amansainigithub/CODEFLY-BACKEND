@@ -112,7 +112,7 @@ public class SellerUrlMappings {
 
     public static final String CHECK_ESTIMATE_DELIVERY_TIME_SHIP_ROCKET = "/checkEstimateDeliveryTimeShipRocket";
 
-    public static final String DISPATCH_COURIER_SHIP_ROCKET = "/dispatchCourierShipRocket";
+    public static final String ASSIGN_AWB_NUMBER_SHIP_ROCKET = "/assignAwbNumberShipRocket";
 
 
     //ORDER ACTION CONTROLLER

@@ -100,15 +100,20 @@ public class OrderItems extends BaseEntity {
 
 
 
-    //ShipRocket Updated Data if Order is confirmed
+    // SHIP-ROCKET UPDATED DATA IF ORDER IS CONFIRMED
     private String shipRocketOrderId;
     private String shipRocketChannelOrderId;
     private String shipRocketShipmentId;
     private String shipRocketStatus;
     private String shipRocketAwbCode;
-    private String courierName;
-    private String courierCompanyId;
-
+    private String shipRocketCourierName;
+    private String shipRocketCourierId;
+    private Double shipRocketCourierPrice;
+    private String shipRocketEtd;
+    private String shipRocketDeliveryDays;
+    private String shipRocketPickupStatus;
+    private String shipRocketPickupDate;
+    private String shipRocketPickupToken;
 
     @OneToOne(cascade = CascadeType.ALL )
     @JsonIgnore

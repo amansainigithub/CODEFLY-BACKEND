@@ -7,7 +7,6 @@ import com.coder.springjwt.dtos.response.JwtResponse;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerLoginPayload;
 import com.coder.springjwt.dtos.sellerPayloads.sellerPayload.SellerMobilePayload;
 import com.coder.springjwt.models.ERole;
-import com.coder.springjwt.models.User;
 import com.coder.springjwt.models.sellerModels.SellerMobile.SellerOtpRequest;
 import com.coder.springjwt.repository.RoleRepository;
 import com.coder.springjwt.repository.UserRepository;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
