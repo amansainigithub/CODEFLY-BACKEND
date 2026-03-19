@@ -1,5 +1,6 @@
 package com.coder.springjwt.services.sellerServices.ordersService.imple;
 
+import com.coder.springjwt.buckets.shiprocketBucket.shiprocketServices.imple.ShipRocketServiceImple;
 import com.coder.springjwt.dtos.sellerPayloads.orders.*;
 import com.coder.springjwt.helpers.userHelper.UserHelper;
 import com.coder.springjwt.models.customerModels.orders.OrderItems;
@@ -29,6 +30,9 @@ public class OrdersServiceImple implements OrdersService {
 
     @Autowired
     private OrderItemsRepository orderItemsRepository;
+
+    @Autowired
+    private ShipRocketServiceImple shipRocketServiceImple;
 
 
     @Override
@@ -149,7 +153,7 @@ public class OrdersServiceImple implements OrdersService {
             List<ConfirmedOrderDto> confirmedOrderDto = new ArrayList<>();
 
             for (OrderItems entity : orderItems.getContent()) {
-                confirmedOrderDto.add(confirmedOrderToDTO(entity));
+                confirmedOrderDto.add(this.confirmedOrderToDTO(entity));
             }
 
             PageImpl<ConfirmedOrderDto> ordersPageImple = new PageImpl<>(confirmedOrderDto,
@@ -207,6 +211,8 @@ public class OrdersServiceImple implements OrdersService {
         ord.setShipRocketPickupDate(entity.getShipRocketPickupDate());
         ord.setShipRocketCourierName(entity.getShipRocketCourierName());
         ord.setShipRocketStatus(entity.getShipRocketStatus());
+        ord.setShipRocketShipmentId(entity.getShipRocketShipmentId());
+        ord.setShipRocketAwbCode(entity.getShipRocketAwbCode());
 
         return ord;
     }
@@ -472,4 +478,28 @@ public class OrdersServiceImple implements OrdersService {
 
         return ord;
     }
+
+
+
+
+
+    @Override
+    public ResponseEntity<?> generateLabelShipRocket1( OrderLabelDto orderLabelDto) {
+        System.out.println("DATA :: " + orderLabelDto.getShipmentIds());
+       return  this.shipRocketServiceImple.generateLabelShipRocket(orderLabelDto.getShipmentIds());
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
+
+
+

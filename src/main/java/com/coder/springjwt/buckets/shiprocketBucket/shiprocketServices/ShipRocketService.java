@@ -6,6 +6,8 @@ import com.coder.springjwt.buckets.shiprocketBucket.shiprocketDtos.createOrder.*
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public interface ShipRocketService {
 //    ResponseEntity<?> generateTokenShipRocket(GenerateTokenDtoShipRocket generateTokenDtoShipRocket);
@@ -23,4 +25,5 @@ public interface ShipRocketService {
     ResponseEntity<?> checkEstimateDeliveryTimeShipRocket1(CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket);
 
 
+    ResponseEntity<?> generateLabelShipRocket(List<String> shipmentIds);
 }

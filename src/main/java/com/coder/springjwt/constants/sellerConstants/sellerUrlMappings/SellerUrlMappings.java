@@ -107,12 +107,11 @@ public class SellerUrlMappings {
     public static final String GET_SHIPPED_ORDERS = "/getShippedOrders";
     public static final String GET_DELIVERED_ORDERS = "/getDeliveredOrders";
     public static final String GET_CALCELLED_ORDERS = "/getCancelledOrders";
-
     public static final String CHECK_COURIER_AVAILABILITY_SHIP_ROCKET = "/checkCourierAvailabilityShipRocket";
-
     public static final String CHECK_ESTIMATE_DELIVERY_TIME_SHIP_ROCKET = "/checkEstimateDeliveryTimeShipRocket";
-
     public static final String ASSIGN_AWB_NUMBER_SHIP_ROCKET = "/assignAwbNumberShipRocket";
+    public static final String GENERATE_LABEL_SHIP_ROCKET = "/generateLabelShipRocket";
+    public static final String GENERATE_LABEL_SHIP_ROCKET_1 = "/generateLabelShipRocket1";
 
 
     //ORDER ACTION CONTROLLER

@@ -52,4 +52,6 @@ public class ConfirmedOrderDto {
     private String shipRocketPickupDate;
     private String shipRocketCourierName;
     private String shipRocketStatus;
+    private String shipRocketShipmentId;
+    private String shipRocketAwbCode;
 }

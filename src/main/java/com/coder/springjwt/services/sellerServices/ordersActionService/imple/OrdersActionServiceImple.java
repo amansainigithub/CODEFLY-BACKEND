@@ -92,9 +92,7 @@ public class OrdersActionServiceImple implements OrdersActionService {
             String awb = shipRocketResponse.get("AWB");
             String deliveryDays = shipRocketResponse.get("DELIVERY_DAYS");
             String pickupStatus = shipRocketResponse.get("PICKUP_STATUS");
-            String pickupDate = shipRocketResponse.get("PICKUP_DATE");
-            String pickupToken = shipRocketResponse.get("PICKUP_TOKEN");
-            String pickupData = shipRocketResponse.get("PICKUP_DATA");
+            String pickupScheduleDate = shipRocketResponse.get("PICKUP_SCHEDULE_DATE");
 
             System.out.println("==============ORDER ACTION STARTING================");
             System.out.println("Courier Name : " + courierName);
@@ -104,20 +102,18 @@ public class OrdersActionServiceImple implements OrdersActionService {
             System.out.println("AWB : " + awb);
             System.out.println("Delivery Days : " + deliveryDays);
             System.out.println("pickup Status : " + pickupStatus);
-            System.out.println("pickup Date : " + pickupDate);
-            System.out.println("pickup Token : " + pickupToken);
-            System.out.println("pickup Data : " + pickupData);
+            System.out.println("pickup Date : " + pickupScheduleDate);
 
             System.out.println("CHECK AVAILABILITY SUCCESS || AWB ASSIGN SUCCESS || PICKUP SUCCESS || ");
             orderItems.setShipRocketCourierId(String.valueOf(courierId));
-            orderItems.setShipRocketCourierName(courierName);
-            orderItems.setShipRocketEtd(etd);
             orderItems.setShipRocketCourierPrice(Double.parseDouble(rate));
             orderItems.setShipRocketAwbCode(awb);
             orderItems.setShipRocketDeliveryDays(deliveryDays);
+            orderItems.setShipRocketPickupDate(pickupScheduleDate);
             orderItems.setShipRocketPickupStatus(pickupStatus);
-            orderItems.setShipRocketPickupDate(pickupDate);
-            orderItems.setShipRocketPickupToken(pickupToken);
+            orderItems.setShipRocketCourierName(courierName);
+            orderItems.setShipRocketEtd(etd);
+
             orderItems.setShipRocketStatus(OrderStatus_SR.OUT_FOR_PICKUP.toString());
 
             orderItemsRepository.save(orderItems);

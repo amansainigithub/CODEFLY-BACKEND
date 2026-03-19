@@ -113,7 +113,8 @@ public class OrderItems extends BaseEntity {
     private String shipRocketDeliveryDays;
     private String shipRocketPickupStatus;
     private String shipRocketPickupDate;
-    private String shipRocketPickupToken;
+
+
 
     @OneToOne(cascade = CascadeType.ALL )
     @JsonIgnore

@@ -1,14 +1,14 @@
 package com.coder.springjwt.controllers.seller.ordersController;
 
 import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrlMappings;
+import com.coder.springjwt.dtos.sellerPayloads.orders.OrderLabelDto;
 import com.coder.springjwt.services.sellerServices.ordersService.OrdersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(SellerUrlMappings.ORDERS_CONTROLLER)
@@ -22,11 +22,9 @@ public class OrdersController {
     public ResponseEntity<?> getPendingOrders( @RequestParam Integer page ,
                                                @RequestParam  Integer size ,
                                                @RequestParam String username ) {
-
         try {
-            Thread.sleep(5000);
+            Thread.sleep(3000);
         }catch (Exception e){}
-
         return this.ordersService.getPendingOrders(page , size , username);
     }
 
@@ -68,6 +66,12 @@ public class OrdersController {
     }
 
 
+
+    @PostMapping(SellerUrlMappings.GENERATE_LABEL_SHIP_ROCKET_1)
+    @PreAuthorize("hasRole('SELLER') or hasRole('CUSTOMER') or hasRole('ADMIN')")
+    public ResponseEntity<?> generateLabelShipRocket1(@RequestBody OrderLabelDto orderLabelDto) {
+        return this.ordersService.generateLabelShipRocket1(orderLabelDto);
+    }
 
 
 

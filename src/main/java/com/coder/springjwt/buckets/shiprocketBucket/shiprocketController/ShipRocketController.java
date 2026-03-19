@@ -9,10 +9,9 @@ import com.coder.springjwt.constants.sellerConstants.sellerUrlMappings.SellerUrl
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(AdminUrlMappings.SHIP_ROCKET_CONTROLLER)
@@ -60,9 +59,16 @@ public class ShipRocketController {
     }
 
     @PostMapping(SellerUrlMappings.CHECK_ESTIMATE_DELIVERY_TIME_SHIP_ROCKET)
-    @PreAuthorize("hasRole('SELLER') or hasRole('CUSTOMER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> checkEstimateDeliveryTimeShipRocket(@RequestBody CheckEstimateDeliveryTimeShipRocket checkEstimateDeliveryTimeShipRocket) {
         return this.shipRocketService.checkEstimateDeliveryTimeShipRocket1(checkEstimateDeliveryTimeShipRocket);
+    }
+
+
+    @PostMapping(SellerUrlMappings.GENERATE_LABEL_SHIP_ROCKET)
+    @PreAuthorize("hasRole('SELLER') or hasRole('CUSTOMER') or hasRole('ADMIN')")
+    public ResponseEntity<?> generateLabelShipRocket(@RequestBody List<String> shipmentIds) {
+        return this.shipRocketService.generateLabelShipRocket(shipmentIds);
     }
 
 
